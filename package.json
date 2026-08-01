@@ -18,7 +18,8 @@
     "test:watch": "vitest --config vitest.config.ts",
     "test:integration": "dotenv -e .env.test -- vitest run --config vitest.integration.config.ts",
     "test:all": "npm run test && npm run test:integration",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma generate",
+    "db:enrich": "tsx prisma/seed/enrich.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed/index.ts"
