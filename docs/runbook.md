@@ -14,6 +14,7 @@ docker compose up -d postgres
 npm install                   # postinstall runs `prisma generate`
 npm run db:migrate            # applies migrations, creates the schema
 npm run db:seed               # loads the prototype fixtures
+npm run db:enrich             # fills the gaps the prototypes left (see below)
 npm run dev                   # http://localhost:3000
 ```
 
@@ -37,6 +38,34 @@ refuses to run without confirmation.
 Source data lives in `prisma/seed/fixtures/*.json`, extracted once from the three HTML
 prototypes. The seed no longer parses the HTML at run time, so the prototypes can be
 retired without breaking anything.
+
+### `db:enrich` — filling what the prototypes left out
+
+Only 37 of the 112 prototype dishes shipped with execution cards. The rest had a title
+and nutrition but no ingredient lines, so they contributed no demand and purchase-order
+generation covered a third of the menu.
+
+`npm run db:enrich` closes that gap **additively** — it only fills empty content and
+never overwrites anything that exists, so it is safe to run against a live database and
+safe to re-run (a second pass finds nothing to do).
+
+| It adds | It never touches |
+| --- | --- |
+| Ingredient lines for versions that have none | Any version that already has ingredients |
+| A method, replacing the placeholder step | A version with a real method already |
+| A preferred vendor + pricing where none is set | An ingredient that already has a preferred vendor |
+| A real category, replacing the importer's `recipe` placeholder | Ingredients already on a real category |
+
+Ingredients are derived from each dish's own subtitle — which lists its components,
+`Brown rice · raita · amaranth greens` — so the result is dish-specific rather than
+random filler. Recipe units are chosen to share a dimension with the ingredient's stock
+unit, so demand aggregation stays convertible (§6.2).
+
+After enrichment, across the 28-day cycle: **0 unsourced ingredients**, ~110 order lines
+per week, and food cost in a believable range.
+
+**This is synthetic pricing.** Unit costs are indicative figures by category, not real
+vendor quotes. Replace them with actual prices before trusting any cost projection.
 
 ---
 
@@ -219,8 +248,13 @@ Deliberate for the MVP, listed so nobody mistakes them for oversights:
   the unique key is `ingredient_id`. Multi-location needs a schema change.
 - **No Playwright suite yet.** The smoke path in system-design §10 is covered by
   integration tests but not through a browser.
-- **75 of 112 recipes are menu outlines**, not full execution cards — the prototypes only
-  detailed 37. They carry their advance-prep requirements and nutrition, but no method
-  steps or ingredient lines, so they contribute nothing to demand aggregation.
-- **135 recipe ingredients have no preferred vendor**, so they surface as `unsourced` in
-  purchase-order generation until somebody assigns one.
+- **Ingredient content and pricing outside the 37 detailed cards is synthetic.**
+  `db:enrich` derives it from each dish's subtitle and prices it from category averages.
+  It is plausible and internally consistent, not real. The 37 prototype cards are the
+  chef's actual recipes; the other 75 are scaffolding to be replaced.
+- **Three ingredients have unresolvable unit conflicts** and appear as exceptions on
+  week 1 generation: avocado is stocked per piece but authored in grams, coconut oil is
+  stocked in litres but authored in grams, black pepper is authored in teaspoons against
+  a pinch. Each needs a human decision (weight per avocado, oil density) that the system
+  deliberately refuses to guess. They exercise the exception path, so leaving them is
+  useful during the trial.
