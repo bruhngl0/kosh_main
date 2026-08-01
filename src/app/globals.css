@@ -116,3 +116,10 @@ table.inventory-table tr.total td{border-top:2px solid var(--border);font-weight
 
 /* Vessels */
 .vessel-actions{display:flex;gap:6px;margin-top:9px;flex-wrap:wrap}
+
+/* Deployment badge — distinguishes live from local at a glance. */
+.environment-badge{display:inline-flex;align-items:center;gap:6px}
+.env-local{color:var(--green);background:var(--green-bg)}
+.env-preview{color:var(--amber);background:var(--amber-bg)}
+.env-production{color:var(--copper);background:var(--copper-bg)}
+.env-sha{font-style:normal;opacity:.65;font-size:9px;letter-spacing:.04em}
