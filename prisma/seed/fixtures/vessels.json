@@ -1,0 +1,52 @@
+[
+  {
+    "id": "vl1",
+    "name": "Meera Krishnamurthy",
+    "type": "steel",
+    "status": "active",
+    "issued": "2025-01-15",
+    "sanit": "2025-04-01",
+    "sets": "2",
+    "notes": ""
+  },
+  {
+    "id": "vl2",
+    "name": "Vikram Nair",
+    "type": "copper",
+    "status": "active",
+    "issued": "2025-01-15",
+    "sanit": "2025-04-01",
+    "sets": "2",
+    "notes": ""
+  },
+  {
+    "id": "vl3",
+    "name": "Priya Raghunathan",
+    "type": "steel",
+    "status": "active",
+    "issued": "2025-01-22",
+    "sanit": "2025-04-01",
+    "sets": "2",
+    "notes": ""
+  },
+  {
+    "id": "vl4",
+    "name": "Arjun Srinivas",
+    "type": "steel",
+    "status": "needs-replace",
+    "issued": "2025-01-22",
+    "sanit": "2025-03-15",
+    "sets": "1",
+    "notes": "Set B lid cracked. Replacement ordered from Ravi."
+  },
+  {
+    "id": "vl5",
+    "name": "Lakshmi Venkataraman",
+    "type": "copper",
+    "status": "active",
+    "issued": "2025-02-01",
+    "sanit": "2025-04-01",
+    "sets": "2",
+    "notes": ""
+  }
+]

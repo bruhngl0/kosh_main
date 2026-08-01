@@ -1,0 +1,19 @@
+node_modules/
+.next/
+out/
+build/
+coverage/
+
+# Environment.
+# Real secrets are ignored; the example and the local test config are tracked
+# on purpose — .env.example documents what is required, and .env.test points at
+# a throwaway local Docker database, not a real one.
+.env*
+!.env.example
+!.env.test
+
+*.log
+*.tsbuildinfo
+.DS_Store
+.vercel
+prisma/generated/

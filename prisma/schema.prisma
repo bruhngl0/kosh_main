@@ -1,0 +1,482 @@
+// Kōsh Operations Platform — canonical data model.
+// See docs/system-design.md §5. Constraints listed in §5.1 are enforced here,
+// not only in application code: the database is the guarantee.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum UserRole {
+  ADMIN
+  PLANNER
+  KITCHEN
+  PROCUREMENT
+  VIEWER
+}
+
+enum CycleStatus {
+  DRAFT
+  ACTIVE
+  CLOSED
+  ARCHIVED
+}
+
+enum MealType {
+  BF
+  SN
+  LU
+  DI
+}
+
+enum RecipeStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+enum PrepTaskStatus {
+  OPEN
+  DONE
+  SKIPPED
+}
+
+/// Advance-prep lead time. See BR-3.
+enum PrepTaskType {
+  SAME_DAY
+  DAY_BEFORE
+  H24
+  D3
+}
+
+/// See BR-9 for the sign and reason rules attached to each type.
+enum InventoryMovementType {
+  RECEIVE
+  CONSUME
+  ADJUST
+  WASTE
+  RETURN
+}
+
+/// Lifecycle in BR-12. RECEIVED and CANCELLED are terminal.
+enum PurchaseOrderStatus {
+  DRAFT
+  OUTREACH_READY
+  ORDERED
+  PARTIALLY_RECEIVED
+  RECEIVED
+  CANCELLED
+}
+
+model User {
+  id        String              @id @default(uuid()) @db.Uuid
+  name      String
+  email     String              @unique
+  role      UserRole            @default(VIEWER)
+  active    Boolean             @default(true)
+  createdAt DateTime            @default(now()) @map("created_at")
+  updatedAt DateTime            @updatedAt @map("updated_at")
+  prepTasks PrepTask[]
+  movements InventoryMovement[]
+  audits    AuditEvent[]
+
+  @@map("users")
+}
+
+model Cycle {
+  id                    String          @id @default(uuid()) @db.Uuid
+  name                  String
+  cycleNumber           Int             @unique @map("cycle_number")
+  durationDays          Int             @default(28) @map("duration_days")
+  status                CycleStatus     @default(DRAFT)
+  weekStart             DateTime?       @map("week_start") @db.Date
+  subscriberCount       Int             @default(1) @map("subscriber_count")
+  foodCostTargetPercent Decimal?        @map("food_cost_target_percent") @db.Decimal(5, 2)
+  chefName              String?         @map("chef_name")
+  /// BR-1: rolling window, in days, within which a dinner protein may not repeat.
+  proteinWindowDays     Int             @default(4) @map("protein_window_days")
+  publishedAt           DateTime?       @map("published_at")
+  createdAt             DateTime        @default(now()) @map("created_at")
+  updatedAt             DateTime        @updatedAt @map("updated_at")
+  days                  CycleDay[]
+  prepTasks             PrepTask[]
+  purchaseOrders        PurchaseOrder[]
+
+  @@index([status])
+  @@map("cycles")
+}
+
+model CycleDay {
+  id          String           @id @default(uuid()) @db.Uuid
+  cycleId     String           @map("cycle_id") @db.Uuid
+  dayNumber   Int              @map("day_number")
+  weekNumber  Int              @map("week_number")
+  phaseLabel  String           @map("phase_label")
+  cycle       Cycle            @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+  assignments MealAssignment[]
+  prepTasks   PrepTask[]
+
+  @@unique([cycleId, dayNumber])
+  @@index([cycleId, weekNumber])
+  @@map("cycle_days")
+}
+
+model Recipe {
+  id        String          @id @default(uuid()) @db.Uuid
+  title     String
+  subtitle  String?
+  mealType  MealType        @map("meal_type")
+  active    Boolean         @default(true)
+  createdAt DateTime        @default(now()) @map("created_at")
+  updatedAt DateTime        @updatedAt @map("updated_at")
+  versions  RecipeVersion[]
+
+  @@unique([title, mealType])
+  @@index([mealType, active])
+  @@map("recipes")
+}
+
+/// Immutable once PUBLISHED. See BR-15.
+model RecipeVersion {
+  id            String             @id @default(uuid()) @db.Uuid
+  recipeId      String             @map("recipe_id") @db.Uuid
+  versionNumber Int                @map("version_number")
+  status        RecipeStatus       @default(DRAFT)
+  calories      Decimal?           @db.Decimal(8, 2)
+  proteinGrams  Decimal?           @map("protein_grams") @db.Decimal(8, 2)
+  carbsGrams    Decimal?           @map("carbs_grams") @db.Decimal(8, 2)
+  fatGrams      Decimal?           @map("fat_grams") @db.Decimal(8, 2)
+  proteinSource String?            @map("protein_source")
+  platingNotes  String?            @map("plating_notes")
+  createdById   String?            @map("created_by_id") @db.Uuid
+  publishedAt   DateTime?          @map("published_at")
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @updatedAt @map("updated_at")
+  recipe        Recipe             @relation(fields: [recipeId], references: [id], onDelete: Restrict)
+  ingredients   RecipeIngredient[]
+  steps         RecipeStep[]
+  allergens     RecipeAllergen[]
+  assignments   MealAssignment[]
+
+  @@unique([recipeId, versionNumber])
+  @@index([status])
+  @@map("recipe_versions")
+}
+
+model Ingredient {
+  id               String              @id @default(uuid()) @db.Uuid
+  name             String
+  normalizedName   String              @unique @map("normalized_name")
+  category         String
+  /// The stock unit. InventoryBalance.quantity is ALWAYS expressed in this unit (§6.2).
+  defaultUnit      String              @map("default_unit")
+  defaultFrequency String              @map("default_frequency")
+  active           Boolean             @default(true)
+  /// True for rows that appear on the inventory master; false for ingredients
+  /// created implicitly as a side effect of authoring a recipe.
+  inventoryManaged Boolean             @default(false) @map("inventory_managed")
+  /// Standing reference quantity carried over from the prototype (BR-7 note).
+  /// Not a substitute for computed weekly demand.
+  quantityNeeded   Decimal             @default(0) @map("quantity_needed") @db.Decimal(12, 3)
+  /// Standing ordering status: needed | ordered | received | cancelled.
+  inventoryStatus  String              @default("needed") @map("inventory_status")
+  notes            String?
+  createdAt        DateTime            @default(now()) @map("created_at")
+  updatedAt        DateTime            @updatedAt @map("updated_at")
+
+  recipeIngredients RecipeIngredient[]
+  vendorIngredients VendorIngredient[]
+  balance           InventoryBalance?
+  movements         InventoryMovement[]
+  purchaseLines     PurchaseOrderLine[]
+
+  @@index([category, active])
+  @@index([inventoryManaged, active])
+  @@map("ingredients")
+}
+
+model RecipeIngredient {
+  id              String        @id @default(uuid()) @db.Uuid
+  recipeVersionId String        @map("recipe_version_id") @db.Uuid
+  ingredientId    String        @map("ingredient_id") @db.Uuid
+  /// Stored as authored, in the recipe's own unit. Converted at demand time (§6.2).
+  quantity        Decimal       @db.Decimal(12, 3)
+  unit            String
+  preparationNote String?       @map("preparation_note")
+  recipeVersion   RecipeVersion @relation(fields: [recipeVersionId], references: [id], onDelete: Cascade)
+  ingredient      Ingredient    @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+
+  @@unique([recipeVersionId, ingredientId, unit])
+  @@map("recipe_ingredients")
+}
+
+model RecipeStep {
+  id              String        @id @default(uuid()) @db.Uuid
+  recipeVersionId String        @map("recipe_version_id") @db.Uuid
+  stepNumber      Int           @map("step_number")
+  title           String
+  instructions    String
+  temperatureC    Decimal?      @map("temperature_c") @db.Decimal(6, 2)
+  durationMinutes Int?          @map("duration_minutes")
+  /// info | warning | mandatory. Non-info steps become advance-prep tasks (BR-3).
+  criticality     String        @default("info")
+  recipeVersion   RecipeVersion @relation(fields: [recipeVersionId], references: [id], onDelete: Cascade)
+
+  @@unique([recipeVersionId, stepNumber])
+  @@map("recipe_steps")
+}
+
+model RecipeAllergen {
+  id              String        @id @default(uuid()) @db.Uuid
+  recipeVersionId String        @map("recipe_version_id") @db.Uuid
+  allergenCode    String        @map("allergen_code")
+  recipeVersion   RecipeVersion @relation(fields: [recipeVersionId], references: [id], onDelete: Cascade)
+
+  @@unique([recipeVersionId, allergenCode])
+  @@map("recipe_allergens")
+}
+
+model MealAssignment {
+  id              String        @id @default(uuid()) @db.Uuid
+  cycleDayId      String        @map("cycle_day_id") @db.Uuid
+  mealType        MealType      @map("meal_type")
+  recipeVersionId String        @map("recipe_version_id") @db.Uuid
+  servings        Int           @default(1)
+  notes           String?
+  createdAt       DateTime      @default(now()) @map("created_at")
+  updatedAt       DateTime      @updatedAt @map("updated_at")
+  cycleDay        CycleDay      @relation(fields: [cycleDayId], references: [id], onDelete: Cascade)
+  recipeVersion   RecipeVersion @relation(fields: [recipeVersionId], references: [id], onDelete: Restrict)
+  prepTasks       PrepTask[]
+
+  @@unique([cycleDayId, mealType])
+  @@map("meal_assignments")
+}
+
+model PrepTask {
+  id               String          @id @default(uuid()) @db.Uuid
+  cycleId          String          @map("cycle_id") @db.Uuid
+  cycleDayId       String          @map("cycle_day_id") @db.Uuid
+  mealAssignmentId String?         @map("meal_assignment_id") @db.Uuid
+  /// Stable natural key for idempotent regeneration (BR-16):
+  /// `{cycleDayId}:{mealType}:{stepNumber}`.
+  sourceKey        String          @map("source_key")
+  taskText         String          @map("task_text")
+  taskType         PrepTaskType    @map("task_type")
+  dueDate          DateTime?       @map("due_date") @db.Date
+  urgent           Boolean         @default(false)
+  status           PrepTaskStatus  @default(OPEN)
+  completedById    String?         @map("completed_by_id") @db.Uuid
+  completedAt      DateTime?       @map("completed_at")
+  createdAt        DateTime        @default(now()) @map("created_at")
+  updatedAt        DateTime        @updatedAt @map("updated_at")
+  cycle            Cycle           @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+  cycleDay         CycleDay        @relation(fields: [cycleDayId], references: [id], onDelete: Cascade)
+  assignment       MealAssignment? @relation(fields: [mealAssignmentId], references: [id], onDelete: SetNull)
+  completedBy      User?           @relation(fields: [completedById], references: [id], onDelete: SetNull)
+
+  @@unique([cycleId, sourceKey])
+  @@index([cycleId, status, dueDate])
+  @@map("prep_tasks")
+}
+
+model Vendor {
+  id             String             @id @default(uuid()) @db.Uuid
+  name           String             @unique
+  category       String?
+  contact        String?
+  whatsapp       String?
+  phone          String?
+  email          String?
+  minimumOrder   String?            @map("minimum_order")
+  leadTime       String?            @map("lead_time")
+  cutoff         String?
+  area           String?
+  paymentTerms   String?            @map("payment_terms")
+  notes          String?
+  active         Boolean            @default(true)
+  createdAt      DateTime           @default(now()) @map("created_at")
+  updatedAt      DateTime           @updatedAt @map("updated_at")
+  ingredients    VendorIngredient[]
+  purchaseOrders PurchaseOrder[]
+
+  @@map("vendors")
+}
+
+model VendorIngredient {
+  id           String     @id @default(uuid()) @db.Uuid
+  vendorId     String     @map("vendor_id") @db.Uuid
+  ingredientId String     @map("ingredient_id") @db.Uuid
+  unitCost     Decimal?   @map("unit_cost") @db.Decimal(12, 2)
+  /// Purchase unit. May differ from the ingredient's stock unit; converted at
+  /// purchase-order time (§6.2).
+  unit         String?
+  minimumQty   Decimal?   @map("minimum_qty") @db.Decimal(12, 3)
+  preferred    Boolean    @default(false)
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  vendor       Vendor     @relation(fields: [vendorId], references: [id], onDelete: Cascade)
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+  @@unique([vendorId, ingredientId])
+  @@index([ingredientId, preferred])
+  @@map("vendor_ingredients")
+}
+
+/// One balance per ingredient. Multi-location is deferred; `location` records
+/// where the stock sits so the model can grow without a data migration, but the
+/// MVP assumes a single kitchen (§6.2).
+model InventoryBalance {
+  id           String     @id @default(uuid()) @db.Uuid
+  ingredientId String     @unique @map("ingredient_id") @db.Uuid
+  location     String     @default("main-kitchen")
+  /// Always expressed in Ingredient.defaultUnit.
+  quantity     Decimal    @default(0) @db.Decimal(12, 3)
+  parLevel     Decimal    @default(0) @map("par_level") @db.Decimal(12, 3)
+  reorderPoint Decimal    @default(0) @map("reorder_point") @db.Decimal(12, 3)
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  ingredient   Ingredient @relation(fields: [ingredientId], references: [id], onDelete: Cascade)
+
+  @@map("inventory_balances")
+}
+
+/// Immutable. The only mechanism that may change an InventoryBalance (BR-11).
+model InventoryMovement {
+  id               String                @id @default(uuid()) @db.Uuid
+  ingredientId     String                @map("ingredient_id") @db.Uuid
+  type             InventoryMovementType
+  /// Signed delta, derived from `type` by the domain layer — never supplied
+  /// directly by a caller (BR-9).
+  quantityDelta    Decimal               @map("quantity_delta") @db.Decimal(12, 3)
+  /// Balance after this movement was applied. Lets history be replayed and
+  /// reconciled without recomputing from the beginning of time.
+  balanceAfter     Decimal               @map("balance_after") @db.Decimal(12, 3)
+  unit             String
+  unitCost         Decimal?              @map("unit_cost") @db.Decimal(12, 2)
+  /// Mandatory for WASTE and ADJUST (BR-9).
+  reason           String?
+  /// Free-text link to a purchase order, production run, or stock count.
+  reference        String?
+  location         String                @default("main-kitchen")
+  /// True when an authorised actor pushed the balance below zero (BR-10).
+  negativeOverride Boolean               @default(false) @map("negative_override")
+  actorId          String?               @map("actor_id") @db.Uuid
+  createdAt        DateTime              @default(now()) @map("created_at")
+  ingredient       Ingredient            @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+  actor            User?                 @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([ingredientId, createdAt])
+  @@index([type, createdAt])
+  @@map("inventory_movements")
+}
+
+model PurchaseOrder {
+  id         String              @id @default(uuid()) @db.Uuid
+  vendorId   String              @map("vendor_id") @db.Uuid
+  cycleId    String?             @map("cycle_id") @db.Uuid
+  weekNumber Int?                @map("week_number")
+  status     PurchaseOrderStatus @default(DRAFT)
+  orderedAt  DateTime?           @map("ordered_at")
+  receivedAt DateTime?           @map("received_at")
+  notes      String?
+  createdAt  DateTime            @default(now()) @map("created_at")
+  updatedAt  DateTime            @updatedAt @map("updated_at")
+  vendor     Vendor              @relation(fields: [vendorId], references: [id], onDelete: Restrict)
+  cycle      Cycle?              @relation(fields: [cycleId], references: [id], onDelete: SetNull)
+  lines      PurchaseOrderLine[]
+
+  /// BR-16. NULL cycle_id rows are treated as distinct by Postgres, so ad-hoc
+  /// orders outside a cycle are unconstrained by design.
+  @@unique([cycleId, vendorId, weekNumber])
+  @@index([status, vendorId])
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderLine {
+  id              String        @id @default(uuid()) @db.Uuid
+  purchaseOrderId String        @map("purchase_order_id") @db.Uuid
+  ingredientId    String        @map("ingredient_id") @db.Uuid
+  requestedQty    Decimal       @map("requested_qty") @db.Decimal(12, 3)
+  orderedQty      Decimal       @default(0) @map("ordered_qty") @db.Decimal(12, 3)
+  receivedQty     Decimal       @default(0) @map("received_qty") @db.Decimal(12, 3)
+  /// Purchase unit for this line. Converted to the ingredient's stock unit when
+  /// receipt is recorded (BR-13).
+  unit            String
+  unitCost        Decimal?      @map("unit_cost") @db.Decimal(12, 2)
+  notes           String?
+  purchaseOrder   PurchaseOrder @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  ingredient      Ingredient    @relation(fields: [ingredientId], references: [id], onDelete: Restrict)
+
+  @@unique([purchaseOrderId, ingredientId])
+  @@map("purchase_order_lines")
+}
+
+/// Replaces the prototype's hardcoded 22/10/5 revenue constant (BR-17).
+model SubscriptionPlan {
+  id          String       @id @default(uuid()) @db.Uuid
+  name        String       @unique
+  /// INR per subscriber per production day.
+  dailyRate   Decimal      @map("daily_rate") @db.Decimal(12, 2)
+  active      Boolean      @default(true)
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  subscribers Subscriber[]
+
+  @@map("subscription_plans")
+}
+
+model Subscriber {
+  id        String            @id @default(uuid()) @db.Uuid
+  name      String
+  status    String            @default("active")
+  planId    String?           @map("plan_id") @db.Uuid
+  createdAt DateTime          @default(now()) @map("created_at")
+  updatedAt DateTime          @updatedAt @map("updated_at")
+  plan      SubscriptionPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
+  kits      VesselKit[]
+
+  @@index([status])
+  @@map("subscribers")
+}
+
+model VesselKit {
+  id           String     @id @default(uuid()) @db.Uuid
+  subscriberId String     @map("subscriber_id") @db.Uuid
+  /// steel | copper
+  type         String
+  /// active | needs-replace | retired
+  status       String
+  sets         Int        @default(2)
+  issuedAt     DateTime?  @map("issued_at") @db.Date
+  sanitisedAt  DateTime?  @map("sanitised_at") @db.Date
+  notes        String?
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  subscriber   Subscriber @relation(fields: [subscriberId], references: [id], onDelete: Restrict)
+
+  @@index([status])
+  @@map("vessel_kits")
+}
+
+/// Written in the same transaction as the change it describes (§8.3).
+model AuditEvent {
+  id         String   @id @default(uuid()) @db.Uuid
+  actorId    String?  @map("actor_id") @db.Uuid
+  action     String
+  entityType String   @map("entity_type")
+  entityId   String   @map("entity_id")
+  before     Json?
+  after      Json?
+  requestId  String?  @map("request_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  actor      User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId, createdAt])
+  @@index([actorId, createdAt])
+  @@map("audit_events")
+}

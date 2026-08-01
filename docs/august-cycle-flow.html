@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Kōsh — August Cycle Workflow</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Mono:wght@400;500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#f5f2ed;--surface:#fff;--ink:#1c1a16;--stone:#8c8070;--sand:#d4c9b0;--border:#ddd5c0;--copper:#8b5e3c;--copper-bg:#f2eae0;--green:#1a6b3c;--green-bg:#eaf4ee;--amber:#a07010;--amber-bg:#fff8e6;--serif:'Cormorant Garamond',Georgia,serif;--sans:'DM Sans',sans-serif;--mono:'DM Mono',monospace}
+    *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:14px/1.6 var(--sans)}.wrap{max-width:1050px;margin:auto;padding:28px 22px 70px}.header{display:flex;align-items:center;gap:15px;border-bottom:2px solid var(--copper);padding-bottom:15px}.logo{font:600 25px var(--serif);letter-spacing:.04em}.logo sup{font-size:11px;color:#c4895a;font-style:italic}.rule{height:24px;width:1px;background:var(--sand)}.meta,.eyebrow{font:10px var(--mono);color:var(--stone);letter-spacing:.1em;text-transform:uppercase}.hero{padding:55px 0 35px}.hero h1{font:600 58px/.95 var(--serif);margin:12px 0}.hero h1 em{font-weight:400;color:var(--copper)}.hero p{max-width:620px;color:var(--stone);font-size:16px}.flow{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:20px 0 42px}.flow-step{position:relative;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px;min-height:128px}.flow-step:not(:last-child):after{content:'→';position:absolute;right:-16px;top:48px;color:var(--copper);font:24px var(--serif);z-index:2}.flow-step b{font:12px var(--mono);color:var(--copper)}.flow-step h2{font:600 20px/1 var(--serif);margin:15px 0 7px}.flow-step p{font-size:11px;color:var(--stone);margin:0}.section-title{font:600 27px var(--serif);margin:38px 0 12px;border-bottom:1px solid var(--sand);padding-bottom:8px}.step{display:grid;grid-template-columns:58px 1fr;gap:14px;background:var(--surface);border:1px solid var(--border);border-radius:8px;margin:10px 0;padding:18px}.step-number{font:600 30px var(--serif);color:var(--copper)}.step h3{font:600 20px var(--serif);margin:0 0 4px}.step p{margin:4px 0;color:var(--stone)}.tip{display:inline-block;margin-top:9px;padding:5px 9px;background:var(--green-bg);color:var(--green);border-radius:4px;font-size:11px}.warning{background:var(--amber-bg);color:var(--amber)}pre{overflow:auto;background:#24211c;color:#f5f2ed;border-radius:6px;padding:14px;font:11px/1.6 var(--mono);margin:12px 0 3px}.label{font:9px var(--mono);color:var(--stone);letter-spacing:.1em;text-transform:uppercase}.codes{display:grid;grid-template-columns:1fr 1fr;gap:12px}.legend{display:flex;flex-wrap:wrap;gap:18px;color:var(--stone);font-size:12px}.legend strong{color:var(--ink)}.footer{margin-top:45px;padding-top:15px;border-top:1px solid var(--sand);color:var(--stone);font-size:11px}@media(max-width:800px){.flow{grid-template-columns:1fr}.flow-step:not(:last-child):after{content:'↓';right:50%;top:auto;bottom:-22px}.codes{grid-template-columns:1fr}.hero h1{font-size:46px}}@media print{body{background:#fff}.header{position:static}.step{break-inside:avoid}.flow-step:not(:last-child):after{color:#000}}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="header"><div class="logo">Kō<sup>sh</sup></div><div class="rule"></div><div class="meta">August Cycle · Local Operations Guide</div></header>
+    <section class="hero"><div class="eyebrow">Cycle Planner / How the system works</div><h1>Build an August cycle,<br><em>from plan to purchase.</em></h1><p>This guide explains how Kōsh turns a 28-day meal plan into recipes, prep work, production lists, inventory requirements, and vendor purchase orders.</p></section>
+
+    <section class="flow">
+      <div class="flow-step"><b>01</b><h2>Plan</h2><p>Create the August cycle and its 28 days.</p></div>
+      <div class="flow-step"><b>02</b><h2>Assign</h2><p>Choose four recipes for every day.</p></div>
+      <div class="flow-step"><b>03</b><h2>Validate</h2><p>Check conflicts and publish the cycle.</p></div>
+      <div class="flow-step"><b>04</b><h2>Prepare</h2><p>Generate prep tasks and production lists.</p></div>
+      <div class="flow-step"><b>05</b><h2>Procure</h2><p>Convert demand into vendor orders.</p></div>
+    </section>
+
+    <h2 class="section-title">August 2026 workflow</h2>
+    <article class="step"><div class="step-number">01</div><div><h3>Create the cycle</h3><p>Start a draft cycle with August 1 as the start date. The system creates 28 numbered days and groups them into four phases.</p><span class="tip">Draft status keeps the plan editable.</span><pre>POST /api/v1/cycles
+
+{
+  "name": "August 2026 Cycle",
+  "cycleNumber": 2,
+  "durationDays": 28,
+  "weekStart": "2026-08-01",
+  "subscriberCount": 37,
+  "foodCostTargetPercent": 30
+}</pre></div></article>
+    <article class="step"><div class="step-number">02</div><div><h3>Assign the recipes</h3><p>Each day has four meal slots. Assign a published recipe version to breakfast, snack, lunch, and dinner.</p><span class="tip">Meal codes: BF = breakfast · SN = snack · LU = lunch · DI = dinner.</span><pre>PUT /api/v1/cycles/CYCLE_ID/days/1/meals/DI
+
+{
+  "mealType": "DI",
+  "recipeVersionId": "RECIPE_VERSION_ID",
+  "servings": 37
+}</pre></div></article>
+    <article class="step"><div class="step-number">03</div><div><h3>Review and publish</h3><p>The planner checks that all days have four assignments. The calendar also highlights dinner protein repeats within a four-day window.</p><span class="tip warning">Do not publish until missing assignments and conflicts are reviewed.</span><pre>PATCH /api/v1/cycles/CYCLE_ID
+
+{}</pre></div></article>
+    <article class="step"><div class="step-number">04</div><div><h3>Generate kitchen work</h3><p>Generate advance-prep tasks from recipe steps marked as mandatory or critical. The weekly production view shows what the kitchen needs to execute.</p><pre>POST /api/v1/cycles/CYCLE_ID/prep-tasks/generate</pre></div></article>
+    <article class="step"><div class="step-number">05</div><div><h3>Generate purchase orders</h3><p>Kōsh multiplies recipe quantities by servings, subtracts current stock, groups the remaining demand by preferred vendor, and creates draft purchase orders.</p><pre>POST /api/v1/purchase-orders/generate
+
+{
+  "cycleId": "CYCLE_ID",
+  "weekNumber": 1
+}</pre></div></article>
+    <article class="step"><div class="step-number">06</div><div><h3>Receive and reconcile stock</h3><p>When ingredients arrive, record a receiving movement. Inventory balances update transactionally and below-par items remain visible for follow-up.</p><pre>POST /api/v1/inventory/movements
+
+{
+  "ingredientId": "INGREDIENT_ID",
+  "type": "RECEIVE",
+  "quantityDelta": 2,
+  "reference": "Vendor delivery — August Week 1"
+}</pre></div></article>
+
+    <h2 class="section-title">What each screen is responsible for</h2>
+    <div class="codes">
+      <div class="step"><div><h3>Cycle Planner</h3><p>Calendar, meal assignments, protein conflict checks, prep tasks, and weekly production.</p></div></div>
+      <div class="step"><div><h3>Recipe Database</h3><p>Versioned ingredients, method steps, nutrition, allergens, advance prep, and plating notes.</p></div></div>
+      <div class="step"><div><h3>Inventory</h3><p>Stock balances, par levels, receiving movements, vendors, costs, and CSV export.</p></div></div>
+      <div class="step"><div><h3>Procurement</h3><p>Demand aggregation, preferred-vendor grouping, draft purchase orders, and outreach preparation.</p></div></div>
+    </div>
+    <div class="footer">Kōsh local operations guide · Database: PostgreSQL · Application: Next.js modular monolith · Print this page for the August planning session.</div>
+  </div>
+</body>
+</html>

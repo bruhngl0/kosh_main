@@ -1,0 +1,1055 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kōsh — Inventory & Procurement</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#1C1A16;--charcoal:#3D3A30;--stone:#8C8070;--sand:#D4C9B0;
+  --parchment:#F5F2ED;--copper:#8B5E3C;--copper-lt:#F2EAE0;
+  --white:#FFFFFF;--gr:#1A6B3C;--re:#A32D2D;--gy:#F5F2ED;
+  --border:#D4C9B0;--lg:#EAF4EE;--ly:#FFF8E6;--lr:#FEF2F2;
+  --blue:#1A3B6B;--blue-lt:#EAF0FB;--am:#A07010;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--parchment);color:var(--ink);font-size:14px;line-height:1.6}
+.wrap{max-width:1440px;margin:0 auto;padding:22px 18px}
+
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:14px;border-bottom:2px solid var(--copper);flex-wrap:wrap;gap:10px}
+.brand{display:flex;align-items:center;gap:12px}
+.logo{width:40px;height:40px;background:var(--ink);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:'Cormorant Garamond',serif;color:var(--copper);font-size:15px;font-weight:600;flex-shrink:0;letter-spacing:.03em}
+.logo sup{font-size:8px;vertical-align:super;font-style:italic}
+.brand-text h1{font-family:'Cormorant Garamond',serif;font-size:19px;color:var(--ink);font-weight:600}
+.brand-text p{font-size:11px;color:var(--stone)}
+.header-actions{display:flex;gap:7px;flex-wrap:wrap}
+.btn{padding:7px 14px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;border:none;transition:all .15s;white-space:nowrap}
+.btn-primary{background:var(--ink);color:var(--copper)}
+.btn-primary:hover{background:var(--charcoal)}
+.btn-ghost{background:transparent;color:var(--stone);border:1.5px solid var(--border)}
+.btn-ghost:hover{border-color:var(--copper);color:var(--ink)}
+.btn-copper{background:var(--copper);color:var(--white)}
+.btn-copper:hover{background:#7a5232}
+.btn-green{background:var(--gr);color:#fff}
+.btn-green:hover{background:#145a32}
+.btn-sm{padding:5px 10px;font-size:11px}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-bottom:14px}
+.kpi{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:11px 13px}
+.kpi.hi{border:2px solid var(--copper)}
+.kpi-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1.1px;color:var(--stone);margin-bottom:3px}
+.kpi-value{font-family:'Cormorant Garamond',serif;font-size:20px;color:var(--ink);font-weight:600}
+.kpi-sub{font-size:10px;color:var(--stone);margin-top:1px}
+
+/* Brief bar */
+.brief-bar{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:11px 15px;margin-bottom:14px;display:grid;grid-template-columns:repeat(6,1fr) auto;gap:10px;align-items:end}
+.brief-field{display:flex;flex-direction:column;gap:3px}
+.brief-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--stone)}
+.brief-input{border:1.5px solid var(--border);border-radius:5px;padding:6px 10px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);background:var(--gy);outline:none;width:100%;transition:border .15s}
+.brief-input:focus{border-color:var(--copper);background:var(--white)}
+
+/* Tabs */
+.main-tabs{display:flex;gap:4px;background:var(--gy);border:1px solid var(--border);border-radius:8px;padding:4px;margin-bottom:13px}
+.main-tab{flex:1;padding:6px 4px;border-radius:5px;cursor:pointer;font-size:11.5px;font-weight:600;color:var(--stone);text-align:center;transition:all .15s;border:none;background:transparent;white-space:nowrap}
+.main-tab.active{background:var(--white);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.tab-panel{display:none}
+.tab-panel.visible{display:block}
+
+/* Category filter pills */
+.cat-pills{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:11px;align-items:center}
+.cat-pill{padding:3px 11px;border-radius:20px;font-size:11px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--gy);color:var(--stone);transition:all .15s;display:flex;align-items:center;gap:5px}
+.cat-pill.active{border-color:var(--copper);background:var(--copper-lt);color:var(--ink)}
+.cat-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0}
+
+/* Card */
+.card{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:13px 15px;margin-bottom:11px}
+.card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px;padding-bottom:8px;border-bottom:1px solid var(--gy);flex-wrap:wrap;gap:8px}
+.card-title{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.4px;color:var(--stone)}
+
+/* Inventory table */
+.inv-table{width:100%;border-collapse:collapse;font-size:12px}
+.inv-table th{text-align:left;font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:var(--stone);padding:6px 9px;border-bottom:1.5px solid var(--border);font-weight:500;white-space:nowrap;cursor:pointer;user-select:none}
+.inv-table th:hover{color:var(--ink)}
+.inv-table th.sort-asc::after{content:' ↑'}
+.inv-table th.sort-desc::after{content:' ↓'}
+.inv-table td{padding:7px 9px;border-bottom:1px solid #ede7d9;vertical-align:middle}
+.inv-table tr:hover td{background:var(--gy)}
+.inv-table tr:last-child td{border-bottom:none}
+.inv-table td:nth-child(n+6){font-family:'DM Mono',monospace;font-size:11px}
+
+/* Badges */
+.cat-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:8px;font-size:10px;font-weight:600;white-space:nowrap}
+.src-chef{background:#EEF2FF;color:#3730A3;padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600}
+.src-std{background:var(--gy);color:var(--stone);padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600}
+.status-needed{background:#FEE2E2;color:var(--re);padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600}
+.status-ordered{background:var(--ly);color:var(--am);padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600}
+.status-received{background:var(--lg);color:var(--gr);padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600}
+.status-cancel{background:var(--gy);color:var(--stone);padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600}
+.freq-daily{background:#EAF4EE;color:var(--gr);padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600}
+.freq-weekly{background:var(--copper-lt);color:var(--copper);padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600}
+.freq-monthly{background:var(--blue-lt);color:var(--blue);padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600}
+.freq-adhoc{background:var(--gy);color:var(--stone);padding:2px 7px;border-radius:6px;font-size:10px;font-weight:600}
+
+/* Inline editable */
+.editable{border:none;background:transparent;font-family:'DM Mono',monospace;font-size:11px;color:var(--ink);width:70px;outline:none;padding:2px 4px;border-radius:3px;text-align:right}
+.editable:focus{background:var(--copper-lt);border:1px solid var(--copper)}
+.editable-text{border:none;background:transparent;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink);width:110px;outline:none;padding:2px 4px;border-radius:3px}
+.editable-text:focus{background:var(--copper-lt);border:1px solid var(--copper)}
+.editable-wide{width:150px}
+
+/* Actions */
+.actions{display:flex;gap:4px}
+.icon-btn{width:25px;height:25px;border-radius:5px;border:1px solid var(--border);background:var(--gy);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;color:var(--stone)}
+.icon-btn:hover{border-color:var(--copper);background:var(--copper-lt)}
+.icon-btn.danger:hover{border-color:var(--re);background:#FEE2E2}
+
+/* Add row */
+.add-row-wrap{padding:9px 10px;border-top:1px solid var(--gy);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.add-field{padding:5px 9px;border:1.5px solid var(--border);border-radius:5px;font-family:'DM Sans',sans-serif;font-size:12px;color:var(--ink);background:var(--parchment);outline:none;transition:border .15s}
+.add-field:focus{border-color:var(--copper);background:var(--white)}
+
+/* Vendor table */
+.vnd-table{width:100%;border-collapse:collapse;font-size:12px}
+.vnd-table th{text-align:left;font-size:9px;letter-spacing:1.2px;text-transform:uppercase;color:var(--stone);padding:6px 9px;border-bottom:1.5px solid var(--border);font-weight:500}
+.vnd-table td{padding:8px 9px;border-bottom:1px solid #ede7d9;vertical-align:top}
+.vnd-table tr:last-child td{border-bottom:none}
+
+/* Outreach */
+.outreach-card{background:var(--white);border:1px solid var(--border);border-radius:8px;margin-bottom:9px;overflow:hidden}
+.outreach-header{display:flex;align-items:center;justify-content:space-between;padding:11px 13px;cursor:pointer;transition:background .15s}
+.outreach-header:hover{background:var(--gy)}
+.outreach-name{font-weight:600;color:var(--ink);font-size:13px}
+.outreach-meta{font-size:11px;color:var(--stone);margin-top:1px}
+.outreach-body{padding:11px 13px;border-top:1px solid var(--gy);display:none}
+.outreach-body.open{display:block}
+.outreach-msg{background:var(--copper-lt);border:1px solid var(--border);border-left:3px solid var(--copper);border-radius:6px;padding:12px 14px;font-size:12px;color:var(--ink);line-height:1.8;white-space:pre-wrap;font-family:'DM Sans',sans-serif}
+.outreach-item-row{display:flex;justify-content:space-between;font-size:12px;padding:4px 0;border-bottom:1px solid var(--gy)}
+.outreach-item-row:last-child{border-bottom:none}
+
+/* Cost tables */
+.cost-table{width:100%;border-collapse:collapse;font-size:12px}
+.cost-table td{padding:6px 9px;border-bottom:1px solid #ede7d9}
+.cost-table td:last-child{text-align:right;font-family:'DM Mono',monospace;font-weight:600}
+.cost-table tr.total td{font-weight:700;font-size:13px;color:var(--ink);border-top:2px solid var(--border);background:var(--copper-lt)}
+.cost-table tr.total td:last-child{color:var(--gr)}
+
+/* Par level indicator */
+.par-ok{color:var(--gr)}
+.par-low{color:var(--am)}
+.par-out{color:var(--re);font-weight:700}
+
+/* Vessel tab */
+.vessel-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:14px}
+.vessel-card{background:var(--white);border:1.5px solid var(--border);border-radius:8px;padding:12px;cursor:pointer;transition:all .15s;text-align:center}
+.vessel-card:hover{border-color:var(--copper)}
+.vessel-card.active{background:var(--copper-lt);border-color:var(--copper)}
+.vessel-card.retired{background:var(--gy);opacity:.6}
+.vessel-card.needs-replace{background:#FEF2F2;border-color:var(--re)}
+.vc-name{font-family:'Cormorant Garamond',serif;font-style:italic;font-size:14px;color:var(--ink);margin-bottom:4px}
+.vc-type{font-size:10px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--stone)}
+.vc-status-badge{display:inline-block;margin-top:5px;font-size:9px;font-weight:600;letter-spacing:.4px;text-transform:uppercase;padding:2px 8px;border-radius:10px}
+
+/* Empty state */
+.empty{text-align:center;padding:32px;color:var(--stone);font-size:13px}
+
+/* Modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:200;align-items:center;justify-content:center}
+.modal-overlay.open{display:flex}
+.modal{background:var(--white);border-radius:12px;width:560px;max-width:95vw;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-hdr{padding:16px 20px 12px;border-bottom:1px solid var(--gy);display:flex;align-items:center;justify-content:space-between}
+.modal-title{font-family:'Cormorant Garamond',serif;font-size:17px;color:var(--ink);font-weight:600}
+.modal-close{width:26px;height:26px;border-radius:5px;border:1px solid var(--border);background:var(--gy);cursor:pointer;font-size:14px;color:var(--stone);display:flex;align-items:center;justify-content:center}
+.modal-body{padding:16px 20px}
+.modal-footer{padding:12px 20px;border-top:1px solid var(--gy);display:flex;gap:8px;justify-content:flex-end}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.form-group{display:flex;flex-direction:column;gap:3px}
+.form-group.full{grid-column:1/-1}
+.form-label{font-size:9px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--stone)}
+.form-input,.form-select,.form-textarea{padding:7px 10px;border:1.5px solid var(--border);border-radius:5px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--ink);background:var(--gy);outline:none;transition:border .15s;width:100%}
+.form-input:focus,.form-select:focus,.form-textarea:focus{border-color:var(--copper);background:var(--white)}
+.form-textarea{resize:vertical;min-height:56px}
+
+.sep{height:1px;background:var(--border);margin:6px 0 12px;opacity:.4}
+
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(4,1fr)}.brief-bar{grid-template-columns:1fr 1fr 1fr}}
+@media(max-width:650px){.kpis{grid-template-columns:repeat(2,1fr)}.brief-bar{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- Header -->
+<div class="header">
+  <div class="brand">
+    <div class="logo">Kō<sup>sh</sup></div>
+    <div class="brand-text">
+      <h1>Inventory & Procurement</h1>
+      <p>Kōsh · Daily production kitchen · 40 subscribers · Sadashivnagar, Bengaluru</p>
+    </div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost" onclick="exportCSV()">↓ CSV</button>
+    <button class="btn btn-ghost" onclick="showTab('vendors');openVendorModal()">+ Vendor</button>
+    <button class="btn btn-ghost" onclick="showTab('items');openItemModal()">+ Item</button>
+    <button class="btn btn-copper" onclick="generateOutreach()">📤 Vendor Outreach</button>
+  </div>
+</div>
+
+<!-- KPIs -->
+<div class="kpis" id="kpi-row"></div>
+
+<!-- Brief bar -->
+<div class="brief-bar">
+  <div class="brief-field">
+    <div class="brief-label">Week of</div>
+    <input class="brief-input" id="b-week" type="date"/>
+  </div>
+  <div class="brief-field">
+    <div class="brief-label">Active Subscribers</div>
+    <input class="brief-input" id="b-subs" type="number" placeholder="37" style="width:80px"/>
+  </div>
+  <div class="brief-field">
+    <div class="brief-label">Cycle Day Range</div>
+    <input class="brief-input" id="b-cycle" placeholder="e.g. Day 14–18"/>
+  </div>
+  <div class="brief-field">
+    <div class="brief-label">Chef</div>
+    <input class="brief-input" id="b-chef" placeholder="Chef name"/>
+  </div>
+  <div class="brief-field">
+    <div class="brief-label">Ordering Status</div>
+    <select class="brief-input" id="b-order-status">
+      <option value="planning">📋 Planning week's menu</option>
+      <option value="ordering">🛒 Ordering in progress</option>
+      <option value="ordered">✅ All ordered</option>
+      <option value="received">📦 All received</option>
+    </select>
+  </div>
+  <div class="brief-field">
+    <div class="brief-label">Food Cost Target</div>
+    <input class="brief-input" id="b-fc-target" type="number" placeholder="30" style="width:80px"/>
+  </div>
+  <button class="btn btn-green btn-sm" onclick="newWeek()">↺ New Week</button>
+</div>
+
+<!-- Tabs -->
+<div class="main-tabs">
+  <button class="main-tab active" onclick="showTab('items')">🧺 Ingredient List</button>
+  <button class="main-tab" onclick="showTab('par')">📊 Par Levels</button>
+  <button class="main-tab" onclick="showTab('vessels')">⬡ Vessel Kits</button>
+  <button class="main-tab" onclick="showTab('vendors')">🏪 Vendors</button>
+  <button class="main-tab" onclick="showTab('outreach')">📤 Outreach</button>
+  <button class="main-tab" onclick="showTab('cost')">₹ Cost Summary</button>
+</div>
+
+<!-- ITEMS TAB -->
+<div class="tab-panel visible" id="tab-items">
+  <div class="cat-pills" id="cat-pills"></div>
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="card-header" style="padding:11px 15px">
+      <span class="card-title" id="items-title">All Ingredients</span>
+      <div style="display:flex;gap:7px;align-items:center">
+        <input id="search-input" placeholder="Search…" style="padding:5px 9px;border:1.5px solid var(--border);border-radius:5px;font-size:12px;background:var(--gy);outline:none;width:150px" oninput="renderItems()"/>
+        <select id="status-filter" style="padding:5px 9px;border:1.5px solid var(--border);border-radius:5px;font-size:12px;background:var(--gy);outline:none" onchange="renderItems()">
+          <option value="">All statuses</option>
+          <option value="needed">Needed</option>
+          <option value="ordered">Ordered</option>
+          <option value="received">Received</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+        <select id="freq-filter" style="padding:5px 9px;border:1.5px solid var(--border);border-radius:5px;font-size:12px;background:var(--gy);outline:none" onchange="renderItems()">
+          <option value="">All frequencies</option>
+          <option value="daily">Daily order</option>
+          <option value="weekly">Weekly order</option>
+          <option value="monthly">Monthly stock</option>
+          <option value="adhoc">Ad hoc</option>
+        </select>
+      </div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="inv-table">
+        <thead><tr>
+          <th onclick="sortBy('name')">Ingredient</th>
+          <th onclick="sortBy('cat')">Category</th>
+          <th onclick="sortBy('freq')">Order Freq.</th>
+          <th onclick="sortBy('vendor')">Vendor</th>
+          <th onclick="sortBy('qty')">Qty Needed</th>
+          <th onclick="sortBy('unit')">Unit</th>
+          <th onclick="sortBy('unitCost')">Unit Cost</th>
+          <th onclick="sortBy('totalCost')">Total Cost</th>
+          <th onclick="sortBy('status')">Status</th>
+          <th>Notes / Spec</th>
+          <th></th>
+        </tr></thead>
+        <tbody id="items-body"></tbody>
+      </table>
+    </div>
+    <!-- Quick add row -->
+    <div class="add-row-wrap" id="add-row-wrap">
+      <input class="add-field" id="new-name" placeholder="Ingredient name *" style="width:160px" onkeydown="if(event.key==='Enter')addItem()"/>
+      <select class="add-field" id="new-cat" style="width:130px"></select>
+      <select class="add-field" id="new-freq" style="width:110px">
+        <option value="daily">Daily</option>
+        <option value="weekly">Weekly</option>
+        <option value="monthly">Monthly</option>
+        <option value="adhoc">Ad hoc</option>
+      </select>
+      <select class="add-field" id="new-vendor" style="width:140px"></select>
+      <input class="add-field" id="new-qty" type="number" placeholder="Qty" style="width:65px"/>
+      <input class="add-field" id="new-unit" placeholder="unit" style="width:60px"/>
+      <input class="add-field" id="new-unitcost" type="number" placeholder="₹/unit" style="width:75px"/>
+      <button class="btn btn-primary btn-sm" onclick="addItem()">+ Add</button>
+    </div>
+  </div>
+</div>
+
+<!-- PAR LEVELS TAB -->
+<div class="tab-panel" id="tab-par">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Standing Par Levels — Daily Kitchen</span>
+      <span style="font-size:11px;color:var(--stone)">Par = minimum stock for 2 production days. Reorder when at par.</span>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="inv-table">
+        <thead><tr>
+          <th>Ingredient</th><th>Category</th><th>Daily Use (est.)</th>
+          <th>Par Level</th><th>Current Stock</th><th>Status</th><th>Vendor</th><th></th>
+        </tr></thead>
+        <tbody id="par-body"></tbody>
+      </table>
+    </div>
+    <div style="padding:10px 14px;border-top:1px solid var(--gy);font-size:11px;color:var(--stone)">
+      ⚡ Items highlighted in red are below par and should be ordered today. Edit par levels inline — they save automatically.
+    </div>
+  </div>
+</div>
+
+<!-- VESSELS TAB -->
+<div class="tab-panel" id="tab-vessels">
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Subscriber Vessel Kit Registry</span>
+      <div style="display:flex;gap:7px">
+        <button class="btn btn-ghost btn-sm" onclick="openVesselModal()">+ Register Kit</button>
+        <button class="btn btn-ghost btn-sm" onclick="renderVessels()">↺ Refresh</button>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--stone);margin-bottom:14px;padding:0 2px">
+      Each subscriber holds 2 sets (Set A + Set B). Track condition, last sanitisation date, and replacement needs here.
+    </div>
+    <div class="vessel-grid" id="vessel-grid"></div>
+  </div>
+  <div class="card">
+    <div class="card-header"><span class="card-title">Vessel Consumables Stock</span></div>
+    <table class="inv-table" id="vessel-consumables">
+      <thead><tr><th>Item</th><th>Stock</th><th>Unit</th><th>Par</th><th>Status</th><th>Notes</th></tr></thead>
+      <tbody id="vessel-cons-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- VENDORS TAB -->
+<div class="tab-panel" id="tab-vendors">
+  <div class="card" style="padding:0;overflow:hidden">
+    <div class="card-header" style="padding:11px 15px">
+      <span class="card-title">Vendor & Supplier Directory</span>
+      <button class="btn btn-ghost btn-sm" onclick="openVendorModal()">+ Add Vendor</button>
+    </div>
+    <table class="vnd-table">
+      <thead><tr>
+        <th>Vendor / Supplier</th><th>Category</th><th>Contact</th>
+        <th>WhatsApp</th><th>MOQ / Lead Time</th><th>Area</th><th>Notes</th><th></th>
+      </tr></thead>
+      <tbody id="vendors-body"></tbody>
+    </table>
+  </div>
+</div>
+
+<!-- OUTREACH TAB -->
+<div class="tab-panel" id="tab-outreach">
+  <div style="background:var(--copper-lt);border:1px solid var(--border);border-left:3px solid var(--copper);border-radius:6px;padding:11px 14px;font-size:13px;margin-bottom:13px;color:var(--ink)">
+    Auto-generated WhatsApp messages for each vendor, listing their items that need ordering this week. Copy and send directly.
+  </div>
+  <div id="outreach-container"></div>
+</div>
+
+<!-- COST TAB -->
+<div class="tab-panel" id="tab-cost">
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px">
+    <div class="card">
+      <div class="card-title" style="margin-bottom:10px">Spend by Category</div>
+      <table class="cost-table"><tbody id="cost-by-cat"></tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:10px">Spend by Vendor</div>
+      <table class="cost-table"><tbody id="cost-by-vendor"></tbody></table>
+    </div>
+    <div class="card">
+      <div class="card-title" style="margin-bottom:10px">Food Cost vs Revenue</div>
+      <table class="cost-table"><tbody id="cost-pl"></tbody></table>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title" style="margin-bottom:10px">Weekly Spend by Order Frequency</div>
+    <table class="cost-table"><tbody id="cost-by-freq"></tbody></table>
+  </div>
+</div>
+
+<!-- ── ITEM MODAL ── -->
+<div class="modal-overlay" id="item-modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <span class="modal-title" id="item-modal-title">Add Ingredient</span>
+      <button class="modal-close" onclick="closeItemModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full"><label class="form-label">Ingredient Name *</label><input class="form-input" id="im-name" placeholder="e.g. Saikyo miso, Sashimi-grade tuna, Brown rice (Sona Masuri)"/></div>
+        <div class="form-group"><label class="form-label">Category</label><select class="form-select" id="im-cat"></select></div>
+        <div class="form-group"><label class="form-label">Order Frequency</label>
+          <select class="form-select" id="im-freq">
+            <option value="daily">Daily — ordered each morning</option>
+            <option value="weekly">Weekly — Mon standing order</option>
+            <option value="monthly">Monthly — bulk/pantry stock</option>
+            <option value="adhoc">Ad hoc — per menu requirement</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Vendor</label><select class="form-select" id="im-vendor"></select></div>
+        <div class="form-group"><label class="form-label">Status</label>
+          <select class="form-select" id="im-status">
+            <option value="needed">Needed</option>
+            <option value="ordered">Ordered</option>
+            <option value="received">Received</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Quantity Needed</label><input class="form-input" id="im-qty" type="number" placeholder="e.g. 2"/></div>
+        <div class="form-group"><label class="form-label">Unit</label><input class="form-input" id="im-unit" placeholder="kg / gm / ml / pcs / btl…"/></div>
+        <div class="form-group"><label class="form-label">Unit Cost (₹)</label><input class="form-input" id="im-unitcost" type="number" placeholder="Cost per unit"/></div>
+        <div class="form-group"><label class="form-label">Par Level (units)</label><input class="form-input" id="im-par" type="number" placeholder="Min stock to hold"/></div>
+        <div class="form-group"><label class="form-label">Current Stock (units)</label><input class="form-input" id="im-stock" type="number" placeholder="What you have now"/></div>
+        <div class="form-group full"><label class="form-label">Specification / Chef Notes</label><textarea class="form-textarea" id="im-notes" placeholder="e.g. Sashimi-grade, frozen at -20°C 24hr. Day-boat only. Avoid Monday. Minimum 150g portions."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeItemModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveItem()">Save Ingredient</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── VENDOR MODAL ── -->
+<div class="modal-overlay" id="vendor-modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <span class="modal-title" id="vendor-modal-title">Add Vendor</span>
+      <button class="modal-close" onclick="closeVendorModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full"><label class="form-label">Vendor / Supplier Name *</label><input class="form-input" id="vm-name" placeholder="e.g. Russel Market Fish Stall, Namdhari's, Metro C&C, Natures Basket"/></div>
+        <div class="form-group"><label class="form-label">Primary Category</label><select class="form-select" id="vm-cat"></select></div>
+        <div class="form-group"><label class="form-label">Contact Person</label><input class="form-input" id="vm-contact" placeholder="Name to ask for"/></div>
+        <div class="form-group"><label class="form-label">WhatsApp Number</label><input class="form-input" id="vm-whatsapp" placeholder="+91 98xxx xxxxx"/></div>
+        <div class="form-group"><label class="form-label">Phone / Alt</label><input class="form-input" id="vm-phone" placeholder="Alternate number"/></div>
+        <div class="form-group"><label class="form-label">Email</label><input class="form-input" id="vm-email" type="email" placeholder="vendor@example.com"/></div>
+        <div class="form-group"><label class="form-label">Min Order / Value</label><input class="form-input" id="vm-moq" placeholder="e.g. ₹500 min, 2kg min"/></div>
+        <div class="form-group"><label class="form-label">Lead Time</label><input class="form-input" id="vm-lead" placeholder="e.g. Same-day by 6am, 24hr"/></div>
+        <div class="form-group"><label class="form-label">Order Cut-off Time</label><input class="form-input" id="vm-cutoff" placeholder="e.g. Order by 9pm for next-day"/></div>
+        <div class="form-group"><label class="form-label">Delivery Area</label><input class="form-input" id="vm-area" placeholder="Delivers to Sadashivnagar?"/></div>
+        <div class="form-group"><label class="form-label">Payment Terms</label><input class="form-input" id="vm-payment" placeholder="COD / weekly credit / UPI"/></div>
+        <div class="form-group full"><label class="form-label">Notes & Tips</label><textarea class="form-textarea" id="vm-notes" placeholder="e.g. Best for fresh catch Mon–Sat. Ask for Ramesh. Don't order on Sundays — restocking."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeVendorModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveVendor()">Save Vendor</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── VESSEL MODAL ── -->
+<div class="modal-overlay" id="vessel-modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <span class="modal-title" id="vessel-modal-title">Register Vessel Kit</span>
+      <button class="modal-close" onclick="closeVesselModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group full"><label class="form-label">Subscriber Name *</label><input class="form-input" id="vl-name" placeholder="Full name as engraved on vessel"/></div>
+        <div class="form-group"><label class="form-label">Vessel Type</label>
+          <select class="form-select" id="vl-type">
+            <option value="steel">Stainless steel (18/8)</option>
+            <option value="copper">Copper (tin-lined)</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Kit Status</label>
+          <select class="form-select" id="vl-status">
+            <option value="active">Active — in rotation</option>
+            <option value="needs-replace">Needs replacement</option>
+            <option value="retired">Retired / unsubscribed</option>
+          </select>
+        </div>
+        <div class="form-group"><label class="form-label">Kit Issued Date</label><input class="form-input" id="vl-issued" type="date"/></div>
+        <div class="form-group"><label class="form-label">Last Sanitisation Check</label><input class="form-input" id="vl-sanit" type="date"/></div>
+        <div class="form-group"><label class="form-label">Sets in Circulation</label>
+          <select class="form-select" id="vl-sets">
+            <option value="2">2 sets (standard)</option>
+            <option value="1">1 set (temporary)</option>
+          </select>
+        </div>
+        <div class="form-group full"><label class="form-label">Notes</label><textarea class="form-textarea" id="vl-notes" placeholder="e.g. Set B under repair. Subscriber travels Fri–Sun, skip those days."></textarea></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeVesselModal()">Cancel</button>
+      <button class="btn btn-primary" onclick="saveVessel()">Save Kit</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Category config ───────────────────────────────────────────────────────────
+const CATS = [
+  {id:'protein',    label:'Proteins & Fish',     color:'#A32D2D', bg:'#FEE2E2'},
+  {id:'produce',    label:'Produce & Herbs',      color:'#1A6B3C', bg:'#EAF4EE'},
+  {id:'grains',     label:'Grains & Legumes',     color:'#A07010', bg:'#FFF8E6'},
+  {id:'dairy',      label:'Dairy & Eggs',         color:'#1A3B6B', bg:'#EAF0FB'},
+  {id:'specialty',  label:'Specialty / Imported', color:'#6B21A8', bg:'#F3E8FF'},
+  {id:'pantry',     label:'Pantry & Dry Goods',   color:'#8C8070', bg:'#F5F2ED'},
+  {id:'oils',       label:'Oils & Condiments',    color:'#8B5E3C', bg:'#F2EAE0'},
+  {id:'vessel',     label:'Vessel & Ops',         color:'#0E7490', bg:'#E0F2FE'},
+];
+const CAT_MAP = Object.fromEntries(CATS.map(c=>[c.id,c]));
+const FREQ_MAP = {
+  daily:  {label:'Daily',   cls:'freq-daily'},
+  weekly: {label:'Weekly',  cls:'freq-weekly'},
+  monthly:{label:'Monthly', cls:'freq-monthly'},
+  adhoc:  {label:'Ad hoc',  cls:'freq-adhoc'},
+};
+
+// ── State init ────────────────────────────────────────────────────────────────
+let state = JSON.parse(localStorage.getItem('kosh-inv') || 'null');
+if (!state) {
+  state = {
+    brief:{week:'',subs:'37',cycle:'Day 1–5',chef:'',orderStatus:'planning',fcTarget:'30'},
+    items:[], vendors:[], vessels:[],
+    sortCol:'cat', sortDir:1, activeCat:'all',
+    editingItemId:null, editingVendorId:null, editingVesselId:null,
+  };
+  // Seed vendors
+  state.vendors = [
+    {id:'v1',name:'Russel Market — Fish & Seafood',cat:'protein',contact:'Salim',whatsapp:'+91 98440 11111',phone:'',email:'',moq:'₹400 min',lead:'Same-day by 6:30am',cutoff:'Order by 9pm prior night',area:'Delivers Sadashivnagar',payment:'COD',notes:'Best fresh catch Tue–Sat. Avoid Mondays. Call Salim directly for sashimi-grade.'},
+    {id:'v2',name:"Russel Market — Meat",cat:'protein',contact:'Rajan',whatsapp:'+91 97400 22222',phone:'',email:'',moq:'₹500 min',lead:'Same-day by 6:30am',cutoff:'Order by 9pm',area:'Delivers Sadashivnagar',payment:'COD',notes:'Lamb, chicken, pork. Ask for specific cuts. Trim requests accepted.'},
+    {id:'v3',name:"Namdhari's Fresh",cat:'produce',contact:'Store',whatsapp:'+91 80-4040 3333',phone:'',email:'',moq:'No minimum',lead:'Same-day',cutoff:'Open from 7am',area:'Sadashivnagar branch',payment:'Card/UPI',notes:'Premium veg, microgreens, imported produce, herbs. Reliable quality.'},
+    {id:'v4',name:'Metro Cash & Carry',cat:'pantry',contact:'Account desk',whatsapp:'',phone:'080-6666 xxxx',email:'',moq:'₹1000 min',lead:'Pickup only',cutoff:'Anytime',area:'Yeshwanthpur — pickup',payment:'Cash/Card',notes:'Bulk dry goods, oils, pantry staples. Weekly run on Mondays.'},
+    {id:'v5',name:'Natures Basket',cat:'specialty',contact:'',whatsapp:'',phone:'',email:'',moq:'No minimum',lead:'Same-day',cutoff:'Open from 8am',area:'Sadashivnagar nearby',payment:'Card/UPI',notes:'Imported specialty: miso, tamari, soba noodles, specialty oils, yuzu. Check availability.'},
+    {id:'v6',name:'Le Marche / Modern Bazaar',cat:'dairy',contact:'',whatsapp:'',phone:'',email:'',moq:'None',lead:'Same-day',cutoff:'Open from 7:30am',area:'Sadashivnagar',payment:'Card',notes:'Dairy, specialty cheese, Greek yoghurt, imported butter, cream. Good for weekly stock.'},
+    {id:'v7',name:'Vessel Supplier — Ravi Copperware',cat:'vessel',contact:'Ravi Kumar',whatsapp:'+91 99900 55555',phone:'',email:'ravi@copperware.in',moq:'Min 5 kits',lead:'7–10 working days',cutoff:'Order on WhatsApp',area:'Bengaluru',payment:'50% advance',notes:'Steel and copper vessel kits. Engraving included. Replacement lids available.'},
+  ];
+  // Seed items
+  state.items = [
+    {id:'i1', name:'Chicken thigh (boneless, skinless)',cat:'protein',freq:'daily',vendor:'v2',qty:4,unit:'kg',unitCost:320,status:'needed',par:2,stock:0,notes:'Free-range preferred. Trim visible fat.'},
+    {id:'i2', name:'Sashimi-grade salmon fillet',cat:'protein',freq:'weekly',vendor:'v1',qty:2,unit:'kg',unitCost:1400,status:'needed',par:1,stock:0,notes:'-20°C frozen 24hr for parasite kill. Skin-on portions 150g each.'},
+    {id:'i3', name:'Tiger prawns (16–20 count)',cat:'protein',freq:'weekly',vendor:'v1',qty:2,unit:'kg',unitCost:900,status:'ordered',par:1,stock:0.5,notes:'Cleaned, deveined. Fresh not frozen.'},
+    {id:'i4', name:'Eggs (free-range)',cat:'dairy',freq:'daily',vendor:'v6',qty:60,unit:'pcs',unitCost:8,status:'received',par:30,stock:60,notes:'For omelettes, bhurji, poaching. Check date.'},
+    {id:'i5', name:'Brown rice (Sona Masuri)',cat:'grains',freq:'monthly',vendor:'v4',qty:10,unit:'kg',unitCost:90,status:'received',par:5,stock:8,notes:'Bulk. Store dry. 28-day supply.'},
+    {id:'i6', name:'Quinoa (white)',cat:'grains',freq:'monthly',vendor:'v4',qty:3,unit:'kg',unitCost:280,status:'received',par:1.5,stock:2,notes:''},
+    {id:'i7', name:'Saikyo miso (white)',cat:'specialty',freq:'monthly',vendor:'v5',qty:2,unit:'kg',unitCost:650,status:'needed',par:0.5,stock:0,notes:'For Day 3 salmon and Day 8 black cod. Refrigerate after opening.'},
+    {id:'i8', name:'Baby spinach',cat:'produce',freq:'daily',vendor:'v3',qty:1,unit:'kg',unitCost:180,status:'needed',par:0.3,stock:0,notes:'Fresh only. Use within 2 days.'},
+    {id:'i9', name:'Coriander (fresh bunches)',cat:'produce',freq:'daily',vendor:'v3',qty:4,unit:'bunch',unitCost:20,status:'received',par:2,stock:4,notes:''},
+    {id:'i10',name:'Avocado (ripe)',cat:'produce',freq:'weekly',vendor:'v3',qty:12,unit:'pcs',unitCost:60,status:'needed',par:4,stock:0,notes:'Check ripeness. For Day 3 toast and Day 14 bowl.'},
+    {id:'i11',name:'Greek yoghurt (full fat)',cat:'dairy',freq:'weekly',vendor:'v6',qty:5,unit:'kg',unitCost:240,status:'ordered',par:2,stock:0.5,notes:'For raita, hollandaise, mousse base. Epigamia or Danone.'},
+    {id:'i12',name:'Cold-press olive oil (extra virgin)',cat:'oils',freq:'monthly',vendor:'v4',qty:3,unit:'L',unitCost:580,status:'received',par:1,stock:2,notes:'For finishing only. Do not cook. Kirkland or Borges.'},
+    {id:'i13',name:'Cold-press coconut oil',cat:'oils',freq:'monthly',vendor:'v4',qty:2,unit:'L',unitCost:320,status:'received',par:0.5,stock:1.5,notes:'For Kerala dishes. Unrefined.'},
+    {id:'i14',name:'Farro (semi-pearled)',cat:'grains',freq:'monthly',vendor:'v5',qty:2,unit:'kg',unitCost:380,status:'needed',par:0.5,stock:0,notes:'For Day 8 grain salad. Soak 20min before cooking.'},
+    {id:'i15',name:'Makhana (fox nuts)',cat:'pantry',freq:'weekly',vendor:'v4',qty:500,unit:'gm',unitCost:280,status:'received',par:200,stock:500,notes:'For snack boxes. Roast in ghee with sendha namak.'},
+    {id:'i16',name:'Vessel sanitiser (food-safe)',cat:'vessel',freq:'monthly',vendor:'v7',qty:2,unit:'L',unitCost:450,status:'received',par:1,stock:1.5,notes:'Commercial food-safe sanitiser for dishwasher. Ecolab preferred.'},
+    {id:'i17',name:'Macro label paper (thermal roll)',cat:'vessel',freq:'monthly',vendor:'',qty:4,unit:'roll',unitCost:120,status:'needed',par:2,stock:0,notes:'For daily macro cards inserted in vessels.'},
+    {id:'i18',name:'Insulated delivery liner bags',cat:'vessel',freq:'monthly',vendor:'',qty:10,unit:'pcs',unitCost:85,status:'received',par:5,stock:8,notes:'Reusable insulated liners for delivery bags. Replace when worn.'},
+  ];
+  // Seed vessels
+  state.vessels = [
+    {id:'vl1',name:'Meera Krishnamurthy',type:'steel',status:'active',issued:'2025-01-15',sanit:'2025-04-01',sets:'2',notes:''},
+    {id:'vl2',name:'Vikram Nair',type:'copper',status:'active',issued:'2025-01-15',sanit:'2025-04-01',sets:'2',notes:''},
+    {id:'vl3',name:'Priya Raghunathan',type:'steel',status:'active',issued:'2025-01-22',sanit:'2025-04-01',sets:'2',notes:''},
+    {id:'vl4',name:'Arjun Srinivas',type:'steel',status:'needs-replace',issued:'2025-01-22',sanit:'2025-03-15',sets:'1',notes:'Set B lid cracked. Replacement ordered from Ravi.'},
+    {id:'vl5',name:'Lakshmi Venkataraman',type:'copper',status:'active',issued:'2025-02-01',sanit:'2025-04-01',sets:'2',notes:''},
+  ];
+  saveState();
+}
+function saveState(){ try{localStorage.setItem('kosh-inv',JSON.stringify(state));}catch(e){} }
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+const fI = v=>'₹'+(v||0).toLocaleString('en-IN');
+const totalCost = i=>(i.qty||0)*(i.unitCost||0);
+const vendorName = id=>(state.vendors.find(v=>v.id===id)||{name:'—'}).name;
+function escHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+
+// ── KPIs ──────────────────────────────────────────────────────────────────────
+function renderKPIs(){
+  const it=state.items;
+  const total=it.reduce((a,i)=>a+totalCost(i),0);
+  const needed=it.filter(i=>i.status==='needed').length;
+  const ordered=it.filter(i=>i.status==='ordered').length;
+  const received=it.filter(i=>i.status==='received').length;
+  const subs=parseInt(state.brief.subs)||37;
+  const cps=subs>0?total/subs:0;
+  const fcTarget=parseFloat(state.brief.fcTarget)||30;
+  const subRevDay=subs*(22*2400+10*1800+5*1600)/37; // approx
+  const weekRev=subRevDay*5;
+  const fcPct=weekRev>0?(total/weekRev*100):0;
+  const belowPar=it.filter(i=>i.par>0&&(i.stock||0)<i.par).length;
+  document.getElementById('kpi-row').innerHTML=[
+    {l:'Total Items',v:it.length,s:'in list'},
+    {l:'Still Needed',v:needed,s:'to order',hi:needed>0},
+    {l:'Ordered',v:ordered,s:'awaiting'},
+    {l:'Received',v:received,s:'in kitchen'},
+    {l:'Below Par',v:belowPar,s:'reorder now',hi:belowPar>0},
+    {l:'Weekly Spend',v:fI(Math.round(total)),s:'all items',hi:true},
+    {l:'Food Cost %',v:fcPct.toFixed(1)+'%',s:`target: ${fcTarget}%`},
+  ].map(k=>`<div class="kpi${k.hi?' hi':''}">
+    <div class="kpi-label">${k.l}</div>
+    <div class="kpi-value" style="font-size:${String(k.v).length>8?'14px':'20px'}">${k.v}</div>
+    <div class="kpi-sub">${k.s}</div>
+  </div>`).join('');
+}
+
+// ── Cat pills ─────────────────────────────────────────────────────────────────
+function renderCatPills(){
+  const counts={};
+  state.items.forEach(i=>counts[i.cat]=(counts[i.cat]||0)+1);
+  let html=`<div class="cat-pill ${state.activeCat==='all'?'active':''}" onclick="setCat('all')">All <span style="opacity:.6">${state.items.length}</span></div>`;
+  CATS.forEach(c=>{
+    if(!counts[c.id]) return;
+    html+=`<div class="cat-pill ${state.activeCat===c.id?'active':''}" onclick="setCat('${c.id}')">
+      <div class="cat-dot" style="background:${c.color}"></div>${c.label} <span style="opacity:.6">${counts[c.id]}</span></div>`;
+  });
+  document.getElementById('cat-pills').innerHTML=html;
+}
+function setCat(id){state.activeCat=id;saveState();renderItems();renderCatPills();}
+
+// ── Items ─────────────────────────────────────────────────────────────────────
+let sortCol='cat',sortDir=1;
+function sortBy(col){if(sortCol===col)sortDir*=-1;else{sortCol=col;sortDir=1;}renderItems();}
+
+function renderItems(){
+  const search=(document.getElementById('search-input')||{value:''}).value.toLowerCase();
+  const sf=(document.getElementById('status-filter')||{value:''}).value;
+  const ff=(document.getElementById('freq-filter')||{value:''}).value;
+  let items=state.items.filter(i=>{
+    if(state.activeCat!=='all'&&i.cat!==state.activeCat) return false;
+    if(sf&&i.status!==sf) return false;
+    if(ff&&i.freq!==ff) return false;
+    if(search&&!i.name.toLowerCase().includes(search)&&!vendorName(i.vendor).toLowerCase().includes(search)) return false;
+    return true;
+  });
+  items.sort((a,b)=>{
+    let av=a[sortCol]||'',bv=b[sortCol]||'';
+    if(sortCol==='totalCost'){av=totalCost(a);bv=totalCost(b);}
+    if(['unitCost','qty'].includes(sortCol)){av=parseFloat(av)||0;bv=parseFloat(bv)||0;}
+    return av>bv?sortDir:av<bv?-sortDir:0;
+  });
+  document.getElementById('items-title').textContent=state.activeCat==='all'?`All Ingredients (${items.length})`:`${(CAT_MAP[state.activeCat]||{label:''}).label} (${items.length})`;
+  if(!items.length){
+    document.getElementById('items-body').innerHTML=`<tr><td colspan="11"><div class="empty">No items. Add ingredients using the row below.</div></td></tr>`;
+    return;
+  }
+  document.getElementById('items-body').innerHTML=items.map(item=>{
+    const cat=CAT_MAP[item.cat]||{label:item.cat,color:'#888',bg:'#eee'};
+    const freq=FREQ_MAP[item.freq]||{label:item.freq,cls:'freq-adhoc'};
+    const tc=totalCost(item);
+    const stMap={needed:'status-needed',ordered:'status-ordered',received:'status-received',cancelled:'status-cancel'};
+    return `<tr>
+      <td><strong style="font-size:12px">${item.name}</strong></td>
+      <td><span class="cat-badge" style="background:${cat.bg};color:${cat.color}">${cat.label}</span></td>
+      <td><span class="${freq.cls}">${freq.label}</span></td>
+      <td style="font-size:11px;max-width:130px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${vendorName(item.vendor)}">${vendorName(item.vendor)}</td>
+      <td><input class="editable" value="${item.qty||''}" style="width:50px" onchange="updateField('${item.id}','qty',this.value)"/></td>
+      <td><input class="editable-text" value="${item.unit||''}" style="width:45px;text-align:left" onchange="updateField('${item.id}','unit',this.value)"/></td>
+      <td><input class="editable" value="${item.unitCost||''}" onchange="updateField('${item.id}','unitCost',this.value)"/></td>
+      <td style="color:${tc>0?'var(--gr)':'var(--stone)'};font-weight:600">${fI(Math.round(tc))}</td>
+      <td>
+        <select class="add-field" style="padding:3px 6px;font-size:10px;width:88px" onchange="updateField('${item.id}','status',this.value)">
+          ${['needed','ordered','received','cancelled'].map(s=>`<option value="${s}"${item.status===s?' selected':''}>${s.charAt(0).toUpperCase()+s.slice(1)}</option>`).join('')}
+        </select>
+      </td>
+      <td><input class="editable-text editable-wide" value="${item.notes||''}" placeholder="spec / notes…" onchange="updateField('${item.id}','notes',this.value)"/></td>
+      <td><div class="actions">
+        <button class="icon-btn" onclick="openItemModal('${item.id}')" title="Edit">✏️</button>
+        <button class="icon-btn danger" onclick="deleteItem('${item.id}')" title="Delete">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+function updateField(id,field,val){
+  const item=state.items.find(i=>i.id===id);
+  if(!item) return;
+  item[field]=['qty','unitCost','par','stock'].includes(field)?parseFloat(val)||0:val;
+  saveState();renderKPIs();renderItems();
+}
+function addItem(){
+  const name=document.getElementById('new-name').value.trim();
+  if(!name) return;
+  state.items.push({id:'i'+Date.now(),name,
+    cat:document.getElementById('new-cat').value||'produce',
+    freq:document.getElementById('new-freq').value||'weekly',
+    vendor:document.getElementById('new-vendor').value,
+    qty:parseFloat(document.getElementById('new-qty').value)||1,
+    unit:document.getElementById('new-unit').value||'kg',
+    unitCost:parseFloat(document.getElementById('new-unitcost').value)||0,
+    status:'needed',par:0,stock:0,notes:''});
+  saveState();
+  ['new-name','new-qty','new-unit','new-unitcost'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+  renderAll();
+}
+function deleteItem(id){if(!confirm('Remove this ingredient?'))return;state.items=state.items.filter(i=>i.id!==id);saveState();renderAll();}
+
+// ── Par levels ────────────────────────────────────────────────────────────────
+function renderPar(){
+  const items=state.items.filter(i=>i.par>0||i.freq==='daily'||i.freq==='weekly');
+  if(!items.length){document.getElementById('par-body').innerHTML=`<tr><td colspan="8"><div class="empty">No par levels set. Add par levels in the ingredient list.</div></td></tr>`;return;}
+  document.getElementById('par-body').innerHTML=items.sort((a,b)=>{
+    const as=(a.stock||0)<a.par?0:1,bs=(b.stock||0)<b.par?0:1;return as-bs;
+  }).map(item=>{
+    const cat=CAT_MAP[item.cat]||{label:item.cat,color:'#888',bg:'#eee'};
+    const stock=item.stock||0; const par=item.par||0;
+    const stClass=stock===0?'par-out':stock<par?'par-low':'par-ok';
+    const stLabel=stock===0?'⚡ Out of stock':stock<par?'⚠ Below par':'✓ OK';
+    return `<tr>
+      <td><strong style="font-size:12px">${item.name}</strong></td>
+      <td><span class="cat-badge" style="background:${cat.bg};color:${cat.color}">${cat.label}</span></td>
+      <td style="font-family:'DM Mono',monospace;font-size:11px">${item.freq==='daily'?'~'+(item.qty/37).toFixed(1)+' '+item.unit+'/sub':'—'}</td>
+      <td><input class="editable" value="${par}" style="width:55px" onchange="updateField('${item.id}','par',this.value)"/></td>
+      <td><input class="editable" value="${stock}" style="width:55px" onchange="updateField('${item.id}','stock',this.value)"/></td>
+      <td class="${stClass}" style="font-weight:600;font-size:11px">${stLabel}</td>
+      <td style="font-size:11px">${vendorName(item.vendor)}</td>
+      <td><div class="actions">
+        <button class="icon-btn" onclick="openItemModal('${item.id}')">✏️</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Vessels ───────────────────────────────────────────────────────────────────
+function renderVessels(){
+  const statusMeta={
+    'active':     {label:'Active',    bg:var2('--copper-lt'),  color:var2('--copper'),  cls:'active'},
+    'needs-replace':{label:'Replace', bg:'#FEF2F2',            color:var2('--re'),      cls:'needs-replace'},
+    'retired':    {label:'Retired',   bg:var2('--gy'),         color:var2('--stone'),   cls:'retired'},
+  };
+  function var2(v){return getComputedStyle(document.documentElement).getPropertyValue(v).trim();}
+  document.getElementById('vessel-grid').innerHTML=state.vessels.map(v=>{
+    const sm=statusMeta[v.status]||statusMeta['active'];
+    return `<div class="vessel-card ${sm.cls}" onclick="openVesselModal('${v.id}')">
+      <div class="vc-name">${v.name}</div>
+      <div class="vc-type">${v.type==='copper'?'Copper':'Steel'} · ${v.sets} sets</div>
+      <span class="vc-status-badge" style="background:${sm.bg};color:${sm.color}">${sm.label}</span>
+      ${v.notes?`<div style="font-size:10px;color:var(--stone);margin-top:5px;line-height:1.4">${v.notes}</div>`:''}
+    </div>`;
+  }).join('');
+  // Vessel consumables
+  const cons=state.items.filter(i=>i.cat==='vessel');
+  document.getElementById('vessel-cons-body').innerHTML=cons.length?cons.map(i=>{
+    const s=i.stock||0,p=i.par||0;
+    return `<tr>
+      <td>${i.name}</td>
+      <td style="font-family:'DM Mono',monospace">${s}</td>
+      <td>${i.unit}</td>
+      <td style="font-family:'DM Mono',monospace">${p||'—'}</td>
+      <td>${s===0?'<span class="par-out">Out</span>':s<p?'<span class="par-low">Low</span>':'<span class="par-ok">OK</span>'}</td>
+      <td style="font-size:11px;color:var(--stone)">${i.notes||'—'}</td>
+    </tr>`;
+  }).join(''):`<tr><td colspan="6"><div class="empty">No vessel consumables tracked. Add items with category "Vessel & Ops".</div></td></tr>`;
+}
+
+// ── Vendors ───────────────────────────────────────────────────────────────────
+function renderVendors(){
+  const tbody=document.getElementById('vendors-body');
+  if(!state.vendors.length){tbody.innerHTML=`<tr><td colspan="8"><div class="empty">No vendors yet.</div></td></tr>`;return;}
+  tbody.innerHTML=state.vendors.map(v=>{
+    const cat=CAT_MAP[v.cat]||{label:v.cat||'—',color:'#888',bg:'#eee'};
+    const ic=state.items.filter(i=>i.vendor===v.id).length;
+    return `<tr>
+      <td><strong>${v.name}</strong>${v.contact?`<br><span style="font-size:11px;color:var(--stone)">${v.contact}</span>`:''}</td>
+      <td><span class="cat-badge" style="background:${cat.bg};color:${cat.color}">${cat.label}</span></td>
+      <td style="font-size:12px">${v.contact||'—'}</td>
+      <td style="font-size:12px">${v.whatsapp||'—'}</td>
+      <td style="font-size:12px">${v.moq||'—'}<br><span style="color:var(--stone)">${v.lead||''}</span>${v.cutoff?`<br><span style="color:var(--copper);font-size:10px">Cut-off: ${v.cutoff}</span>`:''}</td>
+      <td style="font-size:12px">${v.area||'—'}</td>
+      <td style="font-size:11px;max-width:200px">${v.notes||'—'}<br><span style="color:var(--copper);font-weight:600">${ic} item${ic!==1?'s':''} this week</span></td>
+      <td><div class="actions">
+        <button class="icon-btn" onclick="openVendorModal('${v.id}')">✏️</button>
+        <button class="icon-btn danger" onclick="deleteVendor('${v.id}')">🗑</button>
+      </div></td>
+    </tr>`;
+  }).join('');
+}
+function deleteVendor(id){if(!confirm('Remove this vendor?'))return;state.vendors=state.vendors.filter(v=>v.id!==id);saveState();renderAll();}
+
+// ── Outreach ──────────────────────────────────────────────────────────────────
+function generateOutreach(){
+  showTab('outreach');
+  const chef=state.brief.chef||'[Chef]';
+  const week=state.brief.week?new Date(state.brief.week).toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'}):'[Week of]';
+  const subs=state.brief.subs||'37';
+  const cycle=state.brief.cycle||'[Cycle days]';
+  const vendorGroups={};
+  state.items.filter(i=>i.status==='needed'||i.status==='ordered').forEach(item=>{
+    const vid=item.vendor||'__none__';
+    if(!vendorGroups[vid]) vendorGroups[vid]=[];
+    vendorGroups[vid].push(item);
+  });
+  const container=document.getElementById('outreach-container');
+  if(!Object.keys(vendorGroups).length){container.innerHTML=`<div class="empty">No items with Needed or Ordered status.</div>`;return;}
+  container.innerHTML=Object.entries(vendorGroups).map(([vid,items])=>{
+    const vendor=state.vendors.find(v=>v.id===vid);
+    const vName=vendor?vendor.name:'Unassigned Items';
+    const wNum=vendor?vendor.whatsapp:'';
+    const contact=vendor&&vendor.contact?vendor.contact:'';
+    const totalV=items.reduce((a,i)=>a+totalCost(i),0);
+    const itemLines=items.map(i=>`  • ${i.name} — ${i.qty} ${i.unit}${i.notes?` (${i.notes})`:''}`).join('\n');
+    const msg=`Hi${contact?' '+contact:''},
+
+I'm ordering from *Kōsh Private Kitchen*, Sadashivnagar, Bengaluru. We are a daily subscription kitchen serving ${subs} households — all meals prepared and delivered every morning.
+
+Week of: *${week}*
+Menu cycle: *${cycle}*
+Chef: *${chef}*
+
+Could you please confirm availability and pricing for:
+
+${itemLines}
+
+We need delivery *by 5:30 AM latest* (or pickup arranged evening prior if needed).
+
+Please confirm:
+✓ Availability of each item
+✓ Price per unit
+✓ Earliest delivery slot
+
+We order from you every week as a standing arrangement. Thank you.
+
+— Kōsh Kitchen, Sadashivnagar`;
+    const rows=items.map(i=>`<div class="outreach-item-row">
+      <span>${i.name} — ${i.qty} ${i.unit}</span>
+      <span style="color:var(--stone)">${fI(Math.round(totalCost(i)))}</span>
+    </div>`).join('');
+    return `<div class="outreach-card">
+      <div class="outreach-header" onclick="toggleOut(this)">
+        <div>
+          <div class="outreach-name">${vName}</div>
+          <div class="outreach-meta">${items.length} item${items.length!==1?'s':''} · Est. ${fI(Math.round(totalV))}${wNum?' · '+wNum:''}</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center">
+          ${wNum?`<a href="https://wa.me/${wNum.replace(/[^0-9]/g,'')}" target="_blank" class="btn btn-green btn-sm">📱 WhatsApp</a>`:''}
+          <button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();copyMsg(this,'${btoa(unescape(encodeURIComponent(msg)))}')">Copy message</button>
+          <span style="color:var(--stone);font-size:13px">▼</span>
+        </div>
+      </div>
+      <div class="outreach-body">
+        <div class="outreach-items" style="margin-bottom:11px">${rows}</div>
+        <div class="outreach-msg">${escHtml(msg)}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+function toggleOut(hdr){hdr.nextElementSibling.classList.toggle('open');}
+function copyMsg(btn,enc){
+  navigator.clipboard.writeText(decodeURIComponent(escape(atob(enc)))).then(()=>{
+    const o=btn.textContent;btn.textContent='✓ Copied!';btn.style.color='var(--gr)';
+    setTimeout(()=>{btn.textContent=o;btn.style.color='';},2000);
+  });
+}
+
+// ── Cost ──────────────────────────────────────────────────────────────────────
+function renderCost(){
+  const items=state.items;
+  const total=items.reduce((a,i)=>a+totalCost(i),0);
+  const subs=parseInt(state.brief.subs)||37;
+  const fcTarget=parseFloat(state.brief.fcTarget)||30;
+  const byCat={};CATS.forEach(c=>byCat[c.id]=0);
+  items.forEach(i=>byCat[i.cat]=(byCat[i.cat]||0)+totalCost(i));
+  document.getElementById('cost-by-cat').innerHTML=
+    CATS.filter(c=>byCat[c.id]>0).map(c=>`<tr><td style="color:${c.color}">${c.label}</td><td>${fI(Math.round(byCat[c.id]))}</td></tr>`).join('')+
+    `<tr class="total"><td>Total</td><td>${fI(Math.round(total))}</td></tr>`;
+  const byVnd={};
+  items.forEach(i=>{const k=i.vendor||'__none__';byVnd[k]=(byVnd[k]||0)+totalCost(i);});
+  document.getElementById('cost-by-vendor').innerHTML=
+    Object.entries(byVnd).sort((a,b)=>b[1]-a[1]).map(([vid,cost])=>`<tr><td style="font-size:12px">${vendorName(vid)}</td><td>${fI(Math.round(cost))}</td></tr>`).join('')+
+    `<tr class="total"><td>Total</td><td>${fI(Math.round(total))}</td></tr>`;
+  const byFreq={daily:0,weekly:0,monthly:0,adhoc:0};
+  items.forEach(i=>byFreq[i.freq||'adhoc']=(byFreq[i.freq||'adhoc']||0)+totalCost(i));
+  document.getElementById('cost-by-freq').innerHTML=
+    Object.entries(byFreq).map(([freq,cost])=>`<tr><td><span class="${FREQ_MAP[freq]?.cls||'freq-adhoc'}">${FREQ_MAP[freq]?.label||freq}</span></td><td>${fI(Math.round(cost))}</td><td style="font-size:11px;color:var(--stone)">${total>0?(cost/total*100).toFixed(1)+'% of spend':''}</td></tr>`).join('')+
+    `<tr class="total"><td colspan="2">Total weekly ingredient spend</td><td>${fI(Math.round(total))}</td></tr>`;
+  // P&L impact
+  const weekRev = subs * ((22*2400+10*1800+5*1600)/37) * 5;
+  const fcPct = weekRev>0?(total/weekRev*100):0;
+  const fcOk = fcPct<=fcTarget;
+  document.getElementById('cost-pl').innerHTML=`
+    <tr><td>Active subscribers</td><td>${subs}</td></tr>
+    <tr><td>Est. weekly meal revenue</td><td>${fI(Math.round(weekRev))}</td></tr>
+    <tr><td>Weekly ingredient cost</td><td style="color:var(--re)">${fI(Math.round(total))}</td></tr>
+    <tr><td>Food cost %</td><td style="color:${fcOk?'var(--gr)':'var(--re)'};font-weight:700">${fcPct.toFixed(1)}% (target: ${fcTarget}%)</td></tr>
+    <tr><td>Cost per subscriber / week</td><td>${fI(Math.round(total/subs))}</td></tr>
+    <tr><td>Cost per meal (est. 4 meals/sub/day × 5 days)</td><td>${fI(Math.round(total/(subs*4*5)))}</td></tr>
+    <tr class="total"><td>Ingredient margin</td><td>${fI(Math.round(weekRev-total))}</td></tr>
+    <tr><td colspan="2" style="font-size:11px;color:var(--stone);padding-top:8px">⚠ Excludes chef salary, delivery, vessel ops, fixed OPEX. Open the Financial Model for full P&L.</td></tr>`;
+}
+
+// ── Modals ────────────────────────────────────────────────────────────────────
+function openItemModal(id=null){
+  state.editingItemId=id;
+  document.getElementById('item-modal-title').textContent=id?'Edit Ingredient':'Add Ingredient';
+  const item=id?state.items.find(i=>i.id===id):null;
+  document.getElementById('im-name').value      = item?.name||'';
+  document.getElementById('im-cat').value       = item?.cat||'produce';
+  document.getElementById('im-freq').value      = item?.freq||'weekly';
+  document.getElementById('im-vendor').value    = item?.vendor||'';
+  document.getElementById('im-status').value    = item?.status||'needed';
+  document.getElementById('im-qty').value       = item?.qty||'';
+  document.getElementById('im-unit').value      = item?.unit||'';
+  document.getElementById('im-unitcost').value  = item?.unitCost||'';
+  document.getElementById('im-par').value       = item?.par||'';
+  document.getElementById('im-stock').value     = item?.stock||'';
+  document.getElementById('im-notes').value     = item?.notes||'';
+  document.getElementById('item-modal').classList.add('open');
+}
+function closeItemModal(){document.getElementById('item-modal').classList.remove('open');}
+function saveItem(){
+  const name=document.getElementById('im-name').value.trim();
+  if(!name){alert('Name required.');return;}
+  const data={name,cat:document.getElementById('im-cat').value,
+    freq:document.getElementById('im-freq').value,
+    vendor:document.getElementById('im-vendor').value,
+    status:document.getElementById('im-status').value,
+    qty:parseFloat(document.getElementById('im-qty').value)||1,
+    unit:document.getElementById('im-unit').value,
+    unitCost:parseFloat(document.getElementById('im-unitcost').value)||0,
+    par:parseFloat(document.getElementById('im-par').value)||0,
+    stock:parseFloat(document.getElementById('im-stock').value)||0,
+    notes:document.getElementById('im-notes').value};
+  if(state.editingItemId){const idx=state.items.findIndex(i=>i.id===state.editingItemId);state.items[idx]={...state.items[idx],...data};}
+  else state.items.push({id:'i'+Date.now(),...data});
+  saveState();closeItemModal();renderAll();
+}
+
+function openVendorModal(id=null){
+  state.editingVendorId=id;
+  document.getElementById('vendor-modal-title').textContent=id?'Edit Vendor':'Add Vendor';
+  const v=id?state.vendors.find(vv=>vv.id===id):null;
+  ['name','contact','whatsapp','phone','email','moq','lead','cutoff','area','payment','notes'].forEach(f=>{
+    const el=document.getElementById('vm-'+f);if(el)el.value=v?.[f]||'';
+  });
+  document.getElementById('vm-cat').value=v?.cat||'produce';
+  document.getElementById('vendor-modal').classList.add('open');
+}
+function closeVendorModal(){document.getElementById('vendor-modal').classList.remove('open');}
+function saveVendor(){
+  const name=document.getElementById('vm-name').value.trim();
+  if(!name){alert('Name required.');return;}
+  const data={name,cat:document.getElementById('vm-cat').value};
+  ['contact','whatsapp','phone','email','moq','lead','cutoff','area','payment','notes'].forEach(f=>{data[f]=document.getElementById('vm-'+f).value;});
+  if(state.editingVendorId){const idx=state.vendors.findIndex(v=>v.id===state.editingVendorId);state.vendors[idx]={...state.vendors[idx],...data};}
+  else state.vendors.push({id:'v'+Date.now(),...data});
+  saveState();closeVendorModal();renderAll();
+}
+
+function openVesselModal(id=null){
+  state.editingVesselId=id;
+  document.getElementById('vessel-modal-title').textContent=id?'Edit Vessel Kit':'Register Vessel Kit';
+  const v=id?state.vessels.find(vl=>vl.id===id):null;
+  document.getElementById('vl-name').value  =v?.name||'';
+  document.getElementById('vl-type').value  =v?.type||'steel';
+  document.getElementById('vl-status').value=v?.status||'active';
+  document.getElementById('vl-issued').value=v?.issued||'';
+  document.getElementById('vl-sanit').value =v?.sanit||'';
+  document.getElementById('vl-sets').value  =v?.sets||'2';
+  document.getElementById('vl-notes').value =v?.notes||'';
+  document.getElementById('vessel-modal').classList.add('open');
+}
+function closeVesselModal(){document.getElementById('vessel-modal').classList.remove('open');}
+function saveVessel(){
+  const name=document.getElementById('vl-name').value.trim();
+  if(!name){alert('Subscriber name required.');return;}
+  const data={name,type:document.getElementById('vl-type').value,status:document.getElementById('vl-status').value,
+    issued:document.getElementById('vl-issued').value,sanit:document.getElementById('vl-sanit').value,
+    sets:document.getElementById('vl-sets').value,notes:document.getElementById('vl-notes').value};
+  if(state.editingVesselId){const idx=state.vessels.findIndex(v=>v.id===state.editingVesselId);state.vessels[idx]={...state.vessels[idx],...data};}
+  else state.vessels.push({id:'vl'+Date.now(),...data});
+  saveState();closeVesselModal();renderVessels();
+}
+
+// ── Populate selects ──────────────────────────────────────────────────────────
+function populateSelects(){
+  const catOpts=CATS.map(c=>`<option value="${c.id}">${c.label}</option>`).join('');
+  ['new-cat','im-cat','vm-cat'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=(id==='new-cat'?'<option value="">Category…</option>':'')+catOpts;});
+  const vndOpts='<option value="">— unassigned —</option>'+state.vendors.map(v=>`<option value="${v.id}">${v.name}</option>`).join('');
+  ['new-vendor','im-vendor'].forEach(id=>{const el=document.getElementById(id);if(el)el.innerHTML=vndOpts;});
+}
+
+// ── Brief ─────────────────────────────────────────────────────────────────────
+function renderBrief(){
+  const b=state.brief;
+  document.getElementById('b-week').value        =b.week||'';
+  document.getElementById('b-subs').value         =b.subs||'37';
+  document.getElementById('b-cycle').value        =b.cycle||'';
+  document.getElementById('b-chef').value         =b.chef||'';
+  document.getElementById('b-order-status').value =b.orderStatus||'planning';
+  document.getElementById('b-fc-target').value    =b.fcTarget||'30';
+}
+['b-week','b-subs','b-cycle','b-chef','b-order-status','b-fc-target'].forEach(id=>{
+  setTimeout(()=>{
+    const el=document.getElementById(id);if(!el)return;
+    el.addEventListener('change',()=>{
+      const map={'b-week':'week','b-subs':'subs','b-cycle':'cycle','b-chef':'chef','b-order-status':'orderStatus','b-fc-target':'fcTarget'};
+      state.brief[map[id]]=el.value;saveState();renderKPIs();
+    });
+  },100);
+});
+
+// ── Tab ───────────────────────────────────────────────────────────────────────
+function showTab(name){
+  document.querySelectorAll('.main-tab').forEach((t,i)=>{
+    const names=['items','par','vessels','vendors','outreach','cost'];
+    t.classList.toggle('active',names[i]===name);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('visible'));
+  document.getElementById('tab-'+name).classList.add('visible');
+  if(name==='cost') renderCost();
+  if(name==='outreach') generateOutreach();
+  if(name==='par') renderPar();
+  if(name==='vessels') renderVessels();
+  if(name==='vendors') renderVendors();
+}
+
+// ── New week ──────────────────────────────────────────────────────────────────
+function newWeek(){
+  if(!confirm('Start a new week? This resets all item statuses to "Needed". Vendors, par levels, and vessel records are kept.')) return;
+  state.items.forEach(i=>{if(i.status==='received'||i.status==='ordered') i.status='needed';});
+  state.brief={week:'',subs:'37',cycle:'',chef:'',orderStatus:'planning',fcTarget:'30'};
+  saveState();renderBrief();renderAll();
+}
+
+// ── Export CSV ────────────────────────────────────────────────────────────────
+function exportCSV(){
+  const headers=['Ingredient','Category','Frequency','Vendor','Qty','Unit','Unit Cost','Total Cost','Status','Par Level','Current Stock','Notes'];
+  const rows=state.items.map(i=>[i.name,i.cat,i.freq,vendorName(i.vendor),i.qty,i.unit,i.unitCost,Math.round(totalCost(i)),i.status,i.par||0,i.stock||0,i.notes].map(v=>`"${String(v||'').replace(/"/g,'""')}"`).join(','));
+  const csv=[headers.join(','),...rows].join('\n');
+  const a=document.createElement('a');a.href='data:text/csv;charset=utf-8,'+encodeURIComponent(csv);
+  a.download='Kosh_Inventory.csv';a.click();
+}
+
+// ── Main render ───────────────────────────────────────────────────────────────
+function renderAll(){populateSelects();renderKPIs();renderCatPills();renderItems();renderVendors();}
+renderBrief();renderAll();
+</script>
+</body>
+</html>

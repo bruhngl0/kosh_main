@@ -1,0 +1,1574 @@
+[
+  {
+    "day": 1,
+    "week": 1,
+    "bf": {
+      "title": "Masala Egg White Bhurji",
+      "sub": "Ragi sourdough · green chutney",
+      "protein": "egg",
+      "kcal": 390,
+      "prot": 34,
+      "adv": [],
+      "allergens": [
+        "Egg",
+        "Gluten"
+      ]
+    },
+    "sn": {
+      "title": "Roasted Makhana & Seed Mix",
+      "sub": "Ghee-roasted · sendha namak",
+      "protein": "plant",
+      "kcal": 185,
+      "prot": 8,
+      "adv": [],
+      "allergens": []
+    },
+    "lu": {
+      "title": "Chettinad Chicken Thigh",
+      "sub": "Brown rice · raita · amaranth greens",
+      "protein": "chicken",
+      "kcal": 565,
+      "prot": 48,
+      "adv": [
+        "Marinate chicken 2hr+"
+      ],
+      "allergens": [
+        "Dairy"
+      ]
+    },
+    "di": {
+      "title": "Seared Basa & Lentil Salad",
+      "sub": "Roasted cherry tomato · mustard vinaigrette",
+      "protein": "fish",
+      "kcal": 420,
+      "prot": 44,
+      "adv": [
+        "Cook lentils AM"
+      ],
+      "allergens": [
+        "Fish",
+        "Mustard"
+      ]
+    }
+  },
+  {
+    "day": 2,
+    "week": 1,
+    "bf": {
+      "title": "Overnight Oats with Whey",
+      "sub": "Blueberries · chia · almonds",
+      "protein": "dairy",
+      "kcal": 410,
+      "prot": 36,
+      "adv": [
+        "Soak overnight"
+      ],
+      "allergens": [
+        "Gluten",
+        "Tree nuts",
+        "Dairy"
+      ]
+    },
+    "sn": {
+      "title": "Steamed Edamame",
+      "sub": "Sea salt · lime",
+      "protein": "plant",
+      "kcal": 160,
+      "prot": 14,
+      "adv": [],
+      "allergens": [
+        "Soya"
+      ]
+    },
+    "lu": {
+      "title": "Grilled Chicken Breast & Farro",
+      "sub": "Roasted pepper · basil oil · parmesan",
+      "protein": "chicken",
+      "kcal": 560,
+      "prot": 52,
+      "adv": [
+        "Pre-make basil oil"
+      ],
+      "allergens": [
+        "Gluten",
+        "Dairy"
+      ]
+    },
+    "di": {
+      "title": "Prawn Moilee",
+      "sub": "Cauliflower rice · coconut broth · curry leaf",
+      "protein": "prawn",
+      "kcal": 420,
+      "prot": 42,
+      "adv": [],
+      "allergens": [
+        "Crustacean",
+        "Coconut"
+      ]
+    }
+  },
+  {
+    "day": 3,
+    "week": 1,
+    "bf": {
+      "title": "Soft-Boiled Egg & Smashed Avocado",
+      "sub": "Multigrain sourdough · chilli · lemon",
+      "protein": "egg",
+      "kcal": 420,
+      "prot": 22,
+      "adv": [],
+      "allergens": [
+        "Egg",
+        "Gluten"
+      ]
+    },
+    "sn": {
+      "title": "Cottage Cheese & Cucumber",
+      "sub": "Black pepper · olive oil",
+      "protein": "dairy",
+      "kcal": 145,
+      "prot": 18,
+      "adv": [],
+      "allergens": [
+        "Dairy"
+      ]
+    },
+    "lu": {
+      "title": "Mutton Keema & Millet Roti",
+      "sub": "Dal tadka · pickled onion",
+      "protein": "lamb",
+      "kcal": 580,
+      "prot": 48,
+      "adv": [
+        "Quick-pickle onion"
+      ],
+      "allergens": [
+        "Gluten"
+      ]
+    },
+    "di": {
+      "title": "Miso-Glazed Salmon",
+      "sub": "Bok choy · sesame-ginger dressing",
+      "protein": "salmon",
+      "kcal": 450,
+      "prot": 42,
+      "adv": [
+        "Marinate salmon 24HR PRIOR"
+      ],
+      "allergens": [
+        "Fish",
+        "Soya",
+        "Sesame"
+      ]
+    }
+  },
+  {
+    "day": 4,
+    "week": 1,
+    "bf": {
+      "title": "Besan Chilla",
+      "sub": "Mint-coriander chutney · tomato",
+      "protein": "legume",
+      "kcal": 380,
+      "prot": 22,
+      "adv": [],
+      "allergens": [
+        "Legumes"
+      ]
+    },
+    "sn": {
+      "title": "Mixed Nuts & Dark Chocolate",
+      "sub": "Walnut, almond, brazil · 85% chocolate",
+      "protein": "plant",
+      "kcal": 195,
+      "prot": 6,
+      "adv": [],
+      "allergens": [
+        "Tree nuts"
+      ]
+    },
+    "lu": {
+      "title": "Grilled Tiger Prawns & Quinoa Tabbouleh",
+      "sub": "Pomegranate · herb oil",
+      "protein": "prawn",
+      "kcal": 520,
+      "prot": 46,
+      "adv": [],
+      "allergens": [
+        "Crustacean"
+      ]
+    },
+    "di": {
+      "title": "Chicken Yakhni Broth",
+      "sub": "Shredded breast · flatbread · gremolata",
+      "protein": "chicken",
+      "kcal": 400,
+      "prot": 42,
+      "adv": [
+        "Make yakhni 4hr — Sunday prep"
+      ],
+      "allergens": [
+        "Gluten"
+      ]
+    }
+  },
+  {
+    "day": 5,
+    "week": 1,
+    "bf": {
+      "title": "Poha with Groundnuts",
+      "sub": "Mustard seeds · curry leaf · coriander",
+      "protein": "plant",
+      "kcal": 395,
+      "prot": 14,
+      "adv": [],
+      "allergens": [
+        "Groundnuts"
+      ]
+    },
+    "sn": {
+      "title": "Greek Yoghurt & Flaxseed",
+      "sub": "5g honey",
+      "protein": "dairy",
+      "kcal": 175,
+      "prot": 14,
+      "adv": [],
+      "allergens": [
+        "Dairy"
+      ]
+    },
+    "lu": {
+      "title": "Egg Curry & Brown Rice",
+      "sub": "Green beans stir-fry · garlic",
+      "protein": "egg",
+      "kcal": 520,
+      "prot": 28,
+      "adv": [
+        "Pre-make tomato-onion base"
+      ],
+      "allergens": [
+        "Egg"
+      ]
+    },
+    "di": {
+      "title": "Pan-Seared Chicken Thigh & Chickpea",
+      "sub": "Preserved lemon dressing · spinach",
+      "protein": "chicken",
+      "kcal": 440,
+      "prot": 44,
+      "adv": [],
+      "allergens": [
+        "Legumes"
+      ]
+    }
+  },
+  {
+    "day": 6,
+    "week": 1,
+    "bf": {
+      "title": "Fermented Dosa",
+      "sub": "Sambar · coconut chutney",
+      "protein": "plant",
+      "kcal": 380,
+      "prot": 14,
+      "adv": [
+        "Ferment batter 18HR PRIOR"
+      ],
+      "allergens": [
+        "Legumes"
+      ]
+    },
+    "sn": {
+      "title": "Apple & Almond Butter",
+      "sub": "Natural almond butter",
+      "protein": "plant",
+      "kcal": 185,
+      "prot": 5,
+      "adv": [],
+      "allergens": [
+        "Tree nuts"
+      ]
+    },
+    "lu": {
+      "title": "Kerala Kingfish Curry",
+      "sub": "Matta red rice · stir-fried bitter gourd",
+      "protein": "fish",
+      "kcal": 560,
+      "prot": 46,
+      "adv": [
+        "Curry base day before"
+      ],
+      "allergens": [
+        "Fish",
+        "Coconut"
+      ]
+    },
+    "di": {
+      "title": "Grilled Lamb Chop",
+      "sub": "White bean purée · mint gremolata · rocket",
+      "protein": "lamb",
+      "kcal": 460,
+      "prot": 44,
+      "adv": [
+        "Make bean purée in batch"
+      ],
+      "allergens": [
+        "Legumes"
+      ]
+    }
+  },
+  {
+    "day": 7,
+    "week": 1,
+    "bf": {
+      "title": "Scrambled Eggs & Wilted Spinach",
+      "sub": "Smoked paprika · rye toast",
+      "protein": "egg",
+      "kcal": 400,
+      "prot": 28,
+      "adv": [],
+      "allergens": [
+        "Egg",
+        "Gluten",
+        "Dairy"
+      ]
+    },
+    "sn": {
+      "title": "Roasted Chana",
+      "sub": "Chaat masala · lemon",
+      "protein": "legume",
+      "kcal": 170,
+      "prot": 10,
+      "adv": [
+        "Dry chickpeas 30min before roasting"
+      ],
+      "allergens": [
+        "Legumes"
+      ]
+    },
+    "lu": {
+      "title": "Chicken Tikka & Quinoa Slaw",
+      "sub": "Raita · carrot-cabbage slaw",
+      "protein": "chicken",
+      "kcal": 555,
+      "prot": 50,
+      "adv": [
+        "Marinate 24HR PRIOR"
+      ],
+      "allergens": [
+        "Dairy",
+        "Mustard"
+      ]
+    },
+    "di": {
+      "title": "Prawn & Asparagus Soba",
+      "sub": "Tamari · ginger · sesame",
+      "protein": "prawn",
+      "kcal": 430,
+      "prot": 38,
+      "adv": [],
+      "allergens": [
+        "Crustacean",
+        "Gluten",
+        "Sesame"
+      ]
+    }
+  },
+  {
+    "day": 8,
+    "week": 2,
+    "bf": {
+      "title": "Idli with Gun Powder",
+      "sub": "Sambar · cold-press coconut oil",
+      "protein": "plant",
+      "kcal": 370,
+      "prot": 14,
+      "adv": [
+        "Ferment idli batter"
+      ],
+      "allergens": [
+        "Legumes"
+      ]
+    },
+    "sn": {
+      "title": "Seeds & Dried Cranberry Mix",
+      "sub": "Sunflower · chia · walnut",
+      "protein": "plant",
+      "kcal": 185,
+      "prot": 7,
+      "adv": [],
+      "allergens": [
+        "Tree nuts"
+      ]
+    },
+    "lu": {
+      "title": "Miso Black Cod",
+      "sub": "Edamame rice · pickled daikon · bonito broth",
+      "protein": "fish",
+      "kcal": 520,
+      "prot": 44,
+      "adv": [
+        "Marinate cod 3 DAYS PRIOR"
+      ],
+      "allergens": [
+        "Fish",
+        "Soya"
+      ]
+    },
+    "di": {
+      "title": "Grilled Chicken Breast & Freekeh",
+      "sub": "Roasted beetroot · goat's cheese · walnut oil",
+      "protein": "chicken",
+      "kcal": 540,
+      "prot": 50,
+      "adv": [
+        "Roast beetroot batch",
+        "Toast freekeh"
+      ],
+      "allergens": [
+        "Dairy",
+        "Tree nuts",
+        "Gluten"
+      ]
+    }
+  },
+  {
+    "day": 9,
+    "week": 2,
+    "bf": {
+      "title": "Banana Oat Protein Pancakes",
+      "sub": "Fresh banana · cinnamon · whey batter",
+      "protein": "dairy",
+      "kcal": 420,
+      "prot": 32,
+      "adv": [],
+      "allergens": [
+        "Gluten",
+        "Dairy",
+        "Egg"
+      ]
+    },
+    "sn": {
+      "title": "Cheese & Rye Crispbread",
+      "sub": "Aged cheddar or paneer · 2 crispbreads",
+      "protein": "dairy",
+      "kcal": 180,
+      "prot": 10,
+      "adv": [],
+      "allergens": [
+        "Dairy",
+        "Gluten"
+      ]
+    },
+    "lu": {
+      "title": "Thai Green Chicken Curry",
+      "sub": "Jasmine rice · Thai basil · lime",
+      "protein": "chicken",
+      "kcal": 540,
+      "prot": 44,
+      "adv": [
+        "Make paste from scratch"
+      ],
+      "allergens": [
+        "Crustacean (paste)",
+        "Gluten"
+      ]
+    },
+    "di": {
+      "title": "Seared Yellowfin Tuna",
+      "sub": "White bean & roasted garlic purée · salsa verde",
+      "protein": "fish",
+      "kcal": 460,
+      "prot": 48,
+      "adv": [
+        "Freeze tuna -20°C 24hr if serving medium-rare"
+      ],
+      "allergens": [
+        "Fish",
+        "Legumes"
+      ]
+    }
+  },
+  {
+    "day": 10,
+    "week": 2,
+    "bf": {
+      "title": "Egg White Omelette",
+      "sub": "Sun-dried tomato · feta · fresh herbs",
+      "protein": "egg",
+      "kcal": 320,
+      "prot": 32,
+      "adv": [],
+      "allergens": [
+        "Egg",
+        "Dairy"
+      ]
+    },
+    "sn": {
+      "title": "Mango with Tajín",
+      "sub": "Fresh mango · lime · chaat masala",
+      "protein": "plant",
+      "kcal": 120,
+      "prot": 2,
+      "adv": [],
+      "allergens": []
+    },
+    "lu": {
+      "title": "Grilled Lamb Seekh & Cauliflower Tabbouleh",
+      "sub": "Tahini yoghurt",
+      "protein": "lamb",
+      "kcal": 520,
+      "prot": 44,
+      "adv": [
+        "Make seekh mix day before"
+      ],
+      "allergens": [
+        "Sesame",
+        "Dairy"
+      ]
+    },
+    "di": {
+      "title": "Prawn & Tofu Laksa",
+      "sub": "Rice noodles · coconut broth",
+      "protein": "prawn",
+      "kcal": 480,
+      "prot": 42,
+      "adv": [
+        "Make laksa paste from scratch"
+      ],
+      "allergens": [
+        "Crustacean",
+        "Soya",
+        "Coconut"
+      ]
+    }
+  },
+  {
+    "day": 11,
+    "week": 2,
+    "bf": {
+      "title": "Congee with Poached Egg",
+      "sub": "Ginger · spring onion · sesame oil",
+      "protein": "egg",
+      "kcal": 340,
+      "prot": 18,
+      "adv": [
+        "Start brown rice congee 3hr prior"
+      ],
+      "allergens": [
+        "Egg",
+        "Sesame"
+      ]
+    },
+    "sn": {
+      "title": "Steamed Edamame & Yuzu",
+      "sub": "Chilli flakes · yuzu or lime",
+      "protein": "plant",
+      "kcal": 155,
+      "prot": 13,
+      "adv": [],
+      "allergens": [
+        "Soya"
+      ]
+    },
+    "lu": {
+      "title": "Chicken Piccata & Farro",
+      "sub": "Caperberry salsa · lemon butter · spinach",
+      "protein": "chicken",
+      "kcal": 540,
+      "prot": 46,
+      "adv": [],
+      "allergens": [
+        "Gluten",
+        "Dairy"
+      ]
+    },
+    "di": {
+      "title": "Harissa Sea Bass & Vegetable Couscous",
+      "sub": "Pomegranate · mint yoghurt",
+      "protein": "fish",
+      "kcal": 460,
+      "prot": 44,
+      "adv": [
+        "Make harissa from scratch"
+      ],
+      "allergens": [
+        "Fish",
+        "Gluten",
+        "Dairy"
+      ]
+    }
+  },
+  {
+    "day": 12,
+    "week": 2,
+    "bf": {
+      "title": "Smoothie Bowl",
+      "sub": "Protein blend · frozen berries · granola · cacao nibs",
+      "protein": "dairy",
+      "kcal": 420,
+      "prot": 32,
+      "adv": [],
+      "allergens": [
+        "Dairy",
+        "Gluten"
+      ]
+    },
+    "sn": {
+      "title": "Hummus & Raw Vegetables",
+      "sub": "Carrot · celery · radish",
+      "protein": "legume",
+      "kcal": 165,
+      "prot": 7,
+      "adv": [],
+      "allergens": [
+        "Sesame",
+        "Legumes"
+      ]
+    },
+    "lu": {
+      "title": "Vietnamese Beef Pho",
+      "sub": "Rice noodles · herbs · hoisin · bone broth",
+      "protein": "beef",
+      "kcal": 500,
+      "prot": 44,
+      "adv": [
+        "Broth 12HR — Sunday prep"
+      ],
+      "allergens": [
+        "Gluten",
+        "Soya"
+      ]
+    },
+    "di": {
+      "title": "Miso Soup & Grilled Chicken Thigh",
+      "sub": "Steamed rice · pickled ginger",
+      "protein": "chicken",
+      "kcal": 440,
+      "prot": 44,
+      "adv": [],
+      "allergens": [
+        "Soya",
+        "Gluten"
+      ]
+    }
+  },
+  {
+    "day": 13,
+    "week": 2,
+    "bf": {
+      "title": "Upma with Papaya",
+      "sub": "Mustard · curry leaf · cashew",
+      "protein": "plant",
+      "kcal": 360,
+      "prot": 10,
+      "adv": [],
+      "allergens": [
+        "Gluten",
+        "Tree nuts"
+      ]
+    },
+    "sn": {
+      "title": "Peanut Butter & Rice Cake",
+      "sub": "Natural peanut butter · 2 cakes",
+      "protein": "legume",
+      "kcal": 200,
+      "prot": 7,
+      "adv": [],
+      "allergens": [
+        "Groundnuts"
+      ]
+    },
+    "lu": {
+      "title": "Chilli Lime Chicken & Black Bean Salsa",
+      "sub": "Avocado · brown rice tortilla",
+      "protein": "chicken",
+      "kcal": 540,
+      "prot": 44,
+      "adv": [],
+      "allergens": [
+        "Legumes",
+        "Gluten"
+      ]
+    },
+    "di": {
+      "title": "Lemon Herb Snapper En Papillote",
+      "sub": "Roasted fingerling potato · green bean amandine",
+      "protein": "fish",
+      "kcal": 460,
+      "prot": 44,
+      "adv": [],
+      "allergens": [
+        "Fish",
+        "Tree nuts"
+      ]
+    }
+  },
+  {
+    "day": 14,
+    "week": 2,
+    "bf": {
+      "title": "Egg & Quinoa Power Bowl",
+      "sub": "2 poached eggs · avocado · dukkah",
+      "protein": "egg",
+      "kcal": 440,
+      "prot": 26,
+      "adv": [],
+      "allergens": [
+        "Egg",
+        "Tree nuts",
+        "Sesame"
+      ]
+    },
+    "sn": {
+      "title": "Trail Mix",
+      "sub": "Almond · pumpkin seed · dark chocolate chips",
+      "protein": "plant",
+      "kcal": 195,
+      "prot": 6,
+      "adv": [],
+      "allergens": [
+        "Tree nuts"
+      ]
+    },
+    "lu": {
+      "title": "Deconstructed Butter Chicken",
+      "sub": "Cashew-yoghurt sauce · millet",
+      "protein": "chicken",
+      "kcal": 560,
+      "prot": 48,
+      "adv": [
+        "Make cashew paste"
+      ],
+      "allergens": [
+        "Tree nuts",
+        "Dairy"
+      ]
+    },
+    "di": {
+      "title": "Pan-Seared Duck Breast",
+      "sub": "Cherry jus · Puy lentils · roasted fennel",
+      "protein": "duck",
+      "kcal": 480,
+      "prot": 42,
+      "adv": [
+        "Cold-pan duck render technique — 8min render"
+      ],
+      "allergens": [
+        "Sulphites"
+      ]
+    }
+  },
+  {
+    "day": 15,
+    "week": 3,
+    "bf": {
+      "title": "Ragi Mudde & Chicken Keema",
+      "sub": "Coconut chutney",
+      "protein": "chicken",
+      "kcal": 420,
+      "prot": 32,
+      "adv": [
+        "Make keema AM"
+      ],
+      "allergens": [
+        "Legumes"
+      ]
+    },
+    "sn": {
+      "title": "Kefir & Walnuts",
+      "sub": "180ml kefir · 20g walnuts",
+      "protein": "dairy",
+      "kcal": 185,
+      "prot": 8,
+      "adv": [],
+      "allergens": [
+        "Dairy",
+        "Tree nuts"
+      ]
+    },
+    "lu": {
+      "title": "Slow-Roasted Pork Tenderloin",
+      "sub": "Apple-fennel slaw · mustard-rosemary jus · barley",
+      "protein": "pork",
+      "kcal": 520,
+      "prot": 44,
+      "adv": [
+        "Brine pork overnight"
+      ],
+      "allergens": [
+        "Gluten",
+        "Mustard"
+      ]
+    },
+    "di": {
+      "title": "Chettinad Egg Broth",
+      "sub": "2 poached eggs · vermicelli · curry leaf oil",
+      "protein": "egg",
+      "kcal": 380,
+      "prot": 22,
+      "adv": [
+        "Make Chettinad broth 2hr prior"
+      ],
+      "allergens": [
+        "Egg",
+        "Gluten"
+      ]
+    }
+  },
+  {
+    "day": 16,
+    "week": 3,
+    "bf": {
+      "title": "Acai Bowl",
+      "sub": "Protein powder · almond milk · bee pollen · hemp · berries",
+      "protein": "dairy",
+      "kcal": 380,
+      "prot": 28,
+      "adv": [],
+      "allergens": [
+        "Dairy",
+        "Tree nuts"
+      ]
+    },
+    "sn": {
+      "title": "Steamed Chicken Momos",
+      "sub": "3 pieces · ginger-soy dip",
+      "protein": "chicken",
+      "kcal": 185,
+      "prot": 14,
+      "adv": [
+        "Make momo filling AM",
+        "Steam only — never fry"
+      ],
+      "allergens": [
+        "Gluten",
+        "Soya"
+      ]
+    },
+    "lu": {
+      "title": "Lamb Rogan Josh & Spinach Dal",
+      "sub": "Brown rice · pickled radish",
+      "protein": "lamb",
+      "kcal": 560,
+      "prot": 46,
+      "adv": [
+        "Marinate lamb 2hr+"
+      ],
+      "allergens": []
+    },
+    "di": {
+      "title": "Cold Soba & Poached Prawn",
+      "sub": "Yuzu dressing · cucumber julienne · nori",
+      "protein": "prawn",
+      "kcal": 380,
+      "prot": 34,
+      "adv": [
+        "Serve soba at 8°C — resistant starch benefit"
+      ],
+      "allergens": [
+        "Crustacean",
+        "Gluten",
+        "Sesame"
+      ]
+    }
+  },
+  {
+    "day": 17,
+    "week": 3,
+    "bf": {
+      "title": "Millet Congee & Shredded Chicken",
+      "sub": "Ginger · spring onion · white pepper",
+      "protein": "chicken",
+      "kcal": 360,
+      "prot": 26,
+      "adv": [
+        "Start millet congee 2hr prior"
+      ],
+      "allergens": []
+    },
+    "sn": {
+      "title": "Boiled Egg & Cherry Tomatoes",
+      "sub": "Sea salt · olive oil",
+      "protein": "egg",
+      "kcal": 145,
+      "prot": 10,
+      "adv": [],
+      "allergens": [
+        "Egg"
+      ]
+    },
+    "lu": {
+      "title": "Moroccan Chicken Tagine",
+      "sub": "Preserved lemon · olives · couscous · harissa",
+      "protein": "chicken",
+      "kcal": 540,
+      "prot": 44,
+      "adv": [
+        "Make harissa from scratch",
+        "Preserved lemon: rinse well"
+      ],
+      "allergens": [
+        "Gluten",
+        "Sulphites"
+      ]
+    },
+    "di": {
+      "title": "Seared Scallops",
+      "sub": "Truffle pea purée · crispy pancetta · micro herbs",
+      "protein": "scallop",
+      "kcal": 420,
+      "prot": 36,
+      "adv": [
+        "DRY scallops 1HR prior — critical",
+        "Bake pancetta AM"
+      ],
+      "allergens": [
+        "Mollusc",
+        "Dairy",
+        "Pork"
+      ]
+    }
+  },
+  {
+    "day": 18,
+    "week": 3,
+    "bf": {
+      "title": "French Omelette",
+      "sub": "Gruyère · fresh tarragon · sourdough",
+      "protein": "egg",
+      "kcal": 420,
+      "prot": 26,
+      "adv": [],
+      "allergens": [
+        "Egg",
+        "Dairy",
+        "Gluten"
+      ]
+    },
+    "sn": {
+      "title": "Coconut Yoghurt & Passion Fruit",
+      "sub": "Toasted coconut flakes",
+      "protein": "plant",
+      "kcal": 160,
+      "prot": 4,
+      "adv": [],
+      "allergens": [
+        "Coconut"
+      ]
+    },
+    "lu": {
+      "title": "Prawn Pad Thai",
+      "sub": "Rice noodles · egg · bean sprouts · peanut",
+      "protein": "prawn",
+      "kcal": 520,
+      "prot": 42,
+      "adv": [
+        "Make tamarind paste from scratch"
+      ],
+      "allergens": [
+        "Crustacean",
+        "Groundnuts",
+        "Egg",
+        "Gluten"
+      ]
+    },
+    "di": {
+      "title": "Sous-Vide Chicken Thigh",
+      "sub": "Fermented miso glaze · steamed jasmine rice",
+      "protein": "chicken",
+      "kcal": 480,
+      "prot": 44,
+      "adv": [
+        "Sous-vide 65°C 2HR — can do 24hr ahead in bag"
+      ],
+      "allergens": [
+        "Soya",
+        "Gluten"
+      ]
+    }
+  },
+  {
+    "day": 19,
+    "week": 3,
+    "bf": {
+      "title": "Protein French Toast",
+      "sub": "Whole egg + whey batter · berry compote",
+      "protein": "egg",
+      "kcal": 440,
+      "prot": 32,
+      "adv": [],
+      "allergens": [
+        "Egg",
+        "Gluten",
+        "Dairy"
+      ]
+    },
+    "sn": {
+      "title": "Smoked Salmon & Cream Cheese",
+      "sub": "50g salmon · cucumber rounds · cream cheese",
+      "protein": "fish",
+      "kcal": 185,
+      "prot": 14,
+      "adv": [],
+      "allergens": [
+        "Fish",
+        "Dairy"
+      ]
+    },
+    "lu": {
+      "title": "Japanese Chicken Karaage",
+      "sub": "Edamame rice · pickled cabbage · yoghurt kewpie",
+      "protein": "chicken",
+      "kcal": 540,
+      "prot": 44,
+      "adv": [
+        "Double-fry technique: 160°C then 190°C"
+      ],
+      "allergens": [
+        "Gluten",
+        "Soya",
+        "Dairy"
+      ]
+    },
+    "di": {
+      "title": "Roasted Lamb Rack",
+      "sub": "Pistachio-herb crust · white bean purée · broccolini",
+      "protein": "lamb",
+      "kcal": 520,
+      "prot": 46,
+      "adv": [
+        "French bones",
+        "Apply pistachio crust last 5min only"
+      ],
+      "allergens": [
+        "Tree nuts",
+        "Legumes"
+      ]
+    }
+  },
+  {
+    "day": 20,
+    "week": 3,
+    "bf": {
+      "title": "Kimchi Fried Brown Rice",
+      "sub": "1 egg · spring onion · sesame oil",
+      "protein": "egg",
+      "kcal": 380,
+      "prot": 18,
+      "adv": [
+        "Use day-old rice only"
+      ],
+      "allergens": [
+        "Egg",
+        "Gluten",
+        "Sesame"
+      ]
+    },
+    "sn": {
+      "title": "Protein Shake",
+      "sub": "Whey 25g · almond milk · frozen banana · cacao",
+      "protein": "dairy",
+      "kcal": 195,
+      "prot": 26,
+      "adv": [],
+      "allergens": [
+        "Dairy",
+        "Tree nuts"
+      ]
+    },
+    "lu": {
+      "title": "Butter-Basted Swordfish & Caponata",
+      "sub": "Farro · aubergine caponata · lemon",
+      "protein": "fish",
+      "kcal": 520,
+      "prot": 44,
+      "adv": [
+        "Make caponata previous day — improves overnight"
+      ],
+      "allergens": [
+        "Fish",
+        "Gluten",
+        "Dairy"
+      ]
+    },
+    "di": {
+      "title": "Pork Belly",
+      "sub": "Apple purée · pickled red cabbage · jus · dauphinoise",
+      "protein": "pork",
+      "kcal": 560,
+      "prot": 38,
+      "adv": [
+        "Braise 6HR · press overnight · sear AM"
+      ],
+      "allergens": [
+        "Dairy",
+        "Sulphites"
+      ]
+    }
+  },
+  {
+    "day": 21,
+    "week": 3,
+    "bf": {
+      "title": "Saboodana Khichdi",
+      "sub": "Groundnut · ghee · coriander",
+      "protein": "plant",
+      "kcal": 380,
+      "prot": 10,
+      "adv": [
+        "Soak tapioca 6hr minimum"
+      ],
+      "allergens": [
+        "Groundnuts"
+      ]
+    },
+    "sn": {
+      "title": "Pistachios & Dried Apricot",
+      "sub": "25g pistachio · 3 apricots",
+      "protein": "plant",
+      "kcal": 175,
+      "prot": 6,
+      "adv": [],
+      "allergens": [
+        "Tree nuts"
+      ]
+    },
+    "lu": {
+      "title": "Chilli Con Carne & Brown Rice",
+      "sub": "Sour cream · guacamole · pepitas",
+      "protein": "beef",
+      "kcal": 540,
+      "prot": 44,
+      "adv": [
+        "Drain fat after browning"
+      ],
+      "allergens": [
+        "Dairy",
+        "Legumes"
+      ]
+    },
+    "di": {
+      "title": "Sea Bream En Papillote",
+      "sub": "Fennel · lemon · cherry tomato · white wine · olives",
+      "protein": "fish",
+      "kcal": 400,
+      "prot": 40,
+      "adv": [],
+      "allergens": [
+        "Fish",
+        "Sulphites"
+      ]
+    }
+  },
+  {
+    "day": 22,
+    "week": 4,
+    "bf": {
+      "title": "Shakshuka",
+      "sub": "2 eggs · feta · sourdough · za'atar",
+      "protein": "egg",
+      "kcal": 420,
+      "prot": 24,
+      "adv": [
+        "Cook tomato base 20min before adding eggs"
+      ],
+      "allergens": [
+        "Egg",
+        "Dairy",
+        "Gluten"
+      ]
+    },
+    "sn": {
+      "title": "Matcha Latte & Cashews",
+      "sub": "Oat milk matcha · 20g cashews",
+      "protein": "plant",
+      "kcal": 195,
+      "prot": 6,
+      "adv": [],
+      "allergens": [
+        "Tree nuts"
+      ]
+    },
+    "lu": {
+      "title": "Wagyu Beef Stir-Fry",
+      "sub": "Oyster mushroom · jasmine rice · dark soy · ginger",
+      "protein": "beef",
+      "kcal": 520,
+      "prot": 40,
+      "adv": [
+        "Flash-fry wagyu 45 sec only — do not overcook"
+      ],
+      "allergens": [
+        "Gluten",
+        "Soya"
+      ]
+    },
+    "di": {
+      "title": "Beetroot-Crusted Salmon",
+      "sub": "Horseradish cream · watercress · lemon",
+      "protein": "salmon",
+      "kcal": 460,
+      "prot": 42,
+      "adv": [
+        "Make beetroot powder/crust AM"
+      ],
+      "allergens": [
+        "Fish",
+        "Dairy"
+      ]
+    }
+  },
+  {
+    "day": 23,
+    "week": 4,
+    "bf": {
+      "title": "Tamago Gohan",
+      "sub": "Pasteurised egg · warm rice · dashi · soy",
+      "protein": "egg",
+      "kcal": 360,
+      "prot": 18,
+      "adv": [
+        "Use pasteurised egg only — raw serving"
+      ],
+      "allergens": [
+        "Egg",
+        "Gluten",
+        "Soya"
+      ]
+    },
+    "sn": {
+      "title": "Kefir & Pumpkin Seeds",
+      "sub": "150ml kefir · 20g seeds",
+      "protein": "dairy",
+      "kcal": 175,
+      "prot": 9,
+      "adv": [],
+      "allergens": [
+        "Dairy"
+      ]
+    },
+    "lu": {
+      "title": "Nihari (Lamb Shank)",
+      "sub": "Roti · julienned ginger · lemon",
+      "protein": "lamb",
+      "kcal": 560,
+      "prot": 44,
+      "adv": [
+        "8HR slow cook — Sunday prep mandatory"
+      ],
+      "allergens": [
+        "Gluten"
+      ]
+    },
+    "di": {
+      "title": "Grilled King Prawn",
+      "sub": "Romesco sauce · patatas bravas · saffron aioli",
+      "protein": "prawn",
+      "kcal": 480,
+      "prot": 42,
+      "adv": [
+        "Char peppers for romesco directly on flame"
+      ],
+      "allergens": [
+        "Crustacean",
+        "Egg",
+        "Tree nuts"
+      ]
+    }
+  },
+  {
+    "day": 24,
+    "week": 4,
+    "bf": {
+      "title": "Congee with Pork Floss",
+      "sub": "Century egg · spring onion · ginger",
+      "protein": "pork",
+      "kcal": 380,
+      "prot": 22,
+      "adv": [
+        "Slow-roast pork loin 120°C 4hr for floss"
+      ],
+      "allergens": [
+        "Egg"
+      ]
+    },
+    "sn": {
+      "title": "Fresh Fig & Aged Cheddar",
+      "sub": "2 figs · 25g aged cheddar",
+      "protein": "dairy",
+      "kcal": 175,
+      "prot": 7,
+      "adv": [],
+      "allergens": [
+        "Dairy"
+      ]
+    },
+    "lu": {
+      "title": "Chicken Mole Verde",
+      "sub": "Brown rice · avocado · tomatillo salsa · pepitas",
+      "protein": "chicken",
+      "kcal": 540,
+      "prot": 44,
+      "adv": [
+        "Toast pumpkin seeds and tomatillo together"
+      ],
+      "allergens": [
+        "Tree nuts"
+      ]
+    },
+    "di": {
+      "title": "Flash-Seared Chicken Liver",
+      "sub": "Brioche toast · grape chutney · micro sorrel",
+      "protein": "chicken",
+      "kcal": 380,
+      "prot": 28,
+      "adv": [
+        "90 sec sear only — overcooking = bitter"
+      ],
+      "allergens": [
+        "Gluten",
+        "Dairy"
+      ]
+    }
+  },
+  {
+    "day": 25,
+    "week": 4,
+    "bf": {
+      "title": "Turkish Menemen",
+      "sub": "2 eggs + 1 white · feta · isot biber · flatbread",
+      "protein": "egg",
+      "kcal": 400,
+      "prot": 26,
+      "adv": [],
+      "allergens": [
+        "Egg",
+        "Dairy",
+        "Gluten"
+      ]
+    },
+    "sn": {
+      "title": "Bone Broth & Chia",
+      "sub": "200ml homemade bone broth · 5g chia",
+      "protein": "protein",
+      "kcal": 95,
+      "prot": 10,
+      "adv": [
+        "Make bone broth Sunday"
+      ],
+      "allergens": []
+    },
+    "lu": {
+      "title": "Chirashi Bowl",
+      "sub": "Sashimi tuna & salmon · sushi rice · pickled ginger",
+      "protein": "fish",
+      "kcal": 560,
+      "prot": 46,
+      "adv": [
+        "Freeze fish -20°C 24HR — MANDATORY",
+        "Do not refrigerate sushi rice"
+      ],
+      "allergens": [
+        "Fish",
+        "Soya",
+        "Gluten",
+        "Sesame"
+      ]
+    },
+    "di": {
+      "title": "Slow-Roasted Lamb Shoulder",
+      "sub": "Baba ganoush · pomegranate jus · za'atar flatbread",
+      "protein": "lamb",
+      "kcal": 520,
+      "prot": 44,
+      "adv": [
+        "6HR roast at 130°C — must start day prior"
+      ],
+      "allergens": [
+        "Sesame",
+        "Gluten"
+      ]
+    }
+  },
+  {
+    "day": 26,
+    "week": 4,
+    "bf": {
+      "title": "Bircher Muesli",
+      "sub": "Rolled oats · grated apple · yoghurt · chia · almonds",
+      "protein": "dairy",
+      "kcal": 420,
+      "prot": 18,
+      "adv": [
+        "Soak overnight"
+      ],
+      "allergens": [
+        "Gluten",
+        "Dairy",
+        "Tree nuts"
+      ]
+    },
+    "sn": {
+      "title": "Tuna Tartare",
+      "sub": "50g sashimi tuna · avocado · sesame · lemon",
+      "protein": "fish",
+      "kcal": 180,
+      "prot": 16,
+      "adv": [
+        "Freeze tuna -20°C 24hr"
+      ],
+      "allergens": [
+        "Fish",
+        "Sesame"
+      ]
+    },
+    "lu": {
+      "title": "Wagyu Short Rib",
+      "sub": "Gremolata · truffle oil · pomme purée",
+      "protein": "beef",
+      "kcal": 580,
+      "prot": 42,
+      "adv": [
+        "Braise 8HR · refrigerate · skim fat · reheat"
+      ],
+      "allergens": [
+        "Dairy"
+      ]
+    },
+    "di": {
+      "title": "Vietnamese Bun Cha",
+      "sub": "Grilled pork patties · rice vermicelli · dipping broth · herbs",
+      "protein": "pork",
+      "kcal": 440,
+      "prot": 38,
+      "adv": [
+        "Charcoal-grill pork patties for authentic char"
+      ],
+      "allergens": [
+        "Gluten",
+        "Soya",
+        "Groundnuts"
+      ]
+    }
+  },
+  {
+    "day": 27,
+    "week": 4,
+    "bf": {
+      "title": "Tamago Sando",
+      "sub": "Soft eggs · yoghurt mayo · Japanese milk bread",
+      "protein": "egg",
+      "kcal": 440,
+      "prot": 22,
+      "adv": [
+        "Steam eggs 13 min for jammy yolk"
+      ],
+      "allergens": [
+        "Egg",
+        "Gluten",
+        "Dairy"
+      ]
+    },
+    "sn": {
+      "title": "Golden Milk & Walnuts",
+      "sub": "Oat milk turmeric · ginger · black pepper · walnuts",
+      "protein": "plant",
+      "kcal": 195,
+      "prot": 5,
+      "adv": [],
+      "allergens": [
+        "Tree nuts"
+      ]
+    },
+    "lu": {
+      "title": "Roasted Spatchcock Chicken",
+      "sub": "Chimichurri · roasted sweet potato · bitter leaf",
+      "protein": "chicken",
+      "kcal": 560,
+      "prot": 48,
+      "adv": [
+        "Butterfly day before for even cooking"
+      ],
+      "allergens": []
+    },
+    "di": {
+      "title": "Lobster Bisque",
+      "sub": "Sourdough crouton · crème fraîche · chive",
+      "protein": "shellfish",
+      "kcal": 380,
+      "prot": 24,
+      "adv": [
+        "Roast shells · cognac · double strain — day before"
+      ],
+      "allergens": [
+        "Crustacean",
+        "Dairy",
+        "Gluten",
+        "Sulphites"
+      ]
+    }
+  },
+  {
+    "day": 28,
+    "week": 4,
+    "bf": {
+      "title": "Eggs Benedict — House Style",
+      "sub": "Cured salmon · buckwheat blini · yoghurt hollandaise",
+      "protein": "fish",
+      "kcal": 450,
+      "prot": 36,
+      "adv": [
+        "Cure salmon 3 DAYS PRIOR",
+        "Clarify butter AM",
+        "Blini day before"
+      ],
+      "allergens": [
+        "Fish",
+        "Egg",
+        "Dairy",
+        "Gluten"
+      ]
+    },
+    "sn": {
+      "title": "Champagne Grape & Macadamia",
+      "sub": "Valrhona 85% chocolate · macadamia",
+      "protein": "plant",
+      "kcal": 180,
+      "prot": 3,
+      "adv": [],
+      "allergens": [
+        "Tree nuts"
+      ]
+    },
+    "lu": {
+      "title": "Wagyu Sirloin MBS 6+",
+      "sub": "Duck fat potato · seasonal mushroom · bordelaise",
+      "protein": "beef",
+      "kcal": 620,
+      "prot": 48,
+      "adv": [
+        "Room temp wagyu 1HR — mandatory",
+        "Make bordelaise day before"
+      ],
+      "allergens": [
+        "Dairy",
+        "Sulphites"
+      ]
+    },
+    "di": {
+      "title": "Dark Chocolate Mousse",
+      "sub": "Raspberry coulis · cocoa nibs — cycle closes",
+      "protein": "plant",
+      "kcal": 360,
+      "prot": 14,
+      "adv": [
+        "Set overnight — make day before"
+      ],
+      "allergens": [
+        "Egg",
+        "Dairy"
+      ]
+    }
+  }
+]

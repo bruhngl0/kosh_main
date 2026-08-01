@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kōsh — Cycle Planner · Cycle 01</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#F5F2ED; --surface:#FFFFFF; --surface2:#FDFAF6; --ink:#1C1A16;
+  --charcoal:#3D3A30; --stone:#8C8070; --sand:#D4C9B0; --border:#DDD5C0;
+  --copper:#8B5E3C; --copper-lt:#C4895A; --copper-bg:#F2EAE0;
+  --gr:#1A6B3C; --re:#A32D2D; --amber:#A07010;
+  --gr-bg:#EAF4EE; --re-bg:#FEF2F2; --am-bg:#FFF8E6;
+  --ff-d:'Cormorant Garamond',Georgia,serif;
+  --ff-s:'DM Sans',sans-serif;
+  --ff-m:'DM Mono',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--ink);font-family:var(--ff-s);font-size:13px;line-height:1.6}
+.wrap{max-width:1440px;margin:0 auto;padding:20px 18px}
+
+/* Header */
+.header{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;padding-bottom:14px;border-bottom:2px solid var(--copper);flex-wrap:wrap;gap:10px}
+.logo{font-family:var(--ff-d);font-size:20px;font-weight:600;color:var(--ink);letter-spacing:.04em}
+.logo sup{font-size:10px;vertical-align:super;font-style:italic;color:var(--copper-lt)}
+.header-meta{font-size:11px;color:var(--stone);font-family:var(--ff-m)}
+.header-actions{display:flex;gap:7px;flex-wrap:wrap}
+.btn{padding:6px 14px;border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;border:none;transition:all .15s;letter-spacing:.05em;font-family:var(--ff-m)}
+.btn-ghost{background:transparent;color:var(--stone);border:1.5px solid var(--border)}
+.btn-ghost:hover{border-color:var(--copper);color:var(--copper)}
+.btn-copper{background:var(--copper);color:#fff;border:1.5px solid var(--copper)}
+.btn-copper:hover{background:#7a5232}
+.btn-ink{background:var(--ink);color:#fff}
+.btn-ink:hover{background:var(--charcoal)}
+
+/* Tabs */
+.main-tabs{display:flex;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:3px;margin-bottom:16px}
+.main-tab{flex:1;padding:7px 4px;border-radius:4px;cursor:pointer;font-size:11.5px;font-weight:500;color:var(--stone);text-align:center;transition:all .15s;border:none;background:transparent;font-family:var(--ff-m);letter-spacing:.04em;text-transform:uppercase}
+.main-tab.active{background:var(--surface);color:var(--ink);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.tab-panel{display:none}
+.tab-panel.visible{display:block}
+
+/* Status bar */
+.status-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:16px}
+.status-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 14px}
+.status-card.warn{border-color:var(--re);background:var(--re-bg)}
+.status-card.ok{border-color:var(--gr);background:var(--gr-bg)}
+.sc-num{font-family:var(--ff-d);font-size:24px;font-weight:600;color:var(--ink);line-height:1}
+.sc-label{font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--stone);font-family:var(--ff-m);margin-top:3px}
+.sc-sub{font-size:10px;color:var(--stone);margin-top:2px}
+
+/* Week headers */
+.week-header{display:flex;align-items:center;gap:12px;margin:20px 0 10px;padding-bottom:8px;border-bottom:1px solid var(--sand)}
+.wh-num{font-family:var(--ff-d);font-size:13px;font-style:italic;color:var(--stone)}
+.wh-title{font-family:var(--ff-d);font-size:18px;font-weight:600;color:var(--ink)}
+.wh-badge{font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:3px 10px;border-radius:10px;font-family:var(--ff-m)}
+.wb1{background:var(--copper-bg);color:var(--copper)}
+.wb2{background:var(--gr-bg);color:var(--gr)}
+.wb3{background:#EAF0FB;color:#1A3B6B}
+.wb4{background:var(--am-bg);color:var(--amber)}
+
+/* Day grid */
+.day-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:6px}
+.day-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;overflow:hidden;cursor:pointer;transition:all .15s;position:relative}
+.day-card:hover{border-color:var(--copper);box-shadow:0 2px 12px rgba(139,94,60,.12)}
+.day-card.has-conflict{border-color:var(--re);border-width:2px}
+.day-card.has-advance{border-left:3px solid var(--amber)}
+.day-card.selected{border-color:var(--copper);border-width:2px;box-shadow:0 2px 16px rgba(139,94,60,.2)}
+.dc-header{padding:8px 10px 6px;border-bottom:1px solid var(--bg);display:flex;align-items:center;justify-content:space-between}
+.dc-daynum{font-family:var(--ff-d);font-size:16px;font-weight:600;color:var(--ink);line-height:1}
+.dc-flags{display:flex;gap:3px}
+.dc-flag{width:6px;height:6px;border-radius:50%}
+.ff-conflict{background:var(--re)}
+.ff-advance{background:var(--amber)}
+.ff-ok{background:var(--gr)}
+.dc-meals{padding:6px 10px 8px}
+.dc-meal{display:flex;align-items:flex-start;gap:6px;margin-bottom:4px}
+.dc-meal:last-child{margin-bottom:0}
+.dm-dot{width:5px;height:5px;border-radius:50%;flex-shrink:0;margin-top:4px}
+.dot-bf{background:#5aaa7a}
+.dot-sn{background:var(--copper-lt)}
+.dot-lu{background:#6699cc}
+.dot-di{background:#C9A84C}
+.dm-text{font-size:10px;color:var(--charcoal);line-height:1.35;flex:1}
+.dm-protein{font-size:9px;font-family:var(--ff-m);color:var(--stone)}
+
+/* Conflict legend */
+.legend{display:flex;gap:14px;align-items:center;margin-bottom:14px;padding:10px 14px;background:var(--surface);border:1px solid var(--border);border-radius:6px;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--stone)}
+.leg-dot{width:8px;height:8px;border-radius:50%}
+
+/* Conflict panel */
+.conflicts-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}
+.conflict-item{background:var(--re-bg);border:1px solid rgba(163,45,45,.2);border-left:3px solid var(--re);border-radius:6px;padding:10px 14px;display:flex;align-items:flex-start;gap:10px}
+.ci-day{font-family:var(--ff-d);font-size:18px;font-weight:600;color:var(--re);min-width:40px;line-height:1.2}
+.ci-text{font-size:12px;color:var(--charcoal);line-height:1.6}
+.ci-text b{color:var(--re)}
+.no-conflicts{background:var(--gr-bg);border:1px solid rgba(26,107,60,.2);border-left:3px solid var(--gr);border-radius:6px;padding:12px 16px;font-size:13px;color:var(--gr)}
+
+/* Advance prep tab */
+.advance-week{margin-bottom:20px}
+.advance-day-group{margin-bottom:8px}
+.adg-header{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--surface);border:1px solid var(--border);border-radius:6px 6px 0 0;border-bottom:none}
+.adg-daynum{font-family:var(--ff-d);font-size:14px;font-weight:600;color:var(--ink)}
+.adg-items{border:1px solid var(--border);border-radius:0 0 6px 6px;overflow:hidden}
+.adg-item{display:grid;grid-template-columns:80px 1fr 120px 120px;gap:12px;padding:9px 14px;border-bottom:1px solid var(--bg);align-items:center;font-size:12px;transition:background .15s}
+.adg-item:last-child{border-bottom:none}
+.adg-item:hover{background:var(--bg)}
+.adg-item.done{opacity:.5}
+.adg-item.done .adg-name{text-decoration:line-through}
+.adg-lead{font-family:var(--ff-m);font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px;text-align:center}
+.lead-urgent{background:var(--re-bg);color:var(--re)}
+.lead-today{background:var(--am-bg);color:var(--amber)}
+.lead-tomorrow{background:var(--gr-bg);color:var(--gr)}
+.adg-name{font-weight:500;color:var(--ink)}
+.adg-dish{color:var(--stone);font-size:11px}
+.adg-check{width:20px;height:20px;border-radius:4px;border:1.5px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;background:var(--bg);flex-shrink:0}
+.adg-check.checked{background:var(--gr);border-color:var(--gr);color:white}
+
+/* Production list tab */
+.prod-week-select{display:flex;gap:6px;margin-bottom:16px;flex-wrap:wrap}
+.prod-week-btn{padding:7px 18px;border-radius:4px;font-size:11px;font-family:var(--ff-m);letter-spacing:.06em;cursor:pointer;border:1.5px solid var(--border);background:transparent;color:var(--stone);transition:all .15s}
+.prod-week-btn.active{border-color:var(--copper);background:var(--copper-bg);color:var(--copper)}
+.prod-section{background:var(--surface);border:1px solid var(--border);border-radius:8px;margin-bottom:12px;overflow:hidden}
+.prod-section-head{padding:10px 14px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.psh-title{font-size:10px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--stone);font-family:var(--ff-m)}
+.prod-row{display:grid;grid-template-columns:60px 1fr 100px 80px 120px;gap:10px;padding:8px 14px;border-bottom:1px solid var(--bg);align-items:center;font-size:12px}
+.prod-row:last-child{border-bottom:none}
+.pr-day{font-family:var(--ff-d);font-size:13px;font-weight:600;color:var(--copper)}
+.pr-meal{font-size:9px;font-family:var(--ff-m);padding:2px 7px;border-radius:8px}
+.mr-bf{background:#EAF4EE;color:#1A6B3C}
+.mr-sn{background:var(--copper-bg);color:var(--copper)}
+.mr-lu{background:#EAF0FB;color:#1A3B6B}
+.mr-di{background:var(--am-bg);color:var(--amber)}
+.pr-title{font-weight:500;color:var(--ink)}
+.pr-protein{font-size:10px;font-family:var(--ff-m);color:var(--stone)}
+
+/* Day detail modal */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(28,26,22,.6);z-index:200;align-items:flex-start;justify-content:flex-end;padding:20px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface);border-radius:10px;width:420px;max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2)}
+.modal-hdr{padding:16px 18px 12px;border-bottom:1px solid var(--bg);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;background:var(--surface)}
+.modal-title{font-family:var(--ff-d);font-size:18px;font-weight:600;color:var(--ink)}
+.modal-close{width:26px;height:26px;border-radius:4px;border:1px solid var(--border);background:var(--bg);cursor:pointer;font-size:13px;color:var(--stone);display:flex;align-items:center;justify-content:center}
+.modal-body{padding:16px 18px}
+.modal-meal{margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--bg)}
+.modal-meal:last-child{border-bottom:none;margin-bottom:0;padding-bottom:0}
+.mm-header{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.mm-type{font-size:9px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px;border-radius:8px;font-family:var(--ff-m)}
+.mm-title{font-size:14px;font-weight:500;color:var(--ink)}
+.mm-sub{font-size:11px;color:var(--stone);margin-bottom:6px}
+.mm-macros{display:flex;gap:10px;margin-bottom:6px}
+.mm-macro{text-align:center}
+.mm-macro-val{font-family:var(--ff-m);font-size:12px;font-weight:500;color:var(--copper)}
+.mm-macro-label{font-size:9px;color:var(--stone);letter-spacing:.06em;text-transform:uppercase}
+.mm-alerts{display:flex;flex-direction:column;gap:4px}
+.mm-alert{display:flex;align-items:center;gap:6px;font-size:11px;padding:4px 8px;border-radius:3px}
+.alert-conflict{background:var(--re-bg);color:var(--re)}
+.alert-advance{background:var(--am-bg);color:var(--amber)}
+.alert-allergen{background:#EEF2FF;color:#3730A3}
+
+@media print{
+  .header-actions,.main-tabs{display:none}
+  .tab-panel{display:block!important}
+  body{background:white}
+}
+@media(max-width:1100px){.day-grid{grid-template-columns:repeat(4,1fr)}}
+@media(max-width:700px){.day-grid{grid-template-columns:repeat(2,1fr)}.status-bar{grid-template-columns:repeat(3,1fr)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<div class="header">
+  <div style="display:flex;align-items:center;gap:14px">
+    <div class="logo">Kō<sup>sh</sup></div>
+    <div style="width:1px;height:22px;background:var(--sand)"></div>
+    <div class="header-meta">Cycle Planner · Cycle 01 · 28 Days · 112 Dishes</div>
+  </div>
+  <div class="header-actions">
+    <button class="btn btn-ghost" onclick="window.print()">🖨 Print Week</button>
+    <button class="btn btn-ghost" onclick="showTab('conflicts')">⚠ Check Conflicts</button>
+    <button class="btn btn-copper" onclick="showTab('production')">📋 Production List</button>
+  </div>
+</div>
+
+<!-- Status bar -->
+<div class="status-bar" id="status-bar"></div>
+
+<!-- Tabs -->
+<div class="main-tabs">
+  <button class="main-tab active" onclick="showTab('calendar')">📅 28-Day Calendar</button>
+  <button class="main-tab" onclick="showTab('conflicts')">⚠ Protein Conflicts</button>
+  <button class="main-tab" onclick="showTab('advance')">⏰ Advance Prep</button>
+  <button class="main-tab" onclick="showTab('production')">📋 Weekly Production</button>
+</div>
+
+<!-- CALENDAR TAB -->
+<div class="tab-panel visible" id="tab-calendar">
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:var(--gr)"></div>No issues</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--re)"></div>Protein repeat within 4 days</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--amber)"></div>Advance prep required</div>
+    <div class="leg-item" style="margin-left:auto;font-size:11px;color:var(--stone)">Click any day for meal detail</div>
+  </div>
+  <div id="calendar-container"></div>
+</div>
+
+<!-- CONFLICTS TAB -->
+<div class="tab-panel" id="tab-conflicts">
+  <div style="background:var(--copper-bg);border:1px solid var(--border);border-left:3px solid var(--copper);border-radius:6px;padding:11px 14px;font-size:13px;color:var(--charcoal);margin-bottom:16px">
+    Protein rotation rule: no protein source (chicken, fish, prawn, lamb, egg, pork, plant) should repeat at dinner within any 4-day window. Lunch proteins are checked independently.
+  </div>
+  <div id="conflicts-container"></div>
+</div>
+
+<!-- ADVANCE PREP TAB -->
+<div class="tab-panel" id="tab-advance">
+  <div style="background:var(--am-bg);border:1px solid rgba(160,112,16,.2);border-left:3px solid var(--amber);border-radius:6px;padding:11px 14px;font-size:13px;color:var(--charcoal);margin-bottom:16px">
+    Items flagged as requiring advance preparation. Check these before each day's production. Some require 24–72hr lead time.
+  </div>
+  <div id="advance-container"></div>
+</div>
+
+<!-- PRODUCTION LIST TAB -->
+<div class="tab-panel" id="tab-production">
+  <div class="prod-week-select" id="week-btns"></div>
+  <div id="production-container"></div>
+</div>
+
+<!-- DAY DETAIL MODAL -->
+<div class="modal-overlay" id="day-modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div class="modal-title" id="modal-title"></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div class="modal-body" id="modal-body"></div>
+  </div>
+</div>
+
+<script>
+// ── CYCLE DATA ────────────────────────────────────────────────────────────────
+const CYCLE = [
+{day:1, week:1,
+ bf:{title:'Masala Egg White Bhurji',sub:'Ragi sourdough · green chutney',protein:'egg',kcal:390,prot:34,adv:[],allergens:['Egg','Gluten']},
+ sn:{title:'Roasted Makhana & Seed Mix',sub:'Ghee-roasted · sendha namak',protein:'plant',kcal:185,prot:8,adv:[],allergens:[]},
+ lu:{title:'Chettinad Chicken Thigh',sub:'Brown rice · raita · amaranth greens',protein:'chicken',kcal:565,prot:48,adv:['Marinate chicken 2hr+'],allergens:['Dairy']},
+ di:{title:'Seared Basa & Lentil Salad',sub:'Roasted cherry tomato · mustard vinaigrette',protein:'fish',kcal:420,prot:44,adv:['Cook lentils AM'],allergens:['Fish','Mustard']}},
+
+{day:2, week:1,
+ bf:{title:'Overnight Oats with Whey',sub:'Blueberries · chia · almonds',protein:'dairy',kcal:410,prot:36,adv:['Soak overnight'],allergens:['Gluten','Tree nuts','Dairy']},
+ sn:{title:'Steamed Edamame',sub:'Sea salt · lime',protein:'plant',kcal:160,prot:14,adv:[],allergens:['Soya']},
+ lu:{title:'Grilled Chicken Breast & Farro',sub:'Roasted pepper · basil oil · parmesan',protein:'chicken',kcal:560,prot:52,adv:['Pre-make basil oil'],allergens:['Gluten','Dairy']},
+ di:{title:'Prawn Moilee',sub:'Cauliflower rice · coconut broth · curry leaf',protein:'prawn',kcal:420,prot:42,adv:[],allergens:['Crustacean','Coconut']}},
+
+{day:3, week:1,
+ bf:{title:'Soft-Boiled Egg & Smashed Avocado',sub:'Multigrain sourdough · chilli · lemon',protein:'egg',kcal:420,prot:22,adv:[],allergens:['Egg','Gluten']},
+ sn:{title:'Cottage Cheese & Cucumber',sub:'Black pepper · olive oil',protein:'dairy',kcal:145,prot:18,adv:[],allergens:['Dairy']},
+ lu:{title:'Mutton Keema & Millet Roti',sub:'Dal tadka · pickled onion',protein:'lamb',kcal:580,prot:48,adv:['Quick-pickle onion'],allergens:['Gluten']},
+ di:{title:'Miso-Glazed Salmon',sub:'Bok choy · sesame-ginger dressing',protein:'salmon',kcal:450,prot:42,adv:['Marinate salmon 24HR PRIOR'],allergens:['Fish','Soya','Sesame']}},
+
+{day:4, week:1,
+ bf:{title:'Besan Chilla',sub:'Mint-coriander chutney · tomato',protein:'legume',kcal:380,prot:22,adv:[],allergens:['Legumes']},
+ sn:{title:'Mixed Nuts & Dark Chocolate',sub:'Walnut, almond, brazil · 85% chocolate',protein:'plant',kcal:195,prot:6,adv:[],allergens:['Tree nuts']},
+ lu:{title:'Grilled Tiger Prawns & Quinoa Tabbouleh',sub:'Pomegranate · herb oil',protein:'prawn',kcal:520,prot:46,adv:[],allergens:['Crustacean']},
+ di:{title:'Chicken Yakhni Broth',sub:'Shredded breast · flatbread · gremolata',protein:'chicken',kcal:400,prot:42,adv:['Make yakhni 4hr — Sunday prep'],allergens:['Gluten']}},
+
+{day:5, week:1,
+ bf:{title:'Poha with Groundnuts',sub:'Mustard seeds · curry leaf · coriander',protein:'plant',kcal:395,prot:14,adv:[],allergens:['Groundnuts']},
+ sn:{title:'Greek Yoghurt & Flaxseed',sub:'5g honey',protein:'dairy',kcal:175,prot:14,adv:[],allergens:['Dairy']},
+ lu:{title:'Egg Curry & Brown Rice',sub:'Green beans stir-fry · garlic',protein:'egg',kcal:520,prot:28,adv:['Pre-make tomato-onion base'],allergens:['Egg']},
+ di:{title:'Pan-Seared Chicken Thigh & Chickpea',sub:'Preserved lemon dressing · spinach',protein:'chicken',kcal:440,prot:44,adv:[],allergens:['Legumes']}},
+
+{day:6, week:1,
+ bf:{title:'Fermented Dosa',sub:'Sambar · coconut chutney',protein:'plant',kcal:380,prot:14,adv:['Ferment batter 18HR PRIOR'],allergens:['Legumes']},
+ sn:{title:'Apple & Almond Butter',sub:'Natural almond butter',protein:'plant',kcal:185,prot:5,adv:[],allergens:['Tree nuts']},
+ lu:{title:'Kerala Kingfish Curry',sub:'Matta red rice · stir-fried bitter gourd',protein:'fish',kcal:560,prot:46,adv:['Curry base day before'],allergens:['Fish','Coconut']},
+ di:{title:'Grilled Lamb Chop',sub:'White bean purée · mint gremolata · rocket',protein:'lamb',kcal:460,prot:44,adv:['Make bean purée in batch'],allergens:['Legumes']}},
+
+{day:7, week:1,
+ bf:{title:'Scrambled Eggs & Wilted Spinach',sub:'Smoked paprika · rye toast',protein:'egg',kcal:400,prot:28,adv:[],allergens:['Egg','Gluten','Dairy']},
+ sn:{title:'Roasted Chana',sub:'Chaat masala · lemon',protein:'legume',kcal:170,prot:10,adv:['Dry chickpeas 30min before roasting'],allergens:['Legumes']},
+ lu:{title:'Chicken Tikka & Quinoa Slaw',sub:'Raita · carrot-cabbage slaw',protein:'chicken',kcal:555,prot:50,adv:['Marinate 24HR PRIOR'],allergens:['Dairy','Mustard']},
+ di:{title:'Prawn & Asparagus Soba',sub:'Tamari · ginger · sesame',protein:'prawn',kcal:430,prot:38,adv:[],allergens:['Crustacean','Gluten','Sesame']}},
+
+{day:8, week:2,
+ bf:{title:'Idli with Gun Powder',sub:'Sambar · cold-press coconut oil',protein:'plant',kcal:370,prot:14,adv:['Ferment idli batter'],allergens:['Legumes']},
+ sn:{title:'Seeds & Dried Cranberry Mix',sub:'Sunflower · chia · walnut',protein:'plant',kcal:185,prot:7,adv:[],allergens:['Tree nuts']},
+ lu:{title:'Miso Black Cod',sub:'Edamame rice · pickled daikon · bonito broth',protein:'fish',kcal:520,prot:44,adv:['Marinate cod 3 DAYS PRIOR'],allergens:['Fish','Soya']},
+ di:{title:'Grilled Chicken Breast & Freekeh',sub:'Roasted beetroot · goat\'s cheese · walnut oil',protein:'chicken',kcal:540,prot:50,adv:['Roast beetroot batch','Toast freekeh'],allergens:['Dairy','Tree nuts','Gluten']}},
+
+{day:9, week:2,
+ bf:{title:'Banana Oat Protein Pancakes',sub:'Fresh banana · cinnamon · whey batter',protein:'dairy',kcal:420,prot:32,adv:[],allergens:['Gluten','Dairy','Egg']},
+ sn:{title:'Cheese & Rye Crispbread',sub:'Aged cheddar or paneer · 2 crispbreads',protein:'dairy',kcal:180,prot:10,adv:[],allergens:['Dairy','Gluten']},
+ lu:{title:'Thai Green Chicken Curry',sub:'Jasmine rice · Thai basil · lime',protein:'chicken',kcal:540,prot:44,adv:['Make paste from scratch'],allergens:['Crustacean (paste)','Gluten']},
+ di:{title:'Seared Yellowfin Tuna',sub:'White bean & roasted garlic purée · salsa verde',protein:'fish',kcal:460,prot:48,adv:['Freeze tuna -20°C 24hr if serving medium-rare'],allergens:['Fish','Legumes']}},
+
+{day:10, week:2,
+ bf:{title:'Egg White Omelette',sub:'Sun-dried tomato · feta · fresh herbs',protein:'egg',kcal:320,prot:32,adv:[],allergens:['Egg','Dairy']},
+ sn:{title:'Mango with Tajín',sub:'Fresh mango · lime · chaat masala',protein:'plant',kcal:120,prot:2,adv:[],allergens:[]},
+ lu:{title:'Grilled Lamb Seekh & Cauliflower Tabbouleh',sub:'Tahini yoghurt',protein:'lamb',kcal:520,prot:44,adv:['Make seekh mix day before'],allergens:['Sesame','Dairy']},
+ di:{title:'Prawn & Tofu Laksa',sub:'Rice noodles · coconut broth',protein:'prawn',kcal:480,prot:42,adv:['Make laksa paste from scratch'],allergens:['Crustacean','Soya','Coconut']}},
+
+{day:11, week:2,
+ bf:{title:'Congee with Poached Egg',sub:'Ginger · spring onion · sesame oil',protein:'egg',kcal:340,prot:18,adv:['Start brown rice congee 3hr prior'],allergens:['Egg','Sesame']},
+ sn:{title:'Steamed Edamame & Yuzu',sub:'Chilli flakes · yuzu or lime',protein:'plant',kcal:155,prot:13,adv:[],allergens:['Soya']},
+ lu:{title:'Chicken Piccata & Farro',sub:'Caperberry salsa · lemon butter · spinach',protein:'chicken',kcal:540,prot:46,adv:[],allergens:['Gluten','Dairy']},
+ di:{title:'Harissa Sea Bass & Vegetable Couscous',sub:'Pomegranate · mint yoghurt',protein:'fish',kcal:460,prot:44,adv:['Make harissa from scratch'],allergens:['Fish','Gluten','Dairy']}},
+
+{day:12, week:2,
+ bf:{title:'Smoothie Bowl',sub:'Protein blend · frozen berries · granola · cacao nibs',protein:'dairy',kcal:420,prot:32,adv:[],allergens:['Dairy','Gluten']},
+ sn:{title:'Hummus & Raw Vegetables',sub:'Carrot · celery · radish',protein:'legume',kcal:165,prot:7,adv:[],allergens:['Sesame','Legumes']},
+ lu:{title:'Vietnamese Beef Pho',sub:'Rice noodles · herbs · hoisin · bone broth',protein:'beef',kcal:500,prot:44,adv:['Broth 12HR — Sunday prep'],allergens:['Gluten','Soya']},
+ di:{title:'Miso Soup & Grilled Chicken Thigh',sub:'Steamed rice · pickled ginger',protein:'chicken',kcal:440,prot:44,adv:[],allergens:['Soya','Gluten']}},
+
+{day:13, week:2,
+ bf:{title:'Upma with Papaya',sub:'Mustard · curry leaf · cashew',protein:'plant',kcal:360,prot:10,adv:[],allergens:['Gluten','Tree nuts']},
+ sn:{title:'Peanut Butter & Rice Cake',sub:'Natural peanut butter · 2 cakes',protein:'legume',kcal:200,prot:7,adv:[],allergens:['Groundnuts']},
+ lu:{title:'Chilli Lime Chicken & Black Bean Salsa',sub:'Avocado · brown rice tortilla',protein:'chicken',kcal:540,prot:44,adv:[],allergens:['Legumes','Gluten']},
+ di:{title:'Lemon Herb Snapper En Papillote',sub:'Roasted fingerling potato · green bean amandine',protein:'fish',kcal:460,prot:44,adv:[],allergens:['Fish','Tree nuts']}},
+
+{day:14, week:2,
+ bf:{title:'Egg & Quinoa Power Bowl',sub:'2 poached eggs · avocado · dukkah',protein:'egg',kcal:440,prot:26,adv:[],allergens:['Egg','Tree nuts','Sesame']},
+ sn:{title:'Trail Mix',sub:'Almond · pumpkin seed · dark chocolate chips',protein:'plant',kcal:195,prot:6,adv:[],allergens:['Tree nuts']},
+ lu:{title:'Deconstructed Butter Chicken',sub:'Cashew-yoghurt sauce · millet',protein:'chicken',kcal:560,prot:48,adv:['Make cashew paste'],allergens:['Tree nuts','Dairy']},
+ di:{title:'Pan-Seared Duck Breast',sub:'Cherry jus · Puy lentils · roasted fennel',protein:'duck',kcal:480,prot:42,adv:['Cold-pan duck render technique — 8min render'],allergens:['Sulphites']}},
+
+{day:15, week:3,
+ bf:{title:'Ragi Mudde & Chicken Keema',sub:'Coconut chutney',protein:'chicken',kcal:420,prot:32,adv:['Make keema AM'],allergens:['Legumes']},
+ sn:{title:'Kefir & Walnuts',sub:'180ml kefir · 20g walnuts',protein:'dairy',kcal:185,prot:8,adv:[],allergens:['Dairy','Tree nuts']},
+ lu:{title:'Slow-Roasted Pork Tenderloin',sub:'Apple-fennel slaw · mustard-rosemary jus · barley',protein:'pork',kcal:520,prot:44,adv:['Brine pork overnight'],allergens:['Gluten','Mustard']},
+ di:{title:'Chettinad Egg Broth',sub:'2 poached eggs · vermicelli · curry leaf oil',protein:'egg',kcal:380,prot:22,adv:['Make Chettinad broth 2hr prior'],allergens:['Egg','Gluten']}},
+
+{day:16, week:3,
+ bf:{title:'Acai Bowl',sub:'Protein powder · almond milk · bee pollen · hemp · berries',protein:'dairy',kcal:380,prot:28,adv:[],allergens:['Dairy','Tree nuts']},
+ sn:{title:'Steamed Chicken Momos',sub:'3 pieces · ginger-soy dip',protein:'chicken',kcal:185,prot:14,adv:['Make momo filling AM','Steam only — never fry'],allergens:['Gluten','Soya']},
+ lu:{title:'Lamb Rogan Josh & Spinach Dal',sub:'Brown rice · pickled radish',protein:'lamb',kcal:560,prot:46,adv:['Marinate lamb 2hr+'],allergens:[]},
+ di:{title:'Cold Soba & Poached Prawn',sub:'Yuzu dressing · cucumber julienne · nori',protein:'prawn',kcal:380,prot:34,adv:['Serve soba at 8°C — resistant starch benefit'],allergens:['Crustacean','Gluten','Sesame']}},
+
+{day:17, week:3,
+ bf:{title:'Millet Congee & Shredded Chicken',sub:'Ginger · spring onion · white pepper',protein:'chicken',kcal:360,prot:26,adv:['Start millet congee 2hr prior'],allergens:[]},
+ sn:{title:'Boiled Egg & Cherry Tomatoes',sub:'Sea salt · olive oil',protein:'egg',kcal:145,prot:10,adv:[],allergens:['Egg']},
+ lu:{title:'Moroccan Chicken Tagine',sub:'Preserved lemon · olives · couscous · harissa',protein:'chicken',kcal:540,prot:44,adv:['Make harissa from scratch','Preserved lemon: rinse well'],allergens:['Gluten','Sulphites']},
+ di:{title:'Seared Scallops',sub:'Truffle pea purée · crispy pancetta · micro herbs',protein:'scallop',kcal:420,prot:36,adv:['DRY scallops 1HR prior — critical','Bake pancetta AM'],allergens:['Mollusc','Dairy','Pork']}},
+
+{day:18, week:3,
+ bf:{title:'French Omelette',sub:'Gruyère · fresh tarragon · sourdough',protein:'egg',kcal:420,prot:26,adv:[],allergens:['Egg','Dairy','Gluten']},
+ sn:{title:'Coconut Yoghurt & Passion Fruit',sub:'Toasted coconut flakes',protein:'plant',kcal:160,prot:4,adv:[],allergens:['Coconut']},
+ lu:{title:'Prawn Pad Thai',sub:'Rice noodles · egg · bean sprouts · peanut',protein:'prawn',kcal:520,prot:42,adv:['Make tamarind paste from scratch'],allergens:['Crustacean','Groundnuts','Egg','Gluten']},
+ di:{title:'Sous-Vide Chicken Thigh',sub:'Fermented miso glaze · steamed jasmine rice',protein:'chicken',kcal:480,prot:44,adv:['Sous-vide 65°C 2HR — can do 24hr ahead in bag'],allergens:['Soya','Gluten']}},
+
+{day:19, week:3,
+ bf:{title:'Protein French Toast',sub:'Whole egg + whey batter · berry compote',protein:'egg',kcal:440,prot:32,adv:[],allergens:['Egg','Gluten','Dairy']},
+ sn:{title:'Smoked Salmon & Cream Cheese',sub:'50g salmon · cucumber rounds · cream cheese',protein:'fish',kcal:185,prot:14,adv:[],allergens:['Fish','Dairy']},
+ lu:{title:'Japanese Chicken Karaage',sub:'Edamame rice · pickled cabbage · yoghurt kewpie',protein:'chicken',kcal:540,prot:44,adv:['Double-fry technique: 160°C then 190°C'],allergens:['Gluten','Soya','Dairy']},
+ di:{title:'Roasted Lamb Rack',sub:'Pistachio-herb crust · white bean purée · broccolini',protein:'lamb',kcal:520,prot:46,adv:['French bones','Apply pistachio crust last 5min only'],allergens:['Tree nuts','Legumes']}},
+
+{day:20, week:3,
+ bf:{title:'Kimchi Fried Brown Rice',sub:'1 egg · spring onion · sesame oil',protein:'egg',kcal:380,prot:18,adv:['Use day-old rice only'],allergens:['Egg','Gluten','Sesame']},
+ sn:{title:'Protein Shake',sub:'Whey 25g · almond milk · frozen banana · cacao',protein:'dairy',kcal:195,prot:26,adv:[],allergens:['Dairy','Tree nuts']},
+ lu:{title:'Butter-Basted Swordfish & Caponata',sub:'Farro · aubergine caponata · lemon',protein:'fish',kcal:520,prot:44,adv:['Make caponata previous day — improves overnight'],allergens:['Fish','Gluten','Dairy']},
+ di:{title:'Pork Belly',sub:'Apple purée · pickled red cabbage · jus · dauphinoise',protein:'pork',kcal:560,prot:38,adv:['Braise 6HR · press overnight · sear AM'],allergens:['Dairy','Sulphites']}},
+
+{day:21, week:3,
+ bf:{title:'Saboodana Khichdi',sub:'Groundnut · ghee · coriander',protein:'plant',kcal:380,prot:10,adv:['Soak tapioca 6hr minimum'],allergens:['Groundnuts']},
+ sn:{title:'Pistachios & Dried Apricot',sub:'25g pistachio · 3 apricots',protein:'plant',kcal:175,prot:6,adv:[],allergens:['Tree nuts']},
+ lu:{title:'Chilli Con Carne & Brown Rice',sub:'Sour cream · guacamole · pepitas',protein:'beef',kcal:540,prot:44,adv:['Drain fat after browning'],allergens:['Dairy','Legumes']},
+ di:{title:'Sea Bream En Papillote',sub:'Fennel · lemon · cherry tomato · white wine · olives',protein:'fish',kcal:400,prot:40,adv:[],allergens:['Fish','Sulphites']}},
+
+{day:22, week:4,
+ bf:{title:'Shakshuka',sub:'2 eggs · feta · sourdough · za\'atar',protein:'egg',kcal:420,prot:24,adv:['Cook tomato base 20min before adding eggs'],allergens:['Egg','Dairy','Gluten']},
+ sn:{title:'Matcha Latte & Cashews',sub:'Oat milk matcha · 20g cashews',protein:'plant',kcal:195,prot:6,adv:[],allergens:['Tree nuts']},
+ lu:{title:'Wagyu Beef Stir-Fry',sub:'Oyster mushroom · jasmine rice · dark soy · ginger',protein:'beef',kcal:520,prot:40,adv:['Flash-fry wagyu 45 sec only — do not overcook'],allergens:['Gluten','Soya']},
+ di:{title:'Beetroot-Crusted Salmon',sub:'Horseradish cream · watercress · lemon',protein:'salmon',kcal:460,prot:42,adv:['Make beetroot powder/crust AM'],allergens:['Fish','Dairy']}},
+
+{day:23, week:4,
+ bf:{title:'Tamago Gohan',sub:'Pasteurised egg · warm rice · dashi · soy',protein:'egg',kcal:360,prot:18,adv:['Use pasteurised egg only — raw serving'],allergens:['Egg','Gluten','Soya']},
+ sn:{title:'Kefir & Pumpkin Seeds',sub:'150ml kefir · 20g seeds',protein:'dairy',kcal:175,prot:9,adv:[],allergens:['Dairy']},
+ lu:{title:'Nihari (Lamb Shank)',sub:'Roti · julienned ginger · lemon',protein:'lamb',kcal:560,prot:44,adv:['8HR slow cook — Sunday prep mandatory'],allergens:['Gluten']},
+ di:{title:'Grilled King Prawn',sub:'Romesco sauce · patatas bravas · saffron aioli',protein:'prawn',kcal:480,prot:42,adv:['Char peppers for romesco directly on flame'],allergens:['Crustacean','Egg','Tree nuts']}},
+
+{day:24, week:4,
+ bf:{title:'Congee with Pork Floss',sub:'Century egg · spring onion · ginger',protein:'pork',kcal:380,prot:22,adv:['Slow-roast pork loin 120°C 4hr for floss'],allergens:['Egg']},
+ sn:{title:'Fresh Fig & Aged Cheddar',sub:'2 figs · 25g aged cheddar',protein:'dairy',kcal:175,prot:7,adv:[],allergens:['Dairy']},
+ lu:{title:'Chicken Mole Verde',sub:'Brown rice · avocado · tomatillo salsa · pepitas',protein:'chicken',kcal:540,prot:44,adv:['Toast pumpkin seeds and tomatillo together'],allergens:['Tree nuts']},
+ di:{title:'Flash-Seared Chicken Liver',sub:'Brioche toast · grape chutney · micro sorrel',protein:'chicken',kcal:380,prot:28,adv:['90 sec sear only — overcooking = bitter'],allergens:['Gluten','Dairy']}},
+
+{day:25, week:4,
+ bf:{title:'Turkish Menemen',sub:'2 eggs + 1 white · feta · isot biber · flatbread',protein:'egg',kcal:400,prot:26,adv:[],allergens:['Egg','Dairy','Gluten']},
+ sn:{title:'Bone Broth & Chia',sub:'200ml homemade bone broth · 5g chia',protein:'protein',kcal:95,prot:10,adv:['Make bone broth Sunday'],allergens:[]},
+ lu:{title:'Chirashi Bowl',sub:'Sashimi tuna & salmon · sushi rice · pickled ginger',protein:'fish',kcal:560,prot:46,adv:['Freeze fish -20°C 24HR — MANDATORY','Do not refrigerate sushi rice'],allergens:['Fish','Soya','Gluten','Sesame']},
+ di:{title:'Slow-Roasted Lamb Shoulder',sub:'Baba ganoush · pomegranate jus · za\'atar flatbread',protein:'lamb',kcal:520,prot:44,adv:['6HR roast at 130°C — must start day prior'],allergens:['Sesame','Gluten']}},
+
+{day:26, week:4,
+ bf:{title:'Bircher Muesli',sub:'Rolled oats · grated apple · yoghurt · chia · almonds',protein:'dairy',kcal:420,prot:18,adv:['Soak overnight'],allergens:['Gluten','Dairy','Tree nuts']},
+ sn:{title:'Tuna Tartare',sub:'50g sashimi tuna · avocado · sesame · lemon',protein:'fish',kcal:180,prot:16,adv:['Freeze tuna -20°C 24hr'],allergens:['Fish','Sesame']},
+ lu:{title:'Wagyu Short Rib',sub:'Gremolata · truffle oil · pomme purée',protein:'beef',kcal:580,prot:42,adv:['Braise 8HR · refrigerate · skim fat · reheat'],allergens:['Dairy']},
+ di:{title:'Vietnamese Bun Cha',sub:'Grilled pork patties · rice vermicelli · dipping broth · herbs',protein:'pork',kcal:440,prot:38,adv:['Charcoal-grill pork patties for authentic char'],allergens:['Gluten','Soya','Groundnuts']}},
+
+{day:27, week:4,
+ bf:{title:'Tamago Sando',sub:'Soft eggs · yoghurt mayo · Japanese milk bread',protein:'egg',kcal:440,prot:22,adv:['Steam eggs 13 min for jammy yolk'],allergens:['Egg','Gluten','Dairy']},
+ sn:{title:'Golden Milk & Walnuts',sub:'Oat milk turmeric · ginger · black pepper · walnuts',protein:'plant',kcal:195,prot:5,adv:[],allergens:['Tree nuts']},
+ lu:{title:'Roasted Spatchcock Chicken',sub:'Chimichurri · roasted sweet potato · bitter leaf',protein:'chicken',kcal:560,prot:48,adv:['Butterfly day before for even cooking'],allergens:[]},
+ di:{title:'Lobster Bisque',sub:'Sourdough crouton · crème fraîche · chive',protein:'shellfish',kcal:380,prot:24,adv:['Roast shells · cognac · double strain — day before'],allergens:['Crustacean','Dairy','Gluten','Sulphites']}},
+
+{day:28, week:4,
+ bf:{title:'Eggs Benedict — House Style',sub:'Cured salmon · buckwheat blini · yoghurt hollandaise',protein:'fish',kcal:450,prot:36,adv:['Cure salmon 3 DAYS PRIOR','Clarify butter AM','Blini day before'],allergens:['Fish','Egg','Dairy','Gluten']},
+ sn:{title:'Champagne Grape & Macadamia',sub:'Valrhona 85% chocolate · macadamia',protein:'plant',kcal:180,prot:3,adv:[],allergens:['Tree nuts']},
+ lu:{title:'Wagyu Sirloin MBS 6+',sub:'Duck fat potato · seasonal mushroom · bordelaise',protein:'beef',kcal:620,prot:48,adv:['Room temp wagyu 1HR — mandatory','Make bordelaise day before'],allergens:['Dairy','Sulphites']},
+ di:{title:'Dark Chocolate Mousse',sub:'Raspberry coulis · cocoa nibs — cycle closes',protein:'plant',kcal:360,prot:14,adv:['Set overnight — make day before'],allergens:['Egg','Dairy']}},
+];
+
+const WEEK_LABELS = {1:'Establish',2:'Expand',3:'Refine',4:'Peak'};
+const MEAL_ORDER = ['bf','sn','lu','di'];
+const MEAL_NAMES = {bf:'Breakfast',sn:'Snack',lu:'Lunch',di:'Dinner'};
+
+// ── CONFLICT DETECTION ────────────────────────────────────────────────────────
+function getConflicts(){
+  const conflicts = [];
+  // Check dinner proteins — no repeat in 4-day window
+  for(let i=0;i<CYCLE.length;i++){
+    const proto = CYCLE[i].di.protein;
+    for(let j=i+1;j<=i+3&&j<CYCLE.length;j++){
+      if(CYCLE[j].di.protein===proto && proto!=='plant' && proto!=='dairy' && proto!=='legume'){
+        conflicts.push({day:CYCLE[j].day, meal:'dinner', proto, within:CYCLE[j].day-CYCLE[i].day, prevDay:CYCLE[i].day});
+      }
+    }
+  }
+  return conflicts;
+}
+
+function getAdvanceItems(){
+  const items = [];
+  CYCLE.forEach(d=>{
+    MEAL_ORDER.forEach(m=>{
+      const meal = d[m];
+      if(meal.adv && meal.adv.length){
+        meal.adv.forEach(a=>{
+          const urgent = a.includes('PRIOR') || a.includes('mandatory') || a.includes('MANDATORY');
+          const type = a.toLowerCase().includes('3 days')||a.includes('3 DAYS')?'3-day':
+                       a.toLowerCase().includes('24hr')||a.includes('24HR')?'24hr':
+                       a.toLowerCase().includes('overnight')||a.toLowerCase().includes('18hr')||a.toLowerCase().includes('6hr')?'day-before':
+                       a.toLowerCase().includes('8hr')||a.toLowerCase().includes('6hr cook')?'day-before':'same-day';
+          items.push({day:d.day,week:d.week,meal:m,dish:meal.title,note:a,type,urgent});
+        });
+      }
+    });
+  });
+  return items;
+}
+
+// ── STATUS BAR ────────────────────────────────────────────────────────────────
+function renderStatus(){
+  const conflicts = getConflicts();
+  const adv = getAdvanceItems();
+  const critical = adv.filter(a=>a.urgent);
+  document.getElementById('status-bar').innerHTML = [
+    {n:'28',l:'Days planned',s:'Full cycle',ok:true},
+    {n:'112',l:'Unique dishes',s:'4 meals × 28 days',ok:true},
+    {n:conflicts.length,l:'Protein conflicts',s:conflicts.length?'Review needed':'All clear',warn:conflicts.length>0,ok:conflicts.length===0},
+    {n:critical.length,l:'Critical advance prep',s:'24hr+ lead required',warn:critical.length>0},
+    {n:adv.length,l:'Total advance items',s:'Across all 28 days',ok:true},
+  ].map(k=>`<div class="status-card${k.warn?' warn':k.ok?' ok':''}">
+    <div class="sc-num" style="color:${k.warn?'var(--re)':k.ok?'var(--gr)':'var(--ink)'}">${k.n}</div>
+    <div class="sc-label">${k.l}</div>
+    <div class="sc-sub">${k.s}</div>
+  </div>`).join('');
+}
+
+// ── CALENDAR ──────────────────────────────────────────────────────────────────
+function renderCalendar(){
+  const conflicts = getConflicts();
+  const conflictDays = new Set(conflicts.map(c=>c.day));
+  const advanceDays = new Set(CYCLE.filter(d=>[d.bf,d.sn,d.lu,d.di].some(m=>m.adv.length>0)).map(d=>d.day));
+  const weeks = [1,2,3,4];
+  let html = '';
+  weeks.forEach(w=>{
+    const days = CYCLE.filter(d=>d.week===w);
+    html += `<div class="week-header">
+      <span class="wh-num">Week ${w}</span>
+      <span class="wh-title">Cycle 01</span>
+      <span class="wh-badge wb${w}">Phase: ${WEEK_LABELS[w]}</span>
+    </div>
+    <div class="day-grid">`;
+    days.forEach(d=>{
+      const hasConflict = conflictDays.has(d.day);
+      const hasAdv = advanceDays.has(d.day);
+      const flagColor = hasConflict?'var(--re)':hasAdv?'var(--amber)':'var(--gr)';
+      html += `<div class="day-card${hasConflict?' has-conflict':hasAdv?' has-advance':''}" onclick="showDayModal(${d.day})">
+        <div class="dc-header">
+          <span class="dc-daynum">${String(d.day).padStart(2,'0')}</span>
+          <div class="dc-flags">
+            ${hasConflict?'<div class="dc-flag ff-conflict" title="Protein conflict"></div>':''}
+            ${hasAdv?'<div class="dc-flag ff-advance" title="Advance prep"></div>':''}
+            ${!hasConflict&&!hasAdv?'<div class="dc-flag ff-ok"></div>':''}
+          </div>
+        </div>
+        <div class="dc-meals">
+          ${MEAL_ORDER.map(m=>`<div class="dc-meal">
+            <div class="dm-dot dot-${m}"></div>
+            <div>
+              <div class="dm-text">${d[m].title}</div>
+              <div class="dm-protein">${d[m].protein}</div>
+            </div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  document.getElementById('calendar-container').innerHTML = html;
+}
+
+// ── CONFLICTS ─────────────────────────────────────────────────────────────────
+function renderConflicts(){
+  const conflicts = getConflicts();
+  const cont = document.getElementById('conflicts-container');
+  if(!conflicts.length){
+    cont.innerHTML = `<div class="no-conflicts">✓ No protein repeat conflicts detected across the 28-day dinner rotation. The cycle is clear.</div>`;
+    return;
+  }
+  cont.innerHTML = `<div class="conflicts-list">${conflicts.map(c=>`
+    <div class="conflict-item">
+      <div class="ci-day">Day ${c.day}</div>
+      <div class="ci-text">
+        <b>${c.proto.charAt(0).toUpperCase()+c.proto.slice(1)}</b> protein repeats at dinner.
+        Previous occurrence: Day ${c.prevDay} (${c.within} days prior — minimum gap should be 4 days).
+        <br>Consider substituting Day ${c.day} dinner protein with: ${getSuggestedSwap(c.proto)}.
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+function getSuggestedSwap(protein){
+  const swaps = {chicken:'fish or lamb',fish:'chicken or plant',prawn:'duck or beef',lamb:'prawn or fish',salmon:'chicken or plant',beef:'fish or pork'};
+  return swaps[protein]||'a different protein category';
+}
+
+// ── ADVANCE PREP ──────────────────────────────────────────────────────────────
+let advChecked = JSON.parse(localStorage.getItem('kosh-adv-checked')||'{}');
+function renderAdvance(){
+  const items = getAdvanceItems();
+  const weeks = [1,2,3,4];
+  let html = '';
+  weeks.forEach(w=>{
+    const wItems = items.filter(i=>i.week===w);
+    if(!wItems.length) return;
+    html += `<div class="advance-week">
+      <div class="week-header">
+        <span class="wh-num">Week ${w}</span>
+        <span class="wh-title">Phase: ${WEEK_LABELS[w]}</span>
+        <span class="wh-badge wb${w}">${wItems.filter(i=>i.urgent).length} critical</span>
+      </div>`;
+    const days = [...new Set(wItems.map(i=>i.day))].sort((a,b)=>a-b);
+    days.forEach(day=>{
+      const dayItems = wItems.filter(i=>i.day===day);
+      html += `<div class="advance-day-group">
+        <div class="adg-header">
+          <span class="adg-daynum">Day ${String(day).padStart(2,'0')}</span>
+          <span style="font-size:11px;color:var(--stone)">${dayItems.length} prep item${dayItems.length!==1?'s':''}</span>
+        </div>
+        <div class="adg-items">
+          ${dayItems.map(item=>{
+            const key = `${item.day}-${item.meal}-${item.note}`;
+            const checked = !!advChecked[key];
+            const leadCls = item.type==='3-day'?'lead-urgent':item.type==='24hr'?'lead-today':'lead-tomorrow';
+            const leadLabel = item.type==='3-day'?'3 DAYS':item.type==='24hr'?'24 HR':item.type==='day-before'?'DAY BEFORE':'SAME DAY';
+            return `<div class="adg-item${checked?' done':''}" id="adg-${key.replace(/[^a-z0-9]/gi,'_')}">
+              <span class="adg-lead ${leadCls}">${leadLabel}</span>
+              <div>
+                <div class="adg-name">${item.note}</div>
+                <div class="adg-dish">${MEAL_NAMES[item.meal]} — ${item.dish}</div>
+              </div>
+              <div class="pr-meal mr-${item.meal}">${MEAL_NAMES[item.meal]}</div>
+              <div class="adg-check${checked?' checked':''}" onclick="toggleAdv('${key}',this)">${checked?'✓':''}</div>
+            </div>`;
+          }).join('')}
+        </div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  document.getElementById('advance-container').innerHTML = html;
+}
+
+function toggleAdv(key, el){
+  advChecked[key] = !advChecked[key];
+  localStorage.setItem('kosh-adv-checked',JSON.stringify(advChecked));
+  const row = el.closest('.adg-item');
+  row.classList.toggle('done', !!advChecked[key]);
+  el.classList.toggle('checked', !!advChecked[key]);
+  el.textContent = advChecked[key]?'✓':'';
+}
+
+// ── PRODUCTION LIST ────────────────────────────────────────────────────────────
+let prodWeek = 1;
+function renderProduction(){
+  // Week buttons
+  document.getElementById('week-btns').innerHTML = [1,2,3,4].map(w=>`
+    <button class="prod-week-btn${w===prodWeek?' active':''}" onclick="setProdWeek(${w})">
+      Week ${w} — ${WEEK_LABELS[w]}
+    </button>`).join('');
+
+  const days = CYCLE.filter(d=>d.week===prodWeek);
+  const cont = document.getElementById('production-container');
+
+  // Summary
+  let totalMeals = days.length * 4;
+  let advCount = days.flatMap(d=>MEAL_ORDER.flatMap(m=>d[m].adv)).filter(a=>a).length;
+
+  let html = `<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px 16px;margin-bottom:12px;display:flex;gap:24px;flex-wrap:wrap">
+    <div><span style="font-family:var(--ff-d);font-size:22px;font-weight:600;color:var(--ink)">${days.length}</span><span style="font-size:11px;color:var(--stone);display:block;font-family:var(--ff-m);letter-spacing:.06em;text-transform:uppercase">Production days</span></div>
+    <div><span style="font-family:var(--ff-d);font-size:22px;font-weight:600;color:var(--ink)">${totalMeals}</span><span style="font-size:11px;color:var(--stone);display:block;font-family:var(--ff-m);letter-spacing:.06em;text-transform:uppercase">Total dishes</span></div>
+    <div><span style="font-family:var(--ff-d);font-size:22px;font-weight:600;color:var(--amber)">${advCount}</span><span style="font-size:11px;color:var(--stone);display:block;font-family:var(--ff-m);letter-spacing:.06em;text-transform:uppercase">Advance prep items</span></div>
+    <div style="margin-left:auto;align-self:center"><button class="btn btn-ghost" onclick="window.print()">🖨 Print Week ${prodWeek}</button></div>
+  </div>`;
+
+  // Protein summary for the week
+  const diProteins = days.map(d=>({day:d.day,protein:d.di.protein}));
+  html += `<div class="prod-section" style="margin-bottom:12px">
+    <div class="prod-section-head">
+      <span class="psh-title">Dinner protein rotation — Week ${prodWeek}</span>
+      <span style="font-size:11px;color:var(--stone)">No protein should repeat within 4 days</span>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;padding:10px 14px">
+      ${diProteins.map(p=>`<div style="text-align:center;padding:8px 12px;background:var(--bg);border:1px solid var(--border);border-radius:6px;min-width:70px">
+        <div style="font-family:var(--ff-d);font-size:16px;font-weight:600;color:var(--ink)">Day ${p.day}</div>
+        <div style="font-size:10px;font-family:var(--ff-m);color:var(--copper);margin-top:2px">${p.protein}</div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+
+  // Full production list by day
+  html += `<div class="prod-section">
+    <div class="prod-section-head"><span class="psh-title">Full production list — Week ${prodWeek} (Days ${days[0].day}–${days[days.length-1].day})</span></div>`;
+  days.forEach(d=>{
+    html += `<div style="border-bottom:1px solid var(--bg)">
+      <div style="padding:8px 14px;background:var(--bg);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px">
+        <span style="font-family:var(--ff-d);font-size:14px;font-weight:600;color:var(--copper)">Day ${String(d.day).padStart(2,'0')}</span>
+        <span style="font-size:10px;font-family:var(--ff-m);color:var(--stone)">Week ${d.week} · ${WEEK_LABELS[d.week]}</span>
+      </div>`;
+    MEAL_ORDER.forEach(m=>{
+      const meal = d[m];
+      html += `<div class="prod-row">
+        <span class="pr-meal mr-${m}">${MEAL_NAMES[m]}</span>
+        <div>
+          <div class="pr-title">${meal.title}</div>
+          <div style="font-size:10px;color:var(--stone)">${meal.sub}</div>
+          ${meal.adv.map(a=>`<div style="font-size:10px;color:var(--amber);margin-top:2px">⏰ ${a}</div>`).join('')}
+        </div>
+        <span class="pr-protein">${meal.protein}</span>
+        <div style="font-size:11px;font-family:var(--ff-m);color:var(--stone)">${meal.kcal} kcal</div>
+        <div style="font-size:11px;font-family:var(--ff-m);color:var(--copper)">${meal.prot}g protein</div>
+      </div>`;
+    });
+    html += '</div>';
+  });
+  html += '</div>';
+  cont.innerHTML = html;
+}
+
+function setProdWeek(w){ prodWeek=w; renderProduction(); }
+
+// ── DAY MODAL ─────────────────────────────────────────────────────────────────
+function showDayModal(day){
+  const d = CYCLE.find(x=>x.day===day);
+  if(!d) return;
+  const conflicts = getConflicts().filter(c=>c.day===day);
+  document.getElementById('modal-title').textContent = `Day ${String(day).padStart(2,'0')} · Week ${d.week} — ${WEEK_LABELS[d.week]}`;
+  let html = '';
+  MEAL_ORDER.forEach(m=>{
+    const meal = d[m];
+    const mealConflict = conflicts.find(c=>c.meal==='dinner'&&m==='di');
+    html += `<div class="modal-meal">
+      <div class="mm-header">
+        <span class="pr-meal mr-${m}">${MEAL_NAMES[m]}</span>
+        <span class="mm-title">${meal.title}</span>
+      </div>
+      <div class="mm-sub">${meal.sub}</div>
+      <div class="mm-macros">
+        <div class="mm-macro"><div class="mm-macro-val">${meal.kcal}</div><div class="mm-macro-label">kcal</div></div>
+        <div class="mm-macro"><div class="mm-macro-val">${meal.prot}g</div><div class="mm-macro-label">protein</div></div>
+        <div class="mm-macro"><div class="mm-macro-val">${meal.protein}</div><div class="mm-macro-label">source</div></div>
+      </div>
+      <div class="mm-alerts">
+        ${mealConflict?`<div class="mm-alert alert-conflict">⚠ ${meal.protein} protein repeated from Day ${mealConflict.prevDay}</div>`:''}
+        ${meal.adv.map(a=>`<div class="mm-alert alert-advance">⏰ ${a}</div>`).join('')}
+        ${meal.allergens.map(al=>`<div class="mm-alert alert-allergen">⚠ ${al}</div>`).join('')}
+      </div>
+    </div>`;
+  });
+  document.getElementById('modal-body').innerHTML = html;
+  document.getElementById('day-modal').classList.add('open');
+}
+function closeModal(){ document.getElementById('day-modal').classList.remove('open'); }
+document.getElementById('day-modal').addEventListener('click', e=>{ if(e.target===e.currentTarget) closeModal(); });
+
+// ── TAB SWITCHING ─────────────────────────────────────────────────────────────
+function showTab(name){
+  document.querySelectorAll('.main-tab').forEach((t,i)=>{
+    const names=['calendar','conflicts','advance','production'];
+    t.classList.toggle('active',names[i]===name);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('visible'));
+  document.getElementById('tab-'+name).classList.add('visible');
+  if(name==='conflicts') renderConflicts();
+  if(name==='advance') renderAdvance();
+  if(name==='production') renderProduction();
+}
+
+// ── INIT ─────────────────────────────────────────────────────────────────────
+renderStatus();
+renderCalendar();
+</script>
+</body>
+</html>

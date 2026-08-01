@@ -1,0 +1,2974 @@
+[
+  {
+    "id": "d1bf",
+    "day": 1,
+    "week": 1,
+    "meal": "bf",
+    "title": "Masala Egg White Bhurji",
+    "subtitle": "Ragi sourdough toast · green chutney",
+    "kcal": 390,
+    "prot": 34,
+    "carbs": 28,
+    "fat": 11,
+    "ingredients": [
+      {
+        "name": "Egg whites",
+        "qty": "8 (from 4 eggs)",
+        "note": "Save yolks for Day 28 hollandaise"
+      },
+      {
+        "name": "Shallots",
+        "qty": "60g",
+        "note": "Fine dice"
+      },
+      {
+        "name": "Green chilli",
+        "qty": "1 small",
+        "note": "Deseeded, minced"
+      },
+      {
+        "name": "Tomato",
+        "qty": "80g",
+        "note": "Concasse, no skin/seeds"
+      },
+      {
+        "name": "Fresh coriander",
+        "qty": "10g",
+        "note": "Rough chop, add last"
+      },
+      {
+        "name": "Turmeric",
+        "qty": "¼ tsp"
+      },
+      {
+        "name": "Cumin seeds",
+        "qty": "½ tsp"
+      },
+      {
+        "name": "Cold-press coconut oil",
+        "qty": "4g"
+      },
+      {
+        "name": "Ragi sourdough",
+        "qty": "1 slice (45g)"
+      },
+      {
+        "name": "Green chutney",
+        "qty": "25g",
+        "note": "Coriander-mint, pre-made"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Season whites",
+        "text": "Whisk whites lightly — do not over-aerate. Season with turmeric, salt, white pepper. Rest 2 min.",
+        "crits": []
+      },
+      {
+        "title": "Build base",
+        "text": "Cold pan, coconut oil, medium heat. Bloom cumin 20 sec. Add shallots — sweat 3 min until soft. Add chilli, tomato — cook 90 sec to remove moisture.",
+        "crits": []
+      },
+      {
+        "title": "Cook bhurji",
+        "text": "Pour whites over base. Fold continuously with silicone spatula on medium-low. Pull off heat when 80% set — residual heat finishes.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Never scramble hard — silky and just-set only"
+          }
+        ]
+      },
+      {
+        "title": "Finish",
+        "text": "Fold in coriander off heat. Taste salt. Toast ragi, serve immediately — bhurji waits for no one.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Egg",
+      "Gluten"
+    ],
+    "advance": [],
+    "plating": "Ragi toast diagonal on plate. Bhurji tumbled to one side, not spread. Chutney in small vessel alongside. Three coriander leaves. No garnish theatre."
+  },
+  {
+    "id": "d1sn",
+    "day": 1,
+    "week": 1,
+    "meal": "sn",
+    "title": "Roasted Makhana & Pumpkin Seed Mix",
+    "subtitle": "Ghee-roasted · sendha namak",
+    "kcal": 185,
+    "prot": 8,
+    "carbs": 16,
+    "fat": 10,
+    "ingredients": [
+      {
+        "name": "Fox nuts (makhana)",
+        "qty": "35g"
+      },
+      {
+        "name": "Pumpkin seeds",
+        "qty": "15g"
+      },
+      {
+        "name": "Ghee",
+        "qty": "4g"
+      },
+      {
+        "name": "Sendha namak",
+        "qty": "pinch"
+      },
+      {
+        "name": "Black pepper",
+        "qty": "pinch"
+      },
+      {
+        "name": "Medjool date",
+        "qty": "1 (20g)",
+        "note": "Pitted, pre-portioned"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Roast makhana",
+        "text": "Dry pan, medium heat. Toss makhana 3–4 min until they crisp and pop lightly. Remove.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Do not add ghee yet — dry roast first or they turn chewy"
+          }
+        ]
+      },
+      {
+        "title": "Toast seeds",
+        "text": "Same pan, add pumpkin seeds 60 sec. They will pop.",
+        "crits": []
+      },
+      {
+        "title": "Finish",
+        "text": "Toss together off heat with ghee, sendha namak, pepper. Cool completely before packaging — seals in crunch.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Must be fully cool before vessel — steam = soft makhana"
+          }
+        ]
+      }
+    ],
+    "allergens": [],
+    "advance": [],
+    "plating": "Small steel snack pot. Makhana mix filled. Date placed on top whole. Sealed."
+  },
+  {
+    "id": "d1lu",
+    "day": 1,
+    "week": 1,
+    "meal": "lu",
+    "title": "Chettinad Chicken Thigh",
+    "subtitle": "Steamed brown rice · cucumber raita · amaranth greens",
+    "kcal": 565,
+    "prot": 48,
+    "carbs": 50,
+    "fat": 16,
+    "ingredients": [
+      {
+        "name": "Chicken thigh (boneless)",
+        "qty": "150g",
+        "note": "Trimmed, scored twice"
+      },
+      {
+        "name": "Brown rice (cooked)",
+        "qty": "120g"
+      },
+      {
+        "name": "Yoghurt (full fat)",
+        "qty": "60g",
+        "note": "For raita"
+      },
+      {
+        "name": "Cucumber",
+        "qty": "40g",
+        "note": "Fine dice for raita"
+      },
+      {
+        "name": "Amaranth greens",
+        "qty": "60g"
+      },
+      {
+        "name": "Chettinad masala paste",
+        "qty": "40g",
+        "note": "Pre-made: kalpasi, marathi mokku, star anise, dried chilli"
+      },
+      {
+        "name": "Coconut oil",
+        "qty": "5g"
+      },
+      {
+        "name": "Curry leaf",
+        "qty": "6 leaves"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Marinate",
+        "text": "Coat thigh in Chettinad paste. Minimum 2hr refrigerated — overnight preferred.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "Min 2hr marinade — do not skip"
+          }
+        ]
+      },
+      {
+        "title": "Sear",
+        "text": "Cast iron, high heat, coconut oil. Sear thigh skin-side down 4 min. Do not move. Flip, 3 min.",
+        "crits": [
+          {
+            "type": "temp",
+            "text": "Internal: 74°C minimum"
+          }
+        ]
+      },
+      {
+        "title": "Rest",
+        "text": "Rest 4 min before slicing. While resting, wilt amaranth greens 60 sec in same pan with curry leaf.",
+        "crits": []
+      },
+      {
+        "title": "Raita",
+        "text": "Fold cucumber into yoghurt, cumin powder, salt. Make fresh — do not pre-make.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Dairy"
+    ],
+    "advance": [
+      "Marinate overnight",
+      "Pre-cook Chettinad paste batch (lasts 5 days refrigerated)"
+    ],
+    "plating": "Rice packed into small round mould, released to side. Thigh sliced 3 cuts, fanned. Greens tangle opposite. Raita in separate small vessel."
+  },
+  {
+    "id": "d1di",
+    "day": 1,
+    "week": 1,
+    "meal": "di",
+    "title": "Seared Basa & French Lentil Salad",
+    "subtitle": "Roasted cherry tomato · mustard vinaigrette",
+    "kcal": 420,
+    "prot": 44,
+    "carbs": 26,
+    "fat": 14,
+    "ingredients": [
+      {
+        "name": "Basa fillet",
+        "qty": "160g",
+        "note": "Dry thoroughly — moisture = no sear"
+      },
+      {
+        "name": "Puy lentils (cooked)",
+        "qty": "80g",
+        "note": "Dress warm"
+      },
+      {
+        "name": "Cherry tomatoes",
+        "qty": "60g",
+        "note": "Halved, roasted 180°C 10min"
+      },
+      {
+        "name": "Baby spinach",
+        "qty": "20g"
+      },
+      {
+        "name": "Dijon mustard",
+        "qty": "5g"
+      },
+      {
+        "name": "Red wine vinegar",
+        "qty": "8ml"
+      },
+      {
+        "name": "Olive oil",
+        "qty": "8ml"
+      },
+      {
+        "name": "Lemon",
+        "qty": "¼",
+        "note": "Zest and juice"
+      },
+      {
+        "name": "Cold-press olive oil",
+        "qty": "4ml",
+        "note": "Finish only"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Vinaigrette",
+        "text": "Whisk mustard, vinegar, salt, pepper. Stream in olive oil. Emulsify. Taste — should be sharp.",
+        "crits": []
+      },
+      {
+        "title": "Dress lentils warm",
+        "text": "Toss warm lentils in two-thirds of vinaigrette. They absorb better warm. Add cherry tomatoes.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Dress lentils warm — cold lentils reject dressing"
+          }
+        ]
+      },
+      {
+        "title": "Sear basa",
+        "text": "Cast iron, medium-high, no oil. Dry basa goes skin-side down on hot pan. 3 min, do not touch. Flip 2 min.",
+        "crits": [
+          {
+            "type": "temp",
+            "text": "Internal: 63°C"
+          }
+        ]
+      },
+      {
+        "title": "Plate",
+        "text": "Lentil salad base, spinach wilted briefly in pan. Basa placed. Lemon oil, zest. Remaining vinaigrette drizzle.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Fish",
+      "Mustard"
+    ],
+    "advance": [
+      "Cook lentil batch Mon AM — keeps 4 days"
+    ],
+    "plating": "Lentils as loose base — not mounded. Basa placed slightly off-centre. Spinach casually tucked. Clean plate edge."
+  },
+  {
+    "id": "d2bf",
+    "day": 2,
+    "week": 1,
+    "meal": "bf",
+    "title": "Overnight Oats with Whey",
+    "subtitle": "Blueberries · toasted almonds · chia",
+    "kcal": 410,
+    "prot": 36,
+    "carbs": 42,
+    "fat": 11,
+    "ingredients": [
+      {
+        "name": "Rolled oats",
+        "qty": "60g",
+        "note": "Not instant"
+      },
+      {
+        "name": "Whey protein (vanilla)",
+        "qty": "20g",
+        "note": "Stir in after soaking"
+      },
+      {
+        "name": "Almond milk (unsweetened)",
+        "qty": "150ml"
+      },
+      {
+        "name": "Chia seeds",
+        "qty": "10g"
+      },
+      {
+        "name": "Blueberries",
+        "qty": "50g"
+      },
+      {
+        "name": "Almond flakes (toasted)",
+        "qty": "10g"
+      },
+      {
+        "name": "Honey",
+        "qty": "5g"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Soak",
+        "text": "Combine oats, chia, almond milk night before. Refrigerate covered. Oats soften and chia gels overnight.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "Minimum 6hr soak — overnight ideal"
+          }
+        ]
+      },
+      {
+        "title": "Add protein",
+        "text": "Morning: stir in whey protein AFTER soaking. Mixing before can make oats gummy if whey is heat-processed variety.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Stir whey in cold — never add to hot oats (denatures protein)"
+          }
+        ]
+      },
+      {
+        "title": "Finish",
+        "text": "Top with blueberries, almonds, honey. Serve cold.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Gluten",
+      "Tree nuts",
+      "Dairy (whey)"
+    ],
+    "advance": [
+      "Make night before — must"
+    ],
+    "plating": "Tall vessel or bowl. Layered visible from side. Berries clustered. Almonds scattered. Honey drizzled last."
+  },
+  {
+    "id": "d2sn",
+    "day": 2,
+    "week": 1,
+    "meal": "sn",
+    "title": "Steamed Edamame",
+    "subtitle": "Sea salt · lime zest",
+    "kcal": 160,
+    "prot": 14,
+    "carbs": 12,
+    "fat": 6,
+    "ingredients": [
+      {
+        "name": "Edamame (podded)",
+        "qty": "100g",
+        "note": "Fresh or frozen — both fine"
+      },
+      {
+        "name": "Sea salt (flaked)",
+        "qty": "2g"
+      },
+      {
+        "name": "Lime",
+        "qty": "¼",
+        "note": "Zest only"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Steam",
+        "text": "Steam 4 min from frozen, 3 min fresh. Should be bright green, just tender.",
+        "crits": [
+          {
+            "type": "temp",
+            "text": "Do not boil — steaming retains colour and nutrients"
+          }
+        ]
+      },
+      {
+        "title": "Season",
+        "text": "Toss immediately with salt and lime zest while hot.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Soya"
+    ],
+    "advance": [],
+    "plating": "Small snack vessel. Salt visible on surface."
+  },
+  {
+    "id": "d2lu",
+    "day": 2,
+    "week": 1,
+    "meal": "lu",
+    "title": "Grilled Chicken Breast & Farro Salad",
+    "subtitle": "Roasted red pepper · basil oil · shaved parmesan",
+    "kcal": 560,
+    "prot": 52,
+    "carbs": 44,
+    "fat": 15,
+    "ingredients": [
+      {
+        "name": "Chicken breast",
+        "qty": "160g",
+        "note": "Pounded to even 2cm thickness"
+      },
+      {
+        "name": "Farro (cooked)",
+        "qty": "100g",
+        "note": "Semi-pearled, toasted dry before boiling"
+      },
+      {
+        "name": "Red pepper",
+        "qty": "80g",
+        "note": "Roasted, peeled, torn"
+      },
+      {
+        "name": "Basil",
+        "qty": "15g",
+        "note": "For basil oil"
+      },
+      {
+        "name": "Olive oil",
+        "qty": "15ml"
+      },
+      {
+        "name": "Parmesan",
+        "qty": "10g",
+        "note": "Shaved with peeler"
+      },
+      {
+        "name": "Lemon",
+        "qty": "½"
+      },
+      {
+        "name": "Garlic",
+        "qty": "1 clove",
+        "note": "For marinade"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Basil oil",
+        "text": "Blanch basil 10 sec, shock ice water. Blend with olive oil, strain. Make in batch.",
+        "crits": []
+      },
+      {
+        "title": "Grill chicken",
+        "text": "Brush with garlic-lemon marinade. Grill or griddle 4 min each side. Rest 3 min.",
+        "crits": [
+          {
+            "type": "temp",
+            "text": "Internal: 74°C"
+          }
+        ]
+      },
+      {
+        "title": "Farro salad",
+        "text": "Toss warm farro with roasted pepper, lemon juice, salt, pepper, basil oil.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Dress farro warm — flavour absorption is critical"
+          }
+        ]
+      },
+      {
+        "title": "Plate",
+        "text": "Farro base, sliced chicken over. Parmesan shaved tableside ideally. Basil oil drizzle.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Gluten",
+      "Dairy",
+      "Sulphites (pepper)"
+    ],
+    "advance": [
+      "Pre-make basil oil (3 days shelf life)",
+      "Roast peppers in batch"
+    ],
+    "plating": "Farro loose on plate, not packed. Chicken sliced on bias, fanned. Parmesan curls placed deliberately."
+  },
+  {
+    "id": "d2di",
+    "day": 2,
+    "week": 1,
+    "meal": "di",
+    "title": "Prawn Moilee",
+    "subtitle": "Cauliflower rice · fresh coconut milk broth · curry leaf oil",
+    "kcal": 420,
+    "prot": 42,
+    "carbs": 18,
+    "fat": 18,
+    "ingredients": [
+      {
+        "name": "Tiger prawns (cleaned)",
+        "qty": "180g",
+        "note": "16–20 count"
+      },
+      {
+        "name": "Cauliflower",
+        "qty": "180g",
+        "note": "Pulsed to rice size, dry-roasted"
+      },
+      {
+        "name": "Fresh coconut milk",
+        "qty": "120ml",
+        "note": "Not canned — fresh press preferred"
+      },
+      {
+        "name": "Turmeric",
+        "qty": "½ tsp"
+      },
+      {
+        "name": "Green chilli",
+        "qty": "2"
+      },
+      {
+        "name": "Shallots",
+        "qty": "60g"
+      },
+      {
+        "name": "Ginger",
+        "qty": "10g",
+        "note": "Julienne"
+      },
+      {
+        "name": "Curry leaf oil",
+        "qty": "8ml",
+        "note": "Pre-made: curry leaves blended with coconut oil"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Cauliflower rice",
+        "text": "Dry-roast pulsed cauliflower in dry pan until moisture gone and slight colour. Season. Set aside.",
+        "crits": []
+      },
+      {
+        "title": "Broth base",
+        "text": "Sweat shallots, ginger, chilli, turmeric in coconut oil. Do not brown. Add coconut milk, simmer 3 min.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Never boil coconut milk hard — splits and goes grainy"
+          }
+        ]
+      },
+      {
+        "title": "Cook prawns",
+        "text": "Add prawns to simmering broth. 2.5–3 min maximum. They are done when pink and just curled.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "Max 3 min — overcooked prawn is the #1 error"
+          }
+        ]
+      },
+      {
+        "title": "Plate",
+        "text": "Cauliflower rice base, prawns and broth ladled over. Curry leaf oil drizzle. Ginger julienne garnish.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Crustacean",
+      "Coconut"
+    ],
+    "advance": [
+      "Pre-make curry leaf oil (1 week)"
+    ],
+    "plating": "Cauli rice packed in small mould, released. Broth poured at table or at dispatch. Curry leaf oil in small vessel."
+  },
+  {
+    "id": "d3bf",
+    "day": 3,
+    "week": 1,
+    "meal": "bf",
+    "title": "Soft-Boiled Egg & Smashed Avocado",
+    "subtitle": "Multigrain sourdough · flaked chilli · lemon",
+    "kcal": 420,
+    "prot": 22,
+    "carbs": 30,
+    "fat": 24,
+    "ingredients": [
+      {
+        "name": "Eggs",
+        "qty": "2 whole"
+      },
+      {
+        "name": "Avocado (ripe)",
+        "qty": "70g",
+        "note": "Check ripeness day before"
+      },
+      {
+        "name": "Multigrain sourdough",
+        "qty": "1 slice (45g)"
+      },
+      {
+        "name": "Lemon",
+        "qty": "¼"
+      },
+      {
+        "name": "Chilli flakes",
+        "qty": "pinch"
+      },
+      {
+        "name": "Cold-press olive oil",
+        "qty": "4ml"
+      },
+      {
+        "name": "Flaked sea salt",
+        "qty": "pinch"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Boil eggs",
+        "text": "Boiling water, lower eggs gently. 6.5 min exactly for jammy yolk. Ice bath immediately 3 min.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "6.5 min exactly from boiling water — set timer"
+          }
+        ]
+      },
+      {
+        "title": "Avocado",
+        "text": "Smash with fork — not blended. Season with lemon, salt, olive oil. Texture should be rough.",
+        "crits": []
+      },
+      {
+        "title": "Toast",
+        "text": "Toast sourdough. Spread avocado. Halve eggs — yolk should flow slightly.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Egg",
+      "Gluten"
+    ],
+    "advance": [],
+    "plating": "Toast cut diagonal. Avocado generous. Both egg halves placed cut-side up. Chilli flakes, olive oil, salt visible."
+  },
+  {
+    "id": "d3sn",
+    "day": 3,
+    "week": 1,
+    "meal": "sn",
+    "title": "Cottage Cheese & Cucumber",
+    "subtitle": "Black pepper · cold-press olive oil",
+    "kcal": 145,
+    "prot": 18,
+    "carbs": 6,
+    "fat": 5,
+    "ingredients": [
+      {
+        "name": "Cottage cheese (low-fat)",
+        "qty": "130g"
+      },
+      {
+        "name": "Cucumber",
+        "qty": "80g",
+        "note": "Sliced 5mm rounds"
+      },
+      {
+        "name": "Black pepper",
+        "qty": "¼ tsp",
+        "note": "Freshly cracked"
+      },
+      {
+        "name": "Olive oil",
+        "qty": "3ml"
+      },
+      {
+        "name": "Sea salt",
+        "qty": "pinch"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Assemble",
+        "text": "Drain cottage cheese briefly if watery. Season with pepper, salt. Cucumber sliced and placed alongside.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Dairy"
+    ],
+    "advance": [],
+    "plating": "Cottage cheese on one side of vessel. Cucumber overlapping on other side. Pepper and oil on cheese."
+  },
+  {
+    "id": "d3lu",
+    "day": 3,
+    "week": 1,
+    "meal": "lu",
+    "title": "Slow-Braised Mutton Keema",
+    "subtitle": "Millet roti · dal tadka · pickled onion",
+    "kcal": 580,
+    "prot": 48,
+    "carbs": 48,
+    "fat": 18,
+    "ingredients": [
+      {
+        "name": "Lean lamb mince (90%)",
+        "qty": "130g"
+      },
+      {
+        "name": "Millet roti",
+        "qty": "2 (40g each)",
+        "note": "Pre-made or cook AM"
+      },
+      {
+        "name": "Masoor dal (cooked)",
+        "qty": "80g"
+      },
+      {
+        "name": "Onion",
+        "qty": "80g",
+        "note": "Fine dice for keema; thin slices for pickle"
+      },
+      {
+        "name": "Tomato",
+        "qty": "60g",
+        "note": "Concasse"
+      },
+      {
+        "name": "Ginger-garlic paste",
+        "qty": "15g"
+      },
+      {
+        "name": "Keema spice blend",
+        "qty": "8g",
+        "note": "Cumin, coriander, chilli, garam masala"
+      },
+      {
+        "name": "Red wine vinegar",
+        "qty": "10ml",
+        "note": "For pickle"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Brown mince",
+        "text": "Dry pan, high heat. Brown mince in two batches — do not crowd. Drain all fat after browning.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Drain fat after browning — 90% lean still releases fat"
+          }
+        ]
+      },
+      {
+        "title": "Build keema",
+        "text": "Sweat onion 5 min. Add ginger-garlic, 1 min. Add spice blend 30 sec. Add tomato, cook 3 min. Add mince, 100ml water, simmer 12 min covered.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "12 min simmer minimum — develops flavour"
+          }
+        ]
+      },
+      {
+        "title": "Quick pickle",
+        "text": "Thinly sliced onion, red wine vinegar, pinch sugar, salt. 15 min minimum.",
+        "crits": []
+      },
+      {
+        "title": "Dal tadka",
+        "text": "Cooked dal reheated with tarka of ghee, cumin, dried chilli, asafoetida.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Gluten (roti)"
+    ],
+    "advance": [
+      "Pickle can be made previous day"
+    ],
+    "plating": "Roti folded to side. Keema in centre vessel. Dal in separate small vessel. Pickle as condiment."
+  },
+  {
+    "id": "d3di",
+    "day": 3,
+    "week": 1,
+    "meal": "di",
+    "title": "Miso-Glazed Salmon",
+    "subtitle": "Steamed bok choy · sesame-ginger dressing · toasted sesame",
+    "kcal": 450,
+    "prot": 42,
+    "carbs": 18,
+    "fat": 24,
+    "ingredients": [
+      {
+        "name": "Salmon fillet (skin-on)",
+        "qty": "150g",
+        "note": "Saikyo miso marinated — 24hr minimum"
+      },
+      {
+        "name": "Saikyo miso",
+        "qty": "20g"
+      },
+      {
+        "name": "Mirin",
+        "qty": "10ml"
+      },
+      {
+        "name": "Sake",
+        "qty": "10ml"
+      },
+      {
+        "name": "Bok choy",
+        "qty": "100g",
+        "note": "Halved"
+      },
+      {
+        "name": "Sesame oil",
+        "qty": "5ml"
+      },
+      {
+        "name": "Fresh ginger",
+        "qty": "8g",
+        "note": "Grated for dressing"
+      },
+      {
+        "name": "Tamari",
+        "qty": "8ml"
+      },
+      {
+        "name": "Sesame seeds (toasted)",
+        "qty": "5g"
+      },
+      {
+        "name": "Rice vinegar",
+        "qty": "5ml"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Marinade (24hr prior)",
+        "text": "Mix miso, mirin, sake. Coat salmon completely. Refrigerate covered 24hr minimum — 48hr even better.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "24hr marinade non-negotiable — this is the dish"
+          }
+        ]
+      },
+      {
+        "title": "Cook salmon",
+        "text": "Wipe marinade off (sugar burns). Broil or grill 4–5 min skin side. 2–3 min flesh side. Centre should be just translucent.",
+        "crits": [
+          {
+            "type": "temp",
+            "text": "Internal: 55°C for medium — do not overcook"
+          }
+        ]
+      },
+      {
+        "title": "Bok choy",
+        "text": "Steam 3 min. Dress immediately with sesame oil, tamari, grated ginger, rice vinegar, sesame seeds.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Fish",
+      "Soya",
+      "Sesame",
+      "Gluten (tamari)"
+    ],
+    "advance": [
+      "Marinate salmon 24hr before — critical"
+    ],
+    "plating": "Bok choy halves placed. Salmon placed on top at angle. Sesame seeds scattered. Ginger-sesame dressing at table or in vessel."
+  },
+  {
+    "id": "d4bf",
+    "day": 4,
+    "week": 1,
+    "meal": "bf",
+    "title": "Besan Chilla",
+    "subtitle": "Mint-coriander chutney · sliced tomato",
+    "kcal": 380,
+    "prot": 22,
+    "carbs": 38,
+    "fat": 14,
+    "ingredients": [
+      {
+        "name": "Besan (chickpea flour)",
+        "qty": "80g"
+      },
+      {
+        "name": "Water",
+        "qty": "100ml",
+        "note": "Thick batter consistency"
+      },
+      {
+        "name": "Onion",
+        "qty": "30g",
+        "note": "Fine dice"
+      },
+      {
+        "name": "Green chilli",
+        "qty": "1"
+      },
+      {
+        "name": "Coriander",
+        "qty": "10g"
+      },
+      {
+        "name": "Ajwain",
+        "qty": "¼ tsp"
+      },
+      {
+        "name": "Turmeric",
+        "qty": "¼ tsp"
+      },
+      {
+        "name": "Coconut oil",
+        "qty": "6g"
+      },
+      {
+        "name": "Green chutney",
+        "qty": "30g"
+      },
+      {
+        "name": "Tomato",
+        "qty": "60g",
+        "note": "Sliced"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Batter",
+        "text": "Mix besan with water to thick batter. No lumps. Add onion, chilli, coriander, ajwain, turmeric, salt. Rest 5 min.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Thick batter only — thin batter absorbs more oil"
+          }
+        ]
+      },
+      {
+        "title": "Cook",
+        "text": "Non-stick or cast iron, medium heat, coconut oil. Pour batter, spread to 6mm. Cook 3 min until edges lift. Flip, 2 min.",
+        "crits": []
+      },
+      {
+        "title": "Serve",
+        "text": "Stack 3 chillas. Chutney alongside. Tomato sliced.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Legumes"
+    ],
+    "advance": [],
+    "plating": "Three chillas fanned. Chutney in small vessel. Tomato slices to side. Simple."
+  },
+  {
+    "id": "d4sn",
+    "day": 4,
+    "week": 1,
+    "meal": "sn",
+    "title": "Mixed Raw Nuts & Dark Chocolate",
+    "subtitle": "25g nuts · 15g 85% chocolate",
+    "kcal": 195,
+    "prot": 6,
+    "carbs": 10,
+    "fat": 16,
+    "ingredients": [
+      {
+        "name": "Walnut halves",
+        "qty": "8g"
+      },
+      {
+        "name": "Almonds (raw)",
+        "qty": "10g"
+      },
+      {
+        "name": "Brazil nuts",
+        "qty": "7g"
+      },
+      {
+        "name": "85% dark chocolate",
+        "qty": "15g",
+        "note": "1 square per subscriber — Valrhona or Lindt"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Portion",
+        "text": "Weigh precisely. This is a snack — accuracy matters for macros.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Use precision scale — nuts are calorie-dense"
+          }
+        ]
+      }
+    ],
+    "allergens": [
+      "Tree nuts"
+    ],
+    "advance": [],
+    "plating": "Mixed in snack vessel. Chocolate piece resting on top."
+  },
+  {
+    "id": "d4lu",
+    "day": 4,
+    "week": 1,
+    "meal": "lu",
+    "title": "Grilled Tiger Prawns & Quinoa Tabbouleh",
+    "subtitle": "Pomegranate · herb oil",
+    "kcal": 520,
+    "prot": 46,
+    "carbs": 42,
+    "fat": 14,
+    "ingredients": [
+      {
+        "name": "Tiger prawns (cleaned)",
+        "qty": "200g",
+        "note": "Butterfly for presentation"
+      },
+      {
+        "name": "Quinoa (cooked)",
+        "qty": "90g"
+      },
+      {
+        "name": "Flat-leaf parsley",
+        "qty": "20g",
+        "note": "Finely chopped"
+      },
+      {
+        "name": "Mint",
+        "qty": "10g"
+      },
+      {
+        "name": "Tomato",
+        "qty": "60g",
+        "note": "Fine dice"
+      },
+      {
+        "name": "Pomegranate seeds",
+        "qty": "20g"
+      },
+      {
+        "name": "Lemon juice",
+        "qty": "15ml"
+      },
+      {
+        "name": "Olive oil",
+        "qty": "10ml"
+      },
+      {
+        "name": "Garlic",
+        "qty": "1 clove"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Tabbouleh",
+        "text": "Mix cooled quinoa with herbs, tomato, lemon, olive oil, salt. Tabbouleh should be herb-heavy, not grain-heavy.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Parsley must dominate — not a quinoa salad with herbs"
+          }
+        ]
+      },
+      {
+        "title": "Grill prawns",
+        "text": "Butterfly prawns, brush with garlic-olive oil. Hot grill 2 min shell-side, 1 min flesh-side.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "Max 3 min total — pink and just curled"
+          }
+        ]
+      },
+      {
+        "title": "Plate",
+        "text": "Tabbouleh mounded. Prawns arranged over. Pomegranate seeds scattered. Herb oil drizzle.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Crustacean"
+    ],
+    "advance": [],
+    "plating": "Tabbouleh as loose mound. Prawns placed deliberately — not dumped. Pomegranate gives colour. Herb oil from height."
+  },
+  {
+    "id": "d4di",
+    "day": 4,
+    "week": 1,
+    "meal": "di",
+    "title": "Chicken Yakhni Broth",
+    "subtitle": "Shredded breast · torn flatbread · gremolata",
+    "kcal": 400,
+    "prot": 42,
+    "carbs": 28,
+    "fat": 10,
+    "ingredients": [
+      {
+        "name": "Chicken breast (poached)",
+        "qty": "100g",
+        "note": "From yakhni stock"
+      },
+      {
+        "name": "Yakhni broth",
+        "qty": "280ml",
+        "note": "4hr simmer — whole spices, no veg"
+      },
+      {
+        "name": "Whole wheat flatbread",
+        "qty": "½ (25g)"
+      },
+      {
+        "name": "Parsley",
+        "qty": "8g",
+        "note": "For gremolata"
+      },
+      {
+        "name": "Lemon zest",
+        "qty": "½ tsp"
+      },
+      {
+        "name": "Garlic",
+        "qty": "¼ clove",
+        "note": "Micro-grated"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Yakhni broth",
+        "text": "Whole chicken or carcass, cinnamon, cardamom, fennel seed, bay, whole black pepper. Cold water, bring to simmer, 4hr. Skim constantly. Strain, degrease. Should be golden and clear.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "4hr minimum — cannot be rushed"
+          }
+        ]
+      },
+      {
+        "title": "Gremolata",
+        "text": "Combine fine-chopped parsley, lemon zest, micro-grated garlic. Mix just before serving.",
+        "crits": []
+      },
+      {
+        "title": "Assemble",
+        "text": "Heat broth, taste salt — should be well-seasoned. Shred poached breast. Warm flatbread, tear. Ladle broth, top with chicken, gremolata, flatbread alongside.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Gluten"
+    ],
+    "advance": [
+      "Make yakhni broth Sunday — lasts 5 days or freeze"
+    ],
+    "plating": "Deep vessel. Broth first. Chicken shredded loosely on top. Gremolata scattered. Flatbread torn, placed to side of broth."
+  },
+  {
+    "id": "d5bf",
+    "day": 5,
+    "week": 1,
+    "meal": "bf",
+    "title": "Poha with Groundnuts",
+    "subtitle": "Mustard seeds · curry leaf · coriander",
+    "kcal": 395,
+    "prot": 14,
+    "carbs": 52,
+    "fat": 12,
+    "ingredients": [
+      {
+        "name": "Poha (thick flattened rice)",
+        "qty": "90g"
+      },
+      {
+        "name": "Roasted groundnuts",
+        "qty": "25g"
+      },
+      {
+        "name": "Onion",
+        "qty": "60g",
+        "note": "Fine slice"
+      },
+      {
+        "name": "Green chilli",
+        "qty": "1"
+      },
+      {
+        "name": "Mustard seeds",
+        "qty": "½ tsp"
+      },
+      {
+        "name": "Curry leaf",
+        "qty": "8 leaves"
+      },
+      {
+        "name": "Turmeric",
+        "qty": "¼ tsp"
+      },
+      {
+        "name": "Lemon",
+        "qty": "¼"
+      },
+      {
+        "name": "Coconut oil",
+        "qty": "5g"
+      },
+      {
+        "name": "Coriander",
+        "qty": "10g"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Rinse poha",
+        "text": "Rinse poha in colander under cold water 10 sec. Shake dry. Should be soft but not mushy.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Over-rinsing = mush. 10 seconds maximum."
+          }
+        ]
+      },
+      {
+        "title": "Tarka",
+        "text": "Coconut oil, mustard seeds — pop. Add curry leaf, chilli, onion. Sweat 3 min.",
+        "crits": []
+      },
+      {
+        "title": "Combine",
+        "text": "Add poha, turmeric, salt. Toss gently 2 min. Off heat, lemon juice, coriander, groundnuts.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Groundnuts"
+    ],
+    "advance": [],
+    "plating": "Packed lightly in vessel. Groundnuts visible. Coriander on top."
+  },
+  {
+    "id": "d5sn",
+    "day": 5,
+    "week": 1,
+    "meal": "sn",
+    "title": "Greek Yoghurt with Flaxseed",
+    "subtitle": "5g honey · light texture",
+    "kcal": 175,
+    "prot": 14,
+    "carbs": 18,
+    "fat": 5,
+    "ingredients": [
+      {
+        "name": "Greek yoghurt (full fat)",
+        "qty": "150g"
+      },
+      {
+        "name": "Honey",
+        "qty": "5g"
+      },
+      {
+        "name": "Ground flaxseed",
+        "qty": "10g"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Portion",
+        "text": "Yoghurt in vessel. Swirl honey on top. Dust flaxseed. Do not stir — subscriber mixes.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Dairy"
+    ],
+    "advance": [],
+    "plating": "Clean vessel. Honey swirl visible. Flaxseed dusted."
+  },
+  {
+    "id": "d5lu",
+    "day": 5,
+    "week": 1,
+    "meal": "lu",
+    "title": "Egg Curry & Brown Rice",
+    "subtitle": "Green beans stir-fry · garlic",
+    "kcal": 520,
+    "prot": 28,
+    "carbs": 54,
+    "fat": 18,
+    "ingredients": [
+      {
+        "name": "Eggs",
+        "qty": "3 whole",
+        "note": "Hard-boiled, halved or quartered"
+      },
+      {
+        "name": "Brown rice (cooked)",
+        "qty": "120g"
+      },
+      {
+        "name": "Green beans",
+        "qty": "80g"
+      },
+      {
+        "name": "Tomato-onion gravy",
+        "qty": "120g",
+        "note": "Pre-made base"
+      },
+      {
+        "name": "Cumin",
+        "qty": "½ tsp"
+      },
+      {
+        "name": "Coriander powder",
+        "qty": "1 tsp"
+      },
+      {
+        "name": "Chilli powder",
+        "qty": "½ tsp"
+      },
+      {
+        "name": "Coconut oil",
+        "qty": "5g"
+      },
+      {
+        "name": "Garlic",
+        "qty": "2 cloves",
+        "note": "For beans"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Eggs",
+        "text": "Cold eggs into boiling water, 9 min. Ice bath. Peel, halve. Score surface lightly for gravy absorption.",
+        "crits": []
+      },
+      {
+        "title": "Curry gravy",
+        "text": "Heat tomato-onion base, add spices, cook 2 min. Add 80ml water, simmer 5 min. Slide in eggs, spoon gravy over gently.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Gentle — eggs break easily once halved"
+          }
+        ]
+      },
+      {
+        "title": "Green beans",
+        "text": "High heat, coconut oil, sliced garlic 30 sec. Beans in, toss 3 min — should retain bite.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Egg"
+    ],
+    "advance": [
+      "Pre-make tomato-onion base in batch (week supply)"
+    ],
+    "plating": "Rice to one side. Egg curry portioned into vessel. Green beans alongside. Coriander over curry."
+  },
+  {
+    "id": "d5di",
+    "day": 5,
+    "week": 1,
+    "meal": "di",
+    "title": "Pan-Seared Chicken Thigh & Chickpea Salad",
+    "subtitle": "Preserved lemon dressing · spinach",
+    "kcal": 440,
+    "prot": 44,
+    "carbs": 28,
+    "fat": 16,
+    "ingredients": [
+      {
+        "name": "Chicken thigh (boneless)",
+        "qty": "150g"
+      },
+      {
+        "name": "Canned chickpeas",
+        "qty": "100g",
+        "note": "Rinse 30 min cold water — removes excess sodium"
+      },
+      {
+        "name": "Baby spinach",
+        "qty": "30g"
+      },
+      {
+        "name": "Preserved lemon",
+        "qty": "15g",
+        "note": "Rinse, remove pith, fine dice rind only"
+      },
+      {
+        "name": "Olive oil",
+        "qty": "8ml"
+      },
+      {
+        "name": "Red onion",
+        "qty": "30g",
+        "note": "Thin slice"
+      },
+      {
+        "name": "Cumin",
+        "qty": "¼ tsp"
+      },
+      {
+        "name": "Smoked paprika",
+        "qty": "¼ tsp"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Season thigh",
+        "text": "Pat dry. Season with cumin, smoked paprika, salt, pepper.",
+        "crits": []
+      },
+      {
+        "title": "Sear",
+        "text": "Cast iron, medium-high, no oil. Skin-side down, 5 min. Flip, 4 min. Rest 3 min.",
+        "crits": [
+          {
+            "type": "temp",
+            "text": "Internal: 74°C"
+          }
+        ]
+      },
+      {
+        "title": "Salad",
+        "text": "Toss chickpeas, spinach, red onion, preserved lemon, olive oil. Dress just before dispatch.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Dress just before sealing vessel — spinach wilts"
+          }
+        ]
+      }
+    ],
+    "allergens": [
+      "Legumes"
+    ],
+    "advance": [],
+    "plating": "Salad as base. Chicken thigh placed whole or sliced, showing sear colour. Preserved lemon pieces visible."
+  },
+  {
+    "id": "d6bf",
+    "day": 6,
+    "week": 1,
+    "meal": "bf",
+    "title": "Fermented Dosa",
+    "subtitle": "Sambar · coconut chutney",
+    "kcal": 380,
+    "prot": 14,
+    "carbs": 52,
+    "fat": 12,
+    "ingredients": [
+      {
+        "name": "Dosa batter (fermented)",
+        "qty": "180ml",
+        "note": "18hr minimum ferment — check bubbles"
+      },
+      {
+        "name": "Coconut oil",
+        "qty": "4g",
+        "note": "For griddle"
+      },
+      {
+        "name": "Sambar",
+        "qty": "100ml",
+        "note": "Pre-made, no palm oil"
+      },
+      {
+        "name": "Coconut chutney",
+        "qty": "30g",
+        "note": "Fresh ground"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Check batter",
+        "text": "Batter should be aerated and slightly sour-smelling. If flat, discard — under-fermented dosa has poor nutrition and texture.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Under-fermented batter = dense, nutritionally inferior dosa"
+          }
+        ]
+      },
+      {
+        "title": "Griddle",
+        "text": "Cast iron, medium-high. Wipe with coconut oil on cloth. Pour batter in centre, spread thin in concentric circles. 90 sec. Crisp underneath. Fold, serve.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "Spread within 10 seconds of pouring — batter sets fast"
+          }
+        ]
+      }
+    ],
+    "allergens": [
+      "Gluten (if wheat-added)",
+      "Legumes (in sambar)"
+    ],
+    "advance": [
+      "Ferment batter 18hr before — mandatory"
+    ],
+    "plating": "Dosa folded in triangle or roll. Sambar in small warm vessel. Chutney in small vessel. Serve immediately."
+  },
+  {
+    "id": "d6sn",
+    "day": 6,
+    "week": 1,
+    "meal": "sn",
+    "title": "Apple & Almond Butter",
+    "subtitle": "Natural almond butter · no added sugar",
+    "kcal": 185,
+    "prot": 5,
+    "carbs": 22,
+    "fat": 9,
+    "ingredients": [
+      {
+        "name": "Apple (medium)",
+        "qty": "1 (140g)",
+        "note": "Sliced, cored"
+      },
+      {
+        "name": "Almond butter (natural)",
+        "qty": "15g",
+        "note": "No sugar, no palm oil"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Prep",
+        "text": "Slice apple just before packing — squeeze lemon juice over slices to prevent browning.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Slice and lemon-dip within 30 min of dispatch"
+          }
+        ]
+      }
+    ],
+    "allergens": [
+      "Tree nuts"
+    ],
+    "advance": [],
+    "plating": "Almond butter in small sealed pot. Apple slices in vessel."
+  },
+  {
+    "id": "d6lu",
+    "day": 6,
+    "week": 1,
+    "meal": "lu",
+    "title": "Kerala Kingfish Curry",
+    "subtitle": "Matta red rice · stir-fried bitter gourd",
+    "kcal": 560,
+    "prot": 46,
+    "carbs": 54,
+    "fat": 14,
+    "ingredients": [
+      {
+        "name": "Kingfish (centre cut)",
+        "qty": "150g",
+        "note": "Fresh only — buy day of"
+      },
+      {
+        "name": "Matta red rice (cooked)",
+        "qty": "100g"
+      },
+      {
+        "name": "Bitter gourd",
+        "qty": "80g",
+        "note": "Thin rounds, salted 10 min, rinsed"
+      },
+      {
+        "name": "Coconut milk",
+        "qty": "80ml",
+        "note": "Fresh press preferred"
+      },
+      {
+        "name": "Kudampuli (Gamboge)",
+        "qty": "2 pieces"
+      },
+      {
+        "name": "Shallots",
+        "qty": "50g"
+      },
+      {
+        "name": "Curry leaf",
+        "qty": "10 leaves"
+      },
+      {
+        "name": "Green chilli",
+        "qty": "2"
+      },
+      {
+        "name": "Coconut oil",
+        "qty": "6g"
+      },
+      {
+        "name": "Turmeric",
+        "qty": "½ tsp"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Curry base",
+        "text": "Coconut oil, shallots, curry leaf, green chilli. Sweat 3 min. Add turmeric, kudampuli soaked in 50ml warm water. Add coconut milk, simmer 5 min.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Never boil coconut milk fast — simmer only"
+          }
+        ]
+      },
+      {
+        "title": "Add fish",
+        "text": "Slide fish in gently. Spoon curry over. Cover, 6–7 min depending on thickness.",
+        "crits": [
+          {
+            "type": "temp",
+            "text": "Fish cooked through — opaque, flakes easily"
+          }
+        ]
+      },
+      {
+        "title": "Bitter gourd",
+        "text": "Rinse salted rings, pat dry. Shallow-fry in coconut oil 4 min until slightly caramelised.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Fish",
+      "Coconut"
+    ],
+    "advance": [
+      "Make curry base day before — fish added fresh AM"
+    ],
+    "plating": "Rice in vessel. Fish curry spooned generously. Bitter gourd as side showing caramel colour."
+  },
+  {
+    "id": "d6di",
+    "day": 6,
+    "week": 1,
+    "meal": "di",
+    "title": "Grilled Lamb Chop",
+    "subtitle": "White bean purée · mint gremolata · rocket",
+    "kcal": 460,
+    "prot": 44,
+    "carbs": 22,
+    "fat": 22,
+    "ingredients": [
+      {
+        "name": "Lamb loin chop (trimmed)",
+        "qty": "150g",
+        "note": "French the bone"
+      },
+      {
+        "name": "White beans (cannellini)",
+        "qty": "100g",
+        "note": "Cooked, no cream"
+      },
+      {
+        "name": "Garlic",
+        "qty": "2 cloves"
+      },
+      {
+        "name": "Olive oil",
+        "qty": "10ml"
+      },
+      {
+        "name": "Flat-leaf parsley",
+        "qty": "8g"
+      },
+      {
+        "name": "Mint",
+        "qty": "5g"
+      },
+      {
+        "name": "Lemon",
+        "qty": "¼"
+      },
+      {
+        "name": "Rocket",
+        "qty": "15g"
+      },
+      {
+        "name": "Rosemary",
+        "qty": "1 sprig"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Bean purée",
+        "text": "Blend cooked beans with roasted garlic, olive oil, lemon juice. Add cooking liquor to adjust — no cream. Season well.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Use cooking liquor not cream — same richness, correct macros"
+          }
+        ]
+      },
+      {
+        "title": "Gremolata",
+        "text": "Fine-chop parsley, mint, lemon zest, raw garlic. Combine. Make fresh only.",
+        "crits": []
+      },
+      {
+        "title": "Grill chop",
+        "text": "Room temperature lamb. Season. Grill or cast iron 3 min each side for medium-rare.",
+        "crits": [
+          {
+            "type": "temp",
+            "text": "Internal: 60°C for medium-rare · 65°C medium"
+          }
+        ]
+      },
+      {
+        "title": "Rest",
+        "text": "Rest 4 min minimum. Serve on purée.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "Rest time non-negotiable — juices redistribute"
+          }
+        ]
+      }
+    ],
+    "allergens": [
+      "Legumes"
+    ],
+    "advance": [
+      "Make bean purée in batch (3 days)"
+    ],
+    "plating": "Purée swiped across plate or vessel. Lamb chop placed on purée, bone upright. Gremolata on meat. Rocket loosely placed. No extra sauce."
+  },
+  {
+    "id": "d7bf",
+    "day": 7,
+    "week": 1,
+    "meal": "bf",
+    "title": "Scrambled Eggs & Wilted Spinach",
+    "subtitle": "Smoked paprika · rye toast",
+    "kcal": 400,
+    "prot": 28,
+    "carbs": 28,
+    "fat": 18,
+    "ingredients": [
+      {
+        "name": "Whole eggs",
+        "qty": "3"
+      },
+      {
+        "name": "Butter (unsalted)",
+        "qty": "6g"
+      },
+      {
+        "name": "Baby spinach",
+        "qty": "40g"
+      },
+      {
+        "name": "Smoked paprika",
+        "qty": "¼ tsp"
+      },
+      {
+        "name": "Rye bread",
+        "qty": "1 slice (40g)"
+      },
+      {
+        "name": "Crème fraîche",
+        "qty": "10g",
+        "note": "Optional — adds luxury"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Scramble (French method)",
+        "text": "Whisk eggs, salt, white pepper. Medium pan, butter, low heat. Eggs in — fold continuously with silicone spatula. Remove from heat periodically. Slow and silky — 5 min process.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Never rush scrambled eggs — low heat, continuous folding"
+          }
+        ]
+      },
+      {
+        "title": "Spinach",
+        "text": "While eggs rest off heat, wilt spinach 60 sec in same pan. Season.",
+        "crits": []
+      },
+      {
+        "title": "Finish",
+        "text": "Fold crème fraîche into eggs off heat. Toast rye. Smoked paprika dusted.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Egg",
+      "Gluten",
+      "Dairy"
+    ],
+    "advance": [],
+    "plating": "Toast to side. Eggs tumbled onto plate — soft, not flat. Spinach arranged. Paprika dusted from height."
+  },
+  {
+    "id": "d7sn",
+    "day": 7,
+    "week": 1,
+    "meal": "sn",
+    "title": "Roasted Chana",
+    "subtitle": "Chaat masala · lemon",
+    "kcal": 170,
+    "prot": 10,
+    "carbs": 24,
+    "fat": 4,
+    "ingredients": [
+      {
+        "name": "Chickpeas (canned)",
+        "qty": "80g",
+        "note": "Dried completely — 30 min on paper towel"
+      },
+      {
+        "name": "Coconut oil",
+        "qty": "3g"
+      },
+      {
+        "name": "Chaat masala",
+        "qty": "½ tsp"
+      },
+      {
+        "name": "Lemon",
+        "qty": "¼"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Dry chickpeas",
+        "text": "Rinse, drain, spread on paper towel 30 min. DRY is critical — moisture = steam = soft.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Must be bone-dry before roasting"
+          }
+        ]
+      },
+      {
+        "title": "Roast",
+        "text": "200°C oven, 25 min, toss halfway. Should be golden and crunchy.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "25 min at 200°C — check at 20, every oven differs"
+          }
+        ]
+      },
+      {
+        "title": "Season",
+        "text": "Hot from oven: toss with chaat masala, lemon juice. Cool before packaging.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Legumes"
+    ],
+    "advance": [
+      "Can make 2-day batch — store airtight"
+    ],
+    "plating": "Snack vessel. Simple."
+  },
+  {
+    "id": "d7lu",
+    "day": 7,
+    "week": 1,
+    "meal": "lu",
+    "title": "Chicken Tikka & Quinoa Slaw",
+    "subtitle": "Raw carrot-cabbage slaw · raita",
+    "kcal": 555,
+    "prot": 50,
+    "carbs": 42,
+    "fat": 16,
+    "ingredients": [
+      {
+        "name": "Chicken thigh (boneless)",
+        "qty": "160g",
+        "note": "24hr yoghurt marinade"
+      },
+      {
+        "name": "Yoghurt",
+        "qty": "50g",
+        "note": "For marinade + raita"
+      },
+      {
+        "name": "Quinoa (cooked)",
+        "qty": "80g"
+      },
+      {
+        "name": "Cabbage",
+        "qty": "60g",
+        "note": "Fine shred"
+      },
+      {
+        "name": "Carrot",
+        "qty": "40g",
+        "note": "Julienne"
+      },
+      {
+        "name": "Tikka masala spice",
+        "qty": "8g",
+        "note": "Cumin, coriander, chilli, kasuri methi"
+      },
+      {
+        "name": "Mustard oil",
+        "qty": "5ml",
+        "note": "For marinade — traditional"
+      },
+      {
+        "name": "Lemon",
+        "qty": "¼"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Marinate (24hr)",
+        "text": "Score chicken, mix yoghurt, tikka spices, mustard oil, salt. Coat, refrigerate overnight.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "24hr marinade — less is noticeably inferior"
+          }
+        ]
+      },
+      {
+        "title": "Cook",
+        "text": "Very hot grill or cast iron. High heat. Char slightly — tikka should have colour. 4 min each side.",
+        "crits": [
+          {
+            "type": "temp",
+            "text": "Internal: 74°C. Char is flavour — do not be afraid of colour"
+          }
+        ]
+      },
+      {
+        "title": "Slaw",
+        "text": "Toss cabbage, carrot, quinoa with lemon, salt, a touch of olive oil. Light and crunchy.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Dairy",
+      "Mustard"
+    ],
+    "advance": [
+      "Marinate overnight"
+    ],
+    "plating": "Slaw as base. Tikka pieces placed with visible char marks. Raita in small vessel. No extra sauce."
+  },
+  {
+    "id": "d7di",
+    "day": 7,
+    "week": 1,
+    "meal": "di",
+    "title": "Prawn & Asparagus Soba",
+    "subtitle": "Tamari · ginger · sesame",
+    "kcal": 430,
+    "prot": 38,
+    "carbs": 44,
+    "fat": 12,
+    "ingredients": [
+      {
+        "name": "Tiger prawns (cleaned)",
+        "qty": "180g"
+      },
+      {
+        "name": "Soba noodles",
+        "qty": "60g dry",
+        "note": "Rinse under cold water after cooking"
+      },
+      {
+        "name": "Asparagus",
+        "qty": "80g",
+        "note": "Add last 90 seconds only"
+      },
+      {
+        "name": "Tamari",
+        "qty": "15ml"
+      },
+      {
+        "name": "Fresh ginger",
+        "qty": "12g",
+        "note": "Fine grate"
+      },
+      {
+        "name": "Sesame oil",
+        "qty": "6ml"
+      },
+      {
+        "name": "Spring onion",
+        "qty": "20g"
+      },
+      {
+        "name": "Sesame seeds",
+        "qty": "5g",
+        "note": "Toasted"
+      },
+      {
+        "name": "Chilli oil",
+        "qty": "3ml",
+        "note": "Optional heat"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Soba",
+        "text": "Boil 4 min. Drain, rinse cold water thoroughly — stops cooking, removes starch. Set aside.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Rinse cold — hot soba continues cooking and becomes gluey"
+          }
+        ]
+      },
+      {
+        "title": "Wok",
+        "text": "Very hot wok. Sesame oil, ginger 20 sec. Prawns, 2 min. Asparagus, 90 sec. Tamari.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "Asparagus: 90 seconds — no more. Retains bite and colour."
+          }
+        ]
+      },
+      {
+        "title": "Combine",
+        "text": "Toss in soba. Off heat. Spring onion, sesame seeds, chilli oil.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Crustacean",
+      "Gluten",
+      "Soya",
+      "Sesame"
+    ],
+    "advance": [],
+    "plating": "Noodles in deep vessel, tossed loosely. Prawns and asparagus visible on top. Sesame and spring onion. Clean and unfussy."
+  },
+  {
+    "id": "d8di",
+    "day": 8,
+    "week": 2,
+    "meal": "di",
+    "title": "Grilled Chicken Breast & Freekeh Salad",
+    "subtitle": "Roasted beetroot · goat's cheese · walnut oil",
+    "kcal": 540,
+    "prot": 50,
+    "carbs": 40,
+    "fat": 18,
+    "ingredients": [
+      {
+        "name": "Chicken breast",
+        "qty": "150g"
+      },
+      {
+        "name": "Freekeh (cooked)",
+        "qty": "90g",
+        "note": "Toast dry before boiling — nutty flavour"
+      },
+      {
+        "name": "Beetroot (roasted)",
+        "qty": "80g",
+        "note": "180°C 35min, skin on"
+      },
+      {
+        "name": "Goat's cheese",
+        "qty": "20g",
+        "note": "Crumble at service"
+      },
+      {
+        "name": "Walnut oil",
+        "qty": "8ml"
+      },
+      {
+        "name": "Baby spinach",
+        "qty": "20g"
+      },
+      {
+        "name": "Red wine vinegar",
+        "qty": "8ml"
+      },
+      {
+        "name": "Walnuts",
+        "qty": "10g",
+        "note": "Toasted and roughly broken"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Freekeh",
+        "text": "Toast dry in pan 2 min. Boil in salted water, 20 min. Nutty, chewy texture — do not overcook.",
+        "crits": []
+      },
+      {
+        "title": "Dress salad",
+        "text": "Warm freekeh, roasted beetroot (torn, not sliced), walnut oil, red wine vinegar, salt. Toss spinach in at last moment.",
+        "crits": []
+      },
+      {
+        "title": "Grill chicken",
+        "text": "Pounded to even thickness. Season. Grill 4 min each side.",
+        "crits": [
+          {
+            "type": "temp",
+            "text": "Internal: 74°C"
+          }
+        ]
+      },
+      {
+        "title": "Plate",
+        "text": "Salad base, chicken sliced. Goat's cheese crumbled. Walnuts scattered. Walnut oil last.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Dairy",
+      "Tree nuts",
+      "Gluten"
+    ],
+    "advance": [
+      "Roast beetroot in batch",
+      "Toast freekeh in batch"
+    ],
+    "plating": "Organic, not composed. Beetroot stains are welcome — they show it's real. Cheese crumbled visibly."
+  },
+  {
+    "id": "d14di",
+    "day": 14,
+    "week": 2,
+    "meal": "di",
+    "title": "Pan-Seared Duck Breast",
+    "subtitle": "Cherry jus · Puy lentils · roasted fennel",
+    "kcal": 480,
+    "prot": 42,
+    "carbs": 28,
+    "fat": 22,
+    "ingredients": [
+      {
+        "name": "Duck breast",
+        "qty": "130g",
+        "note": "Score fat crosshatch, 1cm depth"
+      },
+      {
+        "name": "Puy lentils (cooked)",
+        "qty": "90g"
+      },
+      {
+        "name": "Fennel bulb",
+        "qty": "80g",
+        "note": "Wedges, roasted 200°C 20min"
+      },
+      {
+        "name": "Dried cherries",
+        "qty": "15g",
+        "note": "For jus"
+      },
+      {
+        "name": "Red wine",
+        "qty": "40ml",
+        "note": "For jus reduction"
+      },
+      {
+        "name": "Chicken stock",
+        "qty": "80ml"
+      },
+      {
+        "name": "Thyme",
+        "qty": "2 sprigs"
+      },
+      {
+        "name": "Red wine vinegar",
+        "qty": "5ml",
+        "note": "Dress lentils warm"
+      },
+      {
+        "name": "Shallot",
+        "qty": "20g",
+        "note": "For jus"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Score and start cold",
+        "text": "Scored duck breast goes COLD PAN. No oil. Medium heat. Fat renders out slowly over 8 min. Pour off fat halfway.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Cold pan only — hot pan seizes fat without rendering it"
+          }
+        ]
+      },
+      {
+        "title": "Sear flesh side",
+        "text": "Flip, increase heat. 3 min for medium-rare.",
+        "crits": [
+          {
+            "type": "temp",
+            "text": "Internal: 58°C medium-rare · 63°C medium"
+          }
+        ]
+      },
+      {
+        "title": "Rest",
+        "text": "Rest 6 min minimum — critical for duck.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "6 min rest — non-negotiable. Duck tightens fast."
+          }
+        ]
+      },
+      {
+        "title": "Cherry jus",
+        "text": "In same pan: shallot, deglaze red wine, reduce by half. Add stock, cherries, thyme. Reduce to glossy consistency.",
+        "crits": []
+      },
+      {
+        "title": "Lentils",
+        "text": "Dress warm with red wine vinegar, olive oil, salt.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Sulphites (wine)"
+    ],
+    "advance": [
+      "Make jus base without cherries — add fresh"
+    ],
+    "plating": "Lentils spooned. Fennel wedge. Duck sliced 4 cuts at angle, fanned. Jus poured carefully — not drowning."
+  },
+  {
+    "id": "d17di",
+    "day": 17,
+    "week": 3,
+    "meal": "di",
+    "title": "Seared Scallops",
+    "subtitle": "Truffle pea purée · crispy pancetta · micro herbs",
+    "kcal": 420,
+    "prot": 36,
+    "carbs": 18,
+    "fat": 22,
+    "ingredients": [
+      {
+        "name": "King scallops (dry)",
+        "qty": "5 large (150g)",
+        "note": "DRY on paper towel 1hr before service"
+      },
+      {
+        "name": "Fresh peas or frozen",
+        "qty": "120g"
+      },
+      {
+        "name": "Black truffle oil",
+        "qty": "3ml",
+        "note": "Finish only — does not survive heat"
+      },
+      {
+        "name": "Pancetta (thin sliced)",
+        "qty": "10g",
+        "note": "Bake 180°C until crisp"
+      },
+      {
+        "name": "Butter",
+        "qty": "8g"
+      },
+      {
+        "name": "Garlic",
+        "qty": "½ clove"
+      },
+      {
+        "name": "Micro herbs",
+        "qty": "3g",
+        "note": "Pea shoots or micro basil"
+      },
+      {
+        "name": "Lemon",
+        "qty": "¼"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Pea purée",
+        "text": "Blanch peas 2 min, shock. Blend with butter, garlic, salt. Strain for silk texture. Add truffle oil only at plating.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Do not heat after truffle oil — heat destroys truffle compounds"
+          }
+        ]
+      },
+      {
+        "title": "Dry scallops",
+        "text": "DRY on paper towel minimum 1hr. Completely dry surface = sear. Any moisture = steam.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "This step cannot be skipped — moisture prevents searing"
+          }
+        ]
+      },
+      {
+        "title": "Sear scallops",
+        "text": "COLD DRY PAN, high heat, no oil. Place scallops — do not touch for 90 seconds. Golden crust will form. Flip, 60 seconds. Add butter, baste.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "90 sec + 60 sec. Done. Overcooked scallop is a crime."
+          }
+        ]
+      },
+      {
+        "title": "Plate",
+        "text": "Purée dotted. Scallops placed on dots. Pancetta crumbled. Micro herbs. Truffle oil from height last.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Mollusc",
+      "Dairy",
+      "Pork"
+    ],
+    "advance": [
+      "Dry scallops 1hr before",
+      "Bake pancetta AM"
+    ],
+    "plating": "Three dots of purée. One scallop per dot. Pancetta scattered. Micro herbs placed individually. Truffle oil — 3 drops maximum."
+  },
+  {
+    "id": "d18di",
+    "day": 18,
+    "week": 3,
+    "meal": "di",
+    "title": "Sous-Vide Chicken Thigh",
+    "subtitle": "Fermented miso glaze · steamed jasmine rice",
+    "kcal": 480,
+    "prot": 44,
+    "carbs": 40,
+    "fat": 14,
+    "ingredients": [
+      {
+        "name": "Chicken thigh (boneless, skin-on)",
+        "qty": "150g"
+      },
+      {
+        "name": "White miso",
+        "qty": "15g"
+      },
+      {
+        "name": "Mirin",
+        "qty": "10ml"
+      },
+      {
+        "name": "Sake",
+        "qty": "8ml"
+      },
+      {
+        "name": "Jasmine rice (cooked)",
+        "qty": "80g"
+      },
+      {
+        "name": "Spring onion",
+        "qty": "15g"
+      },
+      {
+        "name": "Sesame seeds",
+        "qty": "3g"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Sous-vide",
+        "text": "Vacuum seal chicken thigh. Cook 65°C, 2hr in circulator.",
+        "crits": [
+          {
+            "type": "temp",
+            "text": "65°C for 2hr — food-safe and perfectly moist"
+          }
+        ]
+      },
+      {
+        "title": "Miso glaze",
+        "text": "Mix miso, mirin, sake. Simmer 2 min to cook off alcohol.",
+        "crits": []
+      },
+      {
+        "title": "Glaze and finish",
+        "text": "Remove from bag, pat dry. Brush with miso glaze. Salamander or very hot grill 2–3 min to caramelise glaze.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Miso glaze burns fast — watch constantly under salamander"
+          }
+        ]
+      }
+    ],
+    "allergens": [
+      "Soya",
+      "Gluten"
+    ],
+    "advance": [
+      "Sous-vide can be done 24hr ahead — refrigerate in bag, glaze and grill AM"
+    ],
+    "plating": "Rice packed, released. Chicken placed, glaze lacquered and glossy. Spring onion chiffonade. Sesame scattered."
+  },
+  {
+    "id": "d25lu",
+    "day": 25,
+    "week": 4,
+    "meal": "lu",
+    "title": "Chirashi Bowl",
+    "subtitle": "Sashimi-grade tuna & salmon · sushi rice · pickled ginger",
+    "kcal": 560,
+    "prot": 46,
+    "carbs": 54,
+    "fat": 14,
+    "ingredients": [
+      {
+        "name": "Sashimi-grade tuna",
+        "qty": "80g",
+        "note": "Frozen -20°C 24hr for parasite kill — mandatory"
+      },
+      {
+        "name": "Sashimi-grade salmon",
+        "qty": "60g",
+        "note": "Same freezing protocol"
+      },
+      {
+        "name": "Sushi rice (cooked)",
+        "qty": "70g",
+        "note": "Seasoned with rice vinegar, mirin, salt"
+      },
+      {
+        "name": "Avocado",
+        "qty": "40g",
+        "note": "Thin slice"
+      },
+      {
+        "name": "Cucumber",
+        "qty": "30g",
+        "note": "Thin rounds"
+      },
+      {
+        "name": "Pickled ginger",
+        "qty": "10g"
+      },
+      {
+        "name": "Nori",
+        "qty": "½ sheet",
+        "note": "Cut into strips"
+      },
+      {
+        "name": "Sesame seeds",
+        "qty": "3g"
+      },
+      {
+        "name": "Soy sauce (tamari)",
+        "qty": "10ml",
+        "note": "Serve alongside"
+      },
+      {
+        "name": "Wasabi",
+        "qty": "2g",
+        "note": "Optional"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Fish protocol",
+        "text": "MANDATORY: All raw fish must be frozen at -20°C for minimum 24hr. Thaw in refrigerator the night before service. Do not rush-thaw.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Parasite kill: -20°C 24hr non-negotiable for raw fish"
+          }
+        ]
+      },
+      {
+        "title": "Slice fish",
+        "text": "Slice tuna against grain, 5mm. Salmon slightly thicker, 7mm. Cold knife, cold fish.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Fish must be cold when slicing — warm fish tears"
+          }
+        ]
+      },
+      {
+        "title": "Sushi rice",
+        "text": "Season cooked rice with rice vinegar mix while warm. Fan to cool — do not refrigerate (hardens rice).",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Never refrigerate sushi rice — it hardens and loses texture"
+          }
+        ]
+      },
+      {
+        "title": "Assemble",
+        "text": "Rice as base. Arrange fish, avocado, cucumber artfully — this is visual. Pickled ginger, nori strips, sesame. Tamari alongside.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Fish",
+      "Soya",
+      "Gluten",
+      "Sesame"
+    ],
+    "advance": [
+      "Freeze fish 24hr before",
+      "Make sushi rice AM — do not refrigerate"
+    ],
+    "plating": "This is the most visual lunch of the cycle. Each element placed deliberately. Colour contrast matters. No dumping."
+  },
+  {
+    "id": "d28bf",
+    "day": 28,
+    "week": 4,
+    "meal": "bf",
+    "title": "Eggs Benedict — House Style",
+    "subtitle": "Cured salmon · buckwheat blini · yoghurt hollandaise · micro dill",
+    "kcal": 450,
+    "prot": 36,
+    "carbs": 30,
+    "fat": 22,
+    "ingredients": [
+      {
+        "name": "Eggs",
+        "qty": "2",
+        "note": "Poached — use freshest eggs available"
+      },
+      {
+        "name": "House-cured salmon",
+        "qty": "60g",
+        "note": "3-day cure: salt, sugar, dill, lemon"
+      },
+      {
+        "name": "Buckwheat blini",
+        "qty": "2 (30g each)",
+        "note": "Pre-made — reheat gently"
+      },
+      {
+        "name": "Greek yoghurt",
+        "qty": "60g",
+        "note": "For hollandaise base"
+      },
+      {
+        "name": "Egg yolks",
+        "qty": "2",
+        "note": "From Day 1 saved whites"
+      },
+      {
+        "name": "Lemon",
+        "qty": "¼"
+      },
+      {
+        "name": "Butter (clarified)",
+        "qty": "20g"
+      },
+      {
+        "name": "Micro dill",
+        "qty": "2g"
+      },
+      {
+        "name": "Cayenne",
+        "qty": "pinch"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Cure salmon (3 days prior)",
+        "text": "Mix equal salt and sugar, dill, lemon zest. Pack around salmon fillet. Refrigerate 48–72hr. Rinse, slice thin.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "Start cure 3 days before Day 28"
+          }
+        ]
+      },
+      {
+        "title": "Yoghurt hollandaise",
+        "text": "Whisk yolks over bain-marie until ribbon stage. Off heat, stream clarified butter slowly. Fold in Greek yoghurt. Season with lemon, cayenne, salt. Keep warm at 55°C only.",
+        "crits": [
+          {
+            "type": "temp",
+            "text": "Never exceed 65°C — eggs scramble. Bain-marie only."
+          }
+        ]
+      },
+      {
+        "title": "Poach eggs",
+        "text": "Deep water with vinegar. Gentle simmer. Fresh egg cracked into small cup, slid in. 3 min. Drain on towel.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "3 min exactly for runny yolk"
+          }
+        ]
+      },
+      {
+        "title": "Plate",
+        "text": "Blini on plate. Salmon draped. Egg placed. Hollandaise spooned. Micro dill placed. This is Day 28 — it must be the best plate of the cycle.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Day 28: set the standard for Cycle 02"
+          }
+        ]
+      }
+    ],
+    "allergens": [
+      "Fish",
+      "Egg",
+      "Dairy",
+      "Gluten"
+    ],
+    "advance": [
+      "Cure salmon 3 days prior",
+      "Clarify butter AM",
+      "Blini can be made day before"
+    ],
+    "plating": "The most composed plate of the cycle. Everything placed with intent. Hollandaise pooled, not poured. Dill placed, not scattered."
+  },
+  {
+    "id": "d28sn",
+    "day": 28,
+    "week": 4,
+    "meal": "sn",
+    "title": "Champagne Grape & Macadamia",
+    "subtitle": "Single Valrhona 85% square",
+    "kcal": 180,
+    "prot": 3,
+    "carbs": 14,
+    "fat": 13,
+    "ingredients": [
+      {
+        "name": "Champagne grapes",
+        "qty": "80g",
+        "note": "Tiny clusters — leave on stem"
+      },
+      {
+        "name": "Macadamia nuts (raw)",
+        "qty": "20g"
+      },
+      {
+        "name": "Valrhona 85% dark chocolate",
+        "qty": "10g",
+        "note": "Single square — best chocolate of the cycle"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Portion",
+        "text": "This is Day 28. Every detail counts. Weigh precisely. Use the best chocolate available.",
+        "crits": []
+      }
+    ],
+    "allergens": [
+      "Tree nuts"
+    ],
+    "advance": [],
+    "plating": "Small cluster of grapes on stem. Macadamias beside. Chocolate square placed last. This snack should feel like a gift."
+  },
+  {
+    "id": "d28lu",
+    "day": 28,
+    "week": 4,
+    "meal": "lu",
+    "title": "Wagyu Sirloin MBS 6+",
+    "subtitle": "Duck fat potato · seasonal mushroom · bordelaise jus",
+    "kcal": 620,
+    "prot": 48,
+    "carbs": 38,
+    "fat": 30,
+    "ingredients": [
+      {
+        "name": "Wagyu sirloin (MBS 6+)",
+        "qty": "120g",
+        "note": "Room temp 1hr before cooking — mandatory"
+      },
+      {
+        "name": "Potato (roasting)",
+        "qty": "80g",
+        "note": "1 tsp duck fat, 200°C 30min"
+      },
+      {
+        "name": "Seasonal mushroom",
+        "qty": "60g",
+        "note": "Shiitake, oyster, or seasonal choice"
+      },
+      {
+        "name": "Beef stock",
+        "qty": "100ml",
+        "note": "Good quality — bordelaise base"
+      },
+      {
+        "name": "Red wine",
+        "qty": "40ml"
+      },
+      {
+        "name": "Shallot",
+        "qty": "20g"
+      },
+      {
+        "name": "Thyme",
+        "qty": "2 sprigs"
+      },
+      {
+        "name": "Butter",
+        "qty": "8g",
+        "note": "Finish jus and baste"
+      },
+      {
+        "name": "Duck fat",
+        "qty": "5g",
+        "note": "For potatoes — not a health food, a statement"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Potatoes",
+        "text": "Par-boil 8 min. Drain, shake in pot to rough edges. Toss with duck fat, salt. Roast 200°C 30 min, turn once.",
+        "crits": []
+      },
+      {
+        "title": "Bordelaise jus",
+        "text": "Sweat shallot, add red wine, reduce by 75%. Add beef stock, thyme, reduce to glossy. Finish with cold butter (monter au beurre).",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Do not boil after butter — jus will break"
+          }
+        ]
+      },
+      {
+        "title": "Wagyu — room temperature",
+        "text": "Wagyu must be at room temperature 1hr before cooking. Cold wagyu = uneven fat render.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "1hr room temp mandatory — this cannot be skipped"
+          }
+        ]
+      },
+      {
+        "title": "Sear wagyu",
+        "text": "Cast iron maximum heat. Dry pan — wagyu has its own fat. 2 min each side. Continuous basting with butter and thyme.",
+        "crits": [
+          {
+            "type": "temp",
+            "text": "Internal: 52°C rare · 57°C medium-rare. Rest 5 min."
+          }
+        ]
+      }
+    ],
+    "allergens": [
+      "Dairy",
+      "Sulphites"
+    ],
+    "advance": [
+      "Make bordelaise base day before",
+      "Potatoes can be par-boiled AM"
+    ],
+    "plating": "This is the peak of the cycle. Potato to one side. Mushrooms sautéed and placed. Wagyu sliced 3 cuts — do not slice more. Jus poured at last moment. No garnish theatre. The meat speaks."
+  },
+  {
+    "id": "d28di",
+    "day": 28,
+    "week": 4,
+    "meal": "di",
+    "title": "Dark Chocolate Mousse",
+    "subtitle": "Raspberry coulis · cocoa nibs — the cycle closes",
+    "kcal": 360,
+    "prot": 14,
+    "carbs": 28,
+    "fat": 20,
+    "ingredients": [
+      {
+        "name": "Valrhona 70% chocolate",
+        "qty": "60g",
+        "note": "Melt with care"
+      },
+      {
+        "name": "Greek yoghurt",
+        "qty": "80g",
+        "note": "Replaces cream — same texture"
+      },
+      {
+        "name": "Egg whites",
+        "qty": "2",
+        "note": "Whipped to stiff peaks"
+      },
+      {
+        "name": "Honey",
+        "qty": "8g"
+      },
+      {
+        "name": "Vanilla",
+        "qty": "¼ tsp"
+      },
+      {
+        "name": "Fresh raspberries",
+        "qty": "40g",
+        "note": "For coulis"
+      },
+      {
+        "name": "Cocoa nibs",
+        "qty": "5g"
+      }
+    ],
+    "steps": [
+      {
+        "title": "Temper chocolate",
+        "text": "Melt chocolate to 45°C. Cool to 32°C before adding yoghurt. Do not rush.",
+        "crits": [
+          {
+            "type": "temp",
+            "text": "Chocolate at 32°C when folding — above this, yoghurt splits"
+          }
+        ]
+      },
+      {
+        "title": "Combine",
+        "text": "Fold yoghurt into tempered chocolate. Gentle — do not deflate.",
+        "crits": []
+      },
+      {
+        "title": "Egg whites",
+        "text": "Whip to stiff peaks. Fold into chocolate mix in three stages. Gentle J-fold.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Fold, never stir — stirring collapses the mousse"
+          }
+        ]
+      },
+      {
+        "title": "Set",
+        "text": "Pour into vessels. Refrigerate overnight. Do not freeze.",
+        "crits": [
+          {
+            "type": "time",
+            "text": "Minimum 4hr set — overnight preferred"
+          }
+        ]
+      },
+      {
+        "title": "Raspberry coulis",
+        "text": "Blend raspberries, pass through fine strainer. Season with honey, lemon.",
+        "crits": []
+      },
+      {
+        "title": "The last dish",
+        "text": "This is Day 28, Cycle 01. The mousse should be the most indulgent thing the subscriber has received. It earns its place. Cocoa nibs, coulis, and serve.",
+        "crits": [
+          {
+            "type": "warn",
+            "text": "Day 28 dinner sets the memory of the entire cycle"
+          }
+        ]
+      }
+    ],
+    "allergens": [
+      "Egg",
+      "Dairy"
+    ],
+    "advance": [
+      "Set mousse night before — must"
+    ],
+    "plating": "Mousse in steel vessel, set. Coulis drizzled in one gesture. Cocoa nibs scattered. No decoration beyond this. Restraint is the point."
+  }
+]

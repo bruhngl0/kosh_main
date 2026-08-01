@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: kosh-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: kosh
+      POSTGRES_PASSWORD: kosh
+      POSTGRES_DB: kosh
+    ports:
+      - "55432:5432"
+    volumes:
+      - kosh-postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U kosh -d kosh"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  kosh-postgres-data:
