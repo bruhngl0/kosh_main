@@ -24,6 +24,7 @@ The three HTML prototypes in the repository root are the product specification w
 | `Kosh_Recipe_Database.html` | Per-dish execution cards: ingredients with prep notes, method steps with critical controls, allergens, plating | Recipes module |
 | `Kosh_Inventory.html` | Ingredient master, vendor directory, par levels, stock, purchasing, vendor outreach, food-cost P&L, vessel kits | Inventory + Procurement + Vendors + Vessels modules |
 | `Kosh_Cash_Flow.html` | Cash ledger with running balance, weekly view, charts, fixed-cost reminders, danger flags | Finance module (`/finance`) |
+| `koshOnboarding` (separate app) | Applicants, the apply form, confirmation | Feeds the Subscribers module via BR-23 |
 
 ---
 
@@ -169,6 +170,15 @@ Fully received purchase orders in the month (by IST receipt date) can be importe
 
 ### BR-22 — Fixed costs
 Recurring monthly costs are reminders, never auto-posted. One counts as paid for a month when an expense was posted from it, or an expense's description contains its name. Posting is refused if that cost is already posted in the month. Fixed costs are deactivated, not deleted.
+
+### BR-23 — Onboarding creates subscribers
+`koshOnboarding` owns applicants; this app owns the roster. When an admin confirms a submission there, it calls `PUT /integrations/onboarding/subscribers/:submissionId` here with `Authorization: Bearer <ONBOARDING_SYNC_TOKEN>`. The call is keyed on the submission id (`subscribers.external_ref`, unique), so retries and concurrent calls create exactly one subscriber. The first sync creates it with status `onboarding` and source `onboarding`; later syncs refresh contact, delivery and dietary fields and the profile, and **never** touch status, plan, start date or ops notes — those belong to operations. The onboarding form's "delivery plan" (Single/Multi Slot) is a delivery slot, not a pricing plan; the pricing plan is assigned here. A valid token resolves to a dedicated `INTEGRATION` user whose only capability is `subscribers:sync`, so the audit trail attributes every synced change. Reverting a submission to pending in onboarding does not end the subscriber; that is an operations decision.
+
+### BR-24 — Subscriber status
+`onboarding` (confirmed, not yet receiving meals) → `active` → `paused` → `ended`, enforced by a `CHECK` constraint. Any move is allowed — people pause, return, and rejoin. Subscribers are never deleted; vessel kits and history reference them.
+
+### BR-25 — Capacity
+A seat is held by `onboarding`, `active` and `paused` subscribers; only `ended` frees one. Capacity defaults to 40 and is set with `SUBSCRIBER_CAPACITY`. Over capacity is flagged, not blocked.
 
 ---
 
@@ -454,6 +464,15 @@ The request ID appears in both the response and the server log line, so a user r
 | `PATCH` / `DELETE` | `/finance/recurring-costs/:id` | Edit / deactivate |
 | `POST` | `/finance/recurring-costs/:id/post` | Log as paid for a month (BR-22) |
 
+**Subscribers**
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` / `POST` | `/subscribers` | Roster with capacity summary (BR-25) / add manually |
+| `GET` / `PATCH` | `/subscribers/:id` | Detail with kits / edit status, plan, contact, diet (BR-24) |
+| `GET` | `/subscription-plans` | Active pricing plans |
+| `PUT` | `/integrations/onboarding/subscribers/:submissionId` | Service-token upsert from the onboarding app (BR-23) |
+
 **Vessels and reference**
 
 | Method | Endpoint | Purpose |
@@ -461,7 +480,6 @@ The request ID appears in both the response and the server log line, so a user r
 | `GET` / `POST` | `/vessel-kits` | Registry |
 | `PATCH` | `/vessel-kits/:id` | Update status, sanitisation |
 | `GET` | `/vessel-kits/summary` | Rotation and replacement view |
-| `GET` / `POST` | `/subscribers` | Roster |
 | `GET` | `/health` | Liveness and database check |
 
 ---

@@ -158,6 +158,23 @@ DATABASE_URL="<direct-url>" DIRECT_URL="<direct-url>" npm run db:seed
 Never seed production after go-live — the seed asserts reference data and will overwrite
 the menu.
 
+### 4.3a Link the onboarding app
+
+Confirmed applicants in `koshOnboarding` become subscribers here (BR-23). Generate one
+shared secret and set it on both projects:
+
+```bash
+openssl rand -hex 32                                   # the shared token
+vercel env add ONBOARDING_SYNC_TOKEN production         # in kosh-main (this repo)
+# in koshOnboarding:
+vercel env add KOSH_OPS_URL production                  # e.g. https://kosh.vercel.app
+vercel env add KOSH_OPS_SYNC_TOKEN production           # the same token
+```
+
+Optional here: `SUBSCRIBER_CAPACITY` (default 40). Redeploy both, then in the onboarding
+admin press **⇄ Sync confirmed to Ops** once to backfill everyone confirmed before the link
+existed. It is safe to press again at any time.
+
 ### 4.4 Deploy
 
 ```bash

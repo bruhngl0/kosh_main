@@ -18,6 +18,8 @@ enum UserRole {
   KITCHEN
   PROCUREMENT
   VIEWER
+  /// A system calling in with a service token, e.g. the onboarding app (BR-23).
+  INTEGRATION
 }
 
 enum CycleStatus {
@@ -431,14 +433,37 @@ model SubscriptionPlan {
 }
 
 model Subscriber {
-  id        String            @id @default(uuid()) @db.Uuid
-  name      String
-  status    String            @default("active")
-  planId    String?           @map("plan_id") @db.Uuid
-  createdAt DateTime          @default(now()) @map("created_at")
-  updatedAt DateTime          @updatedAt @map("updated_at")
-  plan      SubscriptionPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
-  kits      VesselKit[]
+  id            String            @id @default(uuid()) @db.Uuid
+  name          String
+  /// onboarding | active | paused | ended (BR-24)
+  status        String            @default("active")
+  planId        String?           @map("plan_id") @db.Uuid
+  phone         String?
+  email         String?
+  address       String?
+  landmark      String?
+  deliveryNote  String?           @map("delivery_note")
+  /// What the client asked for on the form: "Single Slot" or "Multi Slot".
+  deliverySlot  String?           @map("delivery_slot")
+  diet          String?
+  allergies     String[]          @default([])
+  dislikes      String?
+  medical       String?
+  /// The rest of the onboarding answers (goal, body numbers, palate). Shown, not queried.
+  profile       Json?
+  startDate     DateTime?         @map("start_date") @db.Date
+  notes         String?
+  /// manual | onboarding | seed
+  source        String            @default("manual")
+  /// The onboarding submission id. Unique, so a resync updates instead of duplicating (BR-23).
+  externalRef   String?           @unique @map("external_ref")
+  /// The human reference the client was given, e.g. KSH-H8K3A.
+  onboardingRef String?           @map("onboarding_ref")
+  syncedAt      DateTime?         @map("synced_at")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+  plan          SubscriptionPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
+  kits          VesselKit[]
 
   @@index([status])
   @@map("subscribers")

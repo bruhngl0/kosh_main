@@ -35,6 +35,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <Link href="/cycles">Cycle Planner</Link>
           <Link href="/recipes">Recipe Database</Link>
           <Link href="/inventory">Inventory</Link>
+          <Link href="/subscribers">Subscribers</Link>
           <Link href="/finance">Finance</Link>
         </nav>
         <div className="header-spacer" />

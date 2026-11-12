@@ -44,7 +44,10 @@ export type AuditAction =
   | "cash_transaction.imported"
   | "cash_opening_balance.set"
   | "recurring_cost.created"
-  | "recurring_cost.updated";
+  | "recurring_cost.updated"
+  | "subscriber.created"
+  | "subscriber.updated"
+  | "subscriber.synced";
 
 export type AuditInput = {
   actorId: string | null;
