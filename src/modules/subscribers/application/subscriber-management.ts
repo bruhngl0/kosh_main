@@ -1,5 +1,5 @@
 import type { Prisma, Subscriber, SubscriptionPlan } from "@prisma/client";
-import { db } from "@/server/db";
+import { db, type DbClient } from "@/server/db";
 import { assertCan, type Actor } from "@/server/actor";
 import { recordAudit } from "@/server/audit";
 import { AppError, notFound } from "@/server/errors";
@@ -130,6 +130,29 @@ async function assertPlanExists(planId: string | null | undefined) {
 const dateColumn = (value: string | null | undefined) =>
   value === undefined ? undefined : value === null ? null : new Date(`${value}T00:00:00Z`);
 
+/**
+ * BR-30 — a change to who is delivered to moves the open cycles' servings, in
+ * the same transaction, so the roster and the shopping list cannot disagree.
+ *
+ * Imported lazily: the cycles module reads the roster through this module's
+ * barrel, and a static import back would make the two load each other.
+ */
+async function followRoster(tx: DbClient, context: Context, reason: string) {
+  const { applyRosterHeadcount } = await import("@/modules/cycles");
+  const results = await applyRosterHeadcount(tx, { actorId: context.actor.id, requestId: context.requestId, reason });
+  return results.filter((result) => result.changed > 0).map(({ cycleName, changed, headcount }) => ({ cycleName, changed, headcount }));
+}
+
+/** Did this change alter who gets a vessel on some day? */
+const affectsDelivery = (
+  before: { status: string; startDate: Date | null } | null,
+  after: { status: string; startDate: Date | null },
+) =>
+  before === null
+    ? after.status === "active"
+    : (before.status !== after.status && (before.status === "active" || after.status === "active")) ||
+      (after.status === "active" && before.startDate?.getTime() !== after.startDate?.getTime());
+
 export async function createSubscriber(input: CreateSubscriberInput, context: Context) {
   assertCan(context.actor, "subscribers:write");
   await assertPlanExists(input.planId);
@@ -147,7 +170,8 @@ export async function createSubscriber(input: CreateSubscriberInput, context: Co
       after: row,
       requestId: context.requestId,
     });
-    return toSubscriberView(row);
+    const servingsChanged = affectsDelivery(null, row) ? await followRoster(tx, context, `${row.name} added`) : [];
+    return { ...toSubscriberView(row), servingsChanged };
   });
 }
 
@@ -173,7 +197,8 @@ export async function updateSubscriber(id: string, input: UpdateSubscriberInput,
       after: row,
       requestId: context.requestId,
     });
-    return toSubscriberView(row);
+    const servingsChanged = affectsDelivery(before, row) ? await followRoster(tx, context, `${row.name} changed`) : [];
+    return { ...toSubscriberView(row), servingsChanged };
   });
 }
 
@@ -253,3 +278,20 @@ export async function listDeliveryRoster(date: string) {
 }
 
 export type DeliveryRoster = Awaited<ReturnType<typeof listDeliveryRoster>>;
+
+/**
+ * BR-30 — how many subscribers get a vessel on each date. Published for the
+ * cycle planner's head-count. Takes the caller's transaction handle so a
+ * roster change and the servings it implies commit together.
+ *
+ * `activeTotal` is the number of active subscribers at all: zero means the
+ * roster has not been set up yet, not that the kitchen cooks for nobody.
+ */
+export async function deliveryCounts(dates: string[], client: DbClient = db) {
+  const active = await client.subscriber.findMany({ where: { status: "active" }, select: { status: true, startDate: true } });
+  const counts: Record<string, number> = {};
+  for (const date of new Set(dates)) {
+    counts[date] = active.filter((subscriber) => deliversOn(subscriber, date)).length;
+  }
+  return { counts, activeTotal: active.length };
+}

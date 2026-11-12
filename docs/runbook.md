@@ -143,7 +143,13 @@ preview data away from production.
 
 ### 4.3 Migrate and seed
 
-Migrations are **not** run automatically at runtime. Run them deliberately:
+Production builds apply pending migrations themselves: `vercel.json` runs
+`scripts/vercel-build.mjs`, which runs `prisma migrate deploy` with Vercel's own
+`DIRECT_URL` before `next build` when `VERCEL_ENV=production`. A failed migration fails the
+build, and the current production deployment keeps serving. Preview builds skip it. Nothing
+migrates at runtime.
+
+To migrate by hand (a fresh database, or diagnosing a failed build):
 
 ```bash
 DATABASE_URL="<direct-url>" DIRECT_URL="<direct-url>" npx prisma migrate deploy
@@ -217,7 +223,7 @@ disagree. Set the Vercel function region to match Neon's.
 4. Buy        /inventory → Outreach → pick week → Generate orders
 5. Send       Copy message or open WhatsApp directly
 6. Receive    Receive goods    writes RECEIVE movements → stock goes up (BR-13)
-7. Cook       Record production → writes CONSUME movements → stock goes down (BR-14)
+7. Cook       /run-sheet → Stock card → Record production → CONSUME movements, once per meal (BR-14, BR-31)
 8. Money      /finance → add received orders to the ledger, post fixed costs, log subscription payments
 ```
 
@@ -230,6 +236,7 @@ disagree. Set the Vercel function region to match Neon's.
 | `... is measured in "bunch" which cannot be converted to "kg"` | A recipe unit and the ingredient's stock unit are different dimensions (§6.2) | Fix the recipe unit, or change the ingredient's stock unit |
 | `N ingredient(s) needed but no preferred vendor is set` | Demand exists but nobody is set up to supply it (BR-7) | Set a preferred vendor on the ingredient |
 | `Version N is published and cannot be edited` | Published recipe versions are immutable (BR-15) | Create a new version |
+| `... is already recorded against stock` | That day's meals were consumed already (BR-31) | Nothing to do; a wrong run is corrected with RETURN/ADJUST movements in Inventory |
 | `Purchase order cannot move from X to Y` | Illegal lifecycle transition (BR-12) | The error lists the allowed transitions |
 
 None of these are bugs. Each one is a place where the old system silently did something
@@ -272,10 +279,20 @@ Deliberate for the MVP, listed so nobody mistakes them for oversights:
   allergies to recipe allergen codes by word (system-design BR-29). Anything the matcher
   does not recognise is shown as "check by hand"; the packing check (`pk0`) stays a human
   task.
-- **The run sheet cooks for the roster, the planner for its count.** The run sheet's
-  delivery list is live (active subscribers whose start date has arrived), while recipe
-  servings come from the cycle's typed-in subscriber count. When they differ the
-  "Cycle day" card on the run sheet turns amber and shows both numbers.
+- **Servings follow the roster, purchase orders do not.** Servings in open cycles move
+  with the subscriber roster day by day (system-design BR-30), but purchase orders already
+  generated keep their quantities — regenerate after a big roster change to refresh the
+  ones still in draft; orders already sent stay as sent. Servings
+  set by hand in the day modal stay fixed until "Follow roster" is pressed, and past days
+  never change. When the run sheet's planned servings differ from the delivery list (a
+  hand-set day, or a past day), its "Cycle day" card turns amber and shows both numbers.
+- **Recorded production is not undone.** Each meal is deducted once (system-design
+  BR-31). If production was recorded by mistake, put the stock back with `RETURN` or
+  `ADJUST` movements in Inventory; the `production_runs` row stays, so the run sheet keeps
+  showing that meal as recorded.
+- **Vessel kits must be registered to be tracked.** Delivery tiles say "No kit
+  registered" until a kit exists in the vessels module; only registered kits get a
+  sanitisation date from the dishwasher tick (`e6`).
 - **No real authentication.** Every mutation runs as the seeded operations user. The
   actor is threaded through every use case already (§8.1), so adding sessions is a
   change to `src/server/actor.ts` alone.

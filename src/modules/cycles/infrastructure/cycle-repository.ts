@@ -123,13 +123,20 @@ export function findDaysForWeek(client: DbClient, cycleId: string, weekNumber: n
 
 export function upsertAssignment(
   client: DbClient,
-  input: { cycleDayId: string; mealType: Prisma.MealAssignmentCreateInput["mealType"]; recipeVersionId: string; servings: number; notes?: string },
+  input: {
+    cycleDayId: string;
+    mealType: Prisma.MealAssignmentCreateInput["mealType"];
+    recipeVersionId: string;
+    servings: number;
+    servingsLocked: boolean;
+    notes?: string;
+  },
 ) {
-  const { cycleDayId, mealType, recipeVersionId, servings, notes } = input;
+  const { cycleDayId, mealType, recipeVersionId, servings, servingsLocked, notes } = input;
   return client.mealAssignment.upsert({
     where: { cycleDayId_mealType: { cycleDayId, mealType } },
-    update: { recipeVersionId, servings, notes },
-    create: { cycleDayId, mealType, recipeVersionId, servings, notes },
+    update: { recipeVersionId, servings, servingsLocked, notes },
+    create: { cycleDayId, mealType, recipeVersionId, servings, servingsLocked, notes },
     include: assignmentInclude,
   });
 }

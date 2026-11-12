@@ -112,7 +112,9 @@ describe("BR-27 checklist", () => {
     const added = await addRunSheetTask(DAY, { phase: "cook", title: "Extra dal batch", owner: "Chef" }, context());
     await setCheck(DAY, { all: true }, context());
     let sheet = await getRunSheet(DAY);
-    expect(sheet.progress).toEqual({ done: sheet.progress.total, total: sheet.progress.total });
+    // Everything except the production task, which only recording production can tick (BR-31).
+    expect(sheet.progress).toEqual({ done: sheet.progress.total - 1, total: sheet.progress.total });
+    expect(sheet.phases.flatMap((p) => p.tasks).find((t) => t.key === "k0")).toMatchObject({ derived: true, done: false });
     expect(sheet.phases.find((p) => p.id === "cook")!.tasks.at(-1)).toMatchObject({ key: added.id, custom: true, done: true });
 
     await removeRunSheetTask(DAY, added.id, context());

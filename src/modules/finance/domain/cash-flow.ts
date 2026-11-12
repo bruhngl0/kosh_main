@@ -6,6 +6,11 @@
  * balances never drift by floating-point dust.
  */
 
+import { KITCHEN_OFFSET_MS, KITCHEN_UTC_OFFSET_MINUTES, kitchenDate } from "@/shared/kitchen-date";
+
+export { KITCHEN_UTC_OFFSET_MINUTES, kitchenDate };
+
+
 export type CashDirection = "IN" | "OUT";
 
 export type LedgerEntry = {
@@ -242,12 +247,9 @@ export function toCsv(rows: MonthView["rows"]): string {
 
 // ── Kitchen-local dates ──────────────────────────────────────────────────────
 
-/** Bengaluru. India has no daylight saving, so a fixed offset is exact. */
-export const KITCHEN_UTC_OFFSET_MINUTES = 330;
-const OFFSET_MS = KITCHEN_UTC_OFFSET_MINUTES * 60_000;
+const OFFSET_MS = KITCHEN_OFFSET_MS;
 
 /** The kitchen-local calendar date of an instant, as yyyy-mm-dd. */
-export const kitchenDate = (instant: Date) => new Date(instant.getTime() + OFFSET_MS).toISOString().slice(0, 10);
 
 /** The instants a kitchen-local month spans: [from, to). */
 export function kitchenMonthRange(month: string): { from: Date; to: Date } {

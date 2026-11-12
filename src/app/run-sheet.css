@@ -113,6 +113,24 @@
 .rs-vessel.missing{background:var(--red-bg);border-color:#e3a5a5}.rs-vessel.missing .rs-vessel-state{color:var(--red)}
 .rs-vessel.flagged{box-shadow:inset 3px 0 0 var(--red)}
 
+.rs-stock{margin-bottom:14px}
+.rs-stock-short{border-color:#ecd9a8}
+.rs-stock-runs{display:flex;flex-direction:column;gap:2px;padding:10px 15px 0;font-size:12px;color:var(--green)}
+.rs-stock-table{width:100%;border-collapse:collapse;font-size:12px}
+.rs-stock-table th{text-align:left;font:10px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--stone);padding:8px 15px;border-bottom:1px solid var(--bg)}
+.rs-stock-table td{padding:6px 15px;border-bottom:1px solid var(--bg);font-family:var(--mono);font-size:11px}
+.rs-stock-table td:first-child{font-family:var(--sans);font-size:12px}
+.rs-stock-table tr.short td{color:var(--red)}
+.rs-stock-table tr.short td:first-child{font-weight:600}
+.rs-stock-actions{display:flex;flex-wrap:wrap;align-items:center;gap:12px;padding:10px 15px}
+.rs-stock-actions .subscribers-link{font-size:12px;color:var(--copper)}
+.rs-spacer{flex:1}
+.rs-hint-inline{font-size:12px;color:var(--stone)}
+.rs-shortfall{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin:0 15px 12px;padding:9px 12px;border-radius:6px;background:var(--red-bg);color:var(--red);font-size:12px}
+.rs-task-body .rs-auto{color:var(--copper)}
+.rs-task input:disabled{cursor:not-allowed}
+.rs-vessel .rs-vessel-warn{color:var(--red);font-weight:600}
+.rs-vessel .rs-vessel-amber{color:var(--amber);font-weight:600}
 .rs-notes textarea{width:100%;border:none;outline:none;resize:vertical;padding:12px 15px;font:13px var(--sans);color:var(--ink);background:transparent;min-height:80px}
 
 @media(max-width:1100px){.rs-brief{grid-template-columns:repeat(3,minmax(0,1fr))}.rs-columns{grid-template-columns:1fr}}
@@ -126,7 +144,7 @@
   .rs-window{display:none}
 }
 @media print{
-  .rs-nav,.rs-add,.rs-remove,.rs-hint,.action-message,.rs-banner .subscribers-link{display:none!important}
+  .rs-nav,.rs-add,.rs-remove,.rs-hint,.rs-stock-actions,.rs-shortfall,.action-message,.rs-banner .subscribers-link{display:none!important}
   .run-sheet-page{font-size:11px}
   .rs-task,.rs-vessel,.rs-menu li,.rs-alert-list li{break-inside:avoid}
   .rs-columns{grid-template-columns:1fr 1fr}

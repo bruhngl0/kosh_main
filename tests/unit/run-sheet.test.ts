@@ -3,6 +3,7 @@ import { allergenGroups, findClashes } from "@/modules/runsheet/domain/allergens
 import { CHECKLIST, STANDARD_TASK_IDS } from "@/modules/runsheet/domain/checklist";
 import { cycleCovering, dayNumberOn } from "@/modules/cycles/domain/cycle";
 import { deliversOn } from "@/modules/subscribers/domain/subscriber";
+import { datesNeeded, headlineDate, planHeadcount } from "@/modules/cycles/domain/headcount";
 import { setCheckSchema, updateRunSheetSchema } from "@/shared/schemas/run-sheet";
 
 // BR-26..BR-29
@@ -91,5 +92,38 @@ describe("BR-29 allergen matching", () => {
     expect(clashes).toEqual([{ mealType: "SN", dish: "Trail mix", allergy: "nuts", allergen: "Tree nuts" }]);
     expect(unrecognised).toEqual(["kiwi"]);
     expect(findClashes(["Dairy"], dishes)).toEqual({ clashes: [], unrecognised: [] });
+  });
+});
+
+describe("BR-30 head-count follows the roster", () => {
+  const day = (dayNumber: number, date: string | null, assignments: { id: string; servings: number; locked?: boolean }[]) => ({
+    dayNumber,
+    date,
+    assignments: assignments.map((a) => ({ locked: false, ...a })),
+  });
+  const today = "2026-11-12";
+
+  it("sets each future day to that day's delivery count", () => {
+    const days = [day(1, "2026-11-12", [{ id: "a", servings: 37 }]), day(2, "2026-11-13", [{ id: "b", servings: 37 }])];
+    expect(planHeadcount(days, today, { "2026-11-12": 37, "2026-11-13": 38 })).toEqual([
+      { assignmentId: "b", dayNumber: 2, from: 37, to: 38 },
+    ]);
+  });
+
+  it("leaves past days and hand-set servings alone", () => {
+    const days = [day(1, "2026-11-11", [{ id: "past", servings: 30 }]), day(2, "2026-11-12", [{ id: "fixed", servings: 45, locked: true }])];
+    expect(planHeadcount(days, today, { "2026-11-11": 40, "2026-11-12": 40 })).toEqual([]);
+    expect(datesNeeded(days, today)).toEqual(["2026-11-12"]);
+  });
+
+  it("uses today's count for a cycle without a start date, and never goes below one", () => {
+    const days = [day(1, null, [{ id: "a", servings: 10 }])];
+    expect(planHeadcount(days, today, { [today]: 0 })).toEqual([{ assignmentId: "a", dayNumber: 1, from: 10, to: 1 }]);
+  });
+
+  it("describes a cycle by today, or by its first day if it has not started", () => {
+    expect(headlineDate("2026-12-01", today)).toBe("2026-12-01");
+    expect(headlineDate("2026-11-01", today)).toBe(today);
+    expect(headlineDate(null, today)).toBe(today);
   });
 });

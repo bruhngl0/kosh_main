@@ -16,6 +16,13 @@ export {
 export { assignMeal, clearMeal } from "@/modules/cycles/application/meal-assignment";
 
 export {
+  syncCycleHeadcount,
+  // Published for the subscribers module: roster changes re-run BR-30 in their own transaction.
+  applyRosterHeadcount,
+  type HeadcountResult,
+} from "@/modules/cycles/application/headcount";
+
+export {
   listCycles,
   getCycleCalendar,
   getConflicts,
