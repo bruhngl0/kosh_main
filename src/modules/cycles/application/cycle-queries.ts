@@ -3,7 +3,9 @@ import { notFound } from "@/server/errors";
 import { toDateString, toNullableNumber, toNumber } from "@/shared/money";
 import {
   MEAL_ORDER,
+  cycleCovering,
   phaseForWeek,
+  weekForDay,
   weekCountFor,
   type MealType,
 } from "@/modules/cycles/domain/cycle";
@@ -231,4 +233,68 @@ function dateForDay(weekStart: Date | null, dayNumber: number): string | null {
   const date = new Date(weekStart);
   date.setUTCDate(date.getUTCDate() + (dayNumber - 1));
   return date.toISOString().slice(0, 10);
+}
+
+export type DayMenu = NonNullable<Awaited<ReturnType<typeof getMenuForDate>>>;
+
+/**
+ * BR-26 — what the kitchen cooks on a calendar date. Published for the run
+ * sheet. Null when no cycle covers the date.
+ */
+export async function getMenuForDate(date: string) {
+  const cycles = await repository.findCyclesStartedBy(db, new Date(`${date}T00:00:00Z`));
+  const covering = cycleCovering(cycles, date);
+  if (!covering) return null;
+
+  const { cycle, dayNumber } = covering;
+  const day = await repository.findDayMenu(db, cycle.id, dayNumber);
+  const meals = MEAL_ORDER.flatMap((mealType) => {
+    const assignment = day?.assignments.find((a) => a.mealType === mealType);
+    if (!assignment) return [];
+    const version = assignment.recipeVersion;
+    return [
+      {
+        mealType,
+        title: version.recipe.title,
+        subtitle: version.recipe.subtitle,
+        protein: version.proteinSource,
+        kcal: toNullableNumber(version.calories),
+        proteinGrams: toNullableNumber(version.proteinGrams),
+        carbsGrams: toNullableNumber(version.carbsGrams),
+        fatGrams: toNullableNumber(version.fatGrams),
+        allergens: version.allergens.map((a) => a.allergenCode),
+        platingNotes: version.platingNotes,
+        servings: assignment.servings,
+        notes: assignment.notes,
+      },
+    ];
+  });
+
+  return {
+    cycle: {
+      id: cycle.id,
+      name: cycle.name,
+      cycleNumber: cycle.cycleNumber,
+      status: cycle.status,
+      durationDays: cycle.durationDays,
+      chefName: cycle.chefName,
+      subscriberCount: cycle.subscriberCount,
+    },
+    dayNumber,
+    weekNumber: day?.weekNumber ?? weekForDay(dayNumber),
+    phaseLabel: day?.phaseLabel ?? null,
+    meals,
+  };
+}
+
+/** The nearest dates any cycle covers, for pointing an empty run sheet somewhere useful. */
+export async function getCycleDateRanges() {
+  const cycles = await repository.listCycles(db);
+  return cycles
+    .filter((cycle) => cycle.weekStart && cycle.status !== "ARCHIVED")
+    .map((cycle) => {
+      const end = new Date(cycle.weekStart!);
+      end.setUTCDate(end.getUTCDate() + cycle.durationDays - 1);
+      return { name: cycle.name, status: cycle.status, from: toDateString(cycle.weekStart)!, to: toDateString(end)! };
+    });
 }

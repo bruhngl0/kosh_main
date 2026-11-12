@@ -4,6 +4,7 @@ export {
   generatePrepTasks,
   updatePrepTask,
   listPrepTasks,
+  listPrepDueOn,
 } from "@/modules/production/application/prep-tasks";
 
 export { consumeProduction } from "@/modules/production/application/consume-production";

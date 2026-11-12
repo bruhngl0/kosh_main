@@ -195,3 +195,52 @@ export function findDayIngredientDemand(client: DbClient, cycleDayId: string, me
     },
   });
 }
+
+/** Cycles that could cover a date: started on or before it and not archived. */
+export function findCyclesStartedBy(client: DbClient, date: Date) {
+  return client.cycle.findMany({
+    where: { weekStart: { lte: date }, status: { not: "ARCHIVED" } },
+    select: {
+      id: true,
+      name: true,
+      cycleNumber: true,
+      status: true,
+      weekStart: true,
+      durationDays: true,
+      chefName: true,
+      subscriberCount: true,
+    },
+  });
+}
+
+/** One day's menu with what the run sheet shows: macros, protein, allergens. */
+export function findDayMenu(client: DbClient, cycleId: string, dayNumber: number) {
+  return client.cycleDay.findUnique({
+    where: { cycleId_dayNumber: { cycleId, dayNumber } },
+    select: {
+      id: true,
+      dayNumber: true,
+      weekNumber: true,
+      phaseLabel: true,
+      assignments: {
+        select: {
+          mealType: true,
+          servings: true,
+          notes: true,
+          recipeVersion: {
+            select: {
+              calories: true,
+              proteinGrams: true,
+              carbsGrams: true,
+              fatGrams: true,
+              proteinSource: true,
+              platingNotes: true,
+              recipe: { select: { title: true, subtitle: true } },
+              allergens: { select: { allergenCode: true }, orderBy: { allergenCode: "asc" } },
+            },
+          },
+        },
+      },
+    },
+  });
+}

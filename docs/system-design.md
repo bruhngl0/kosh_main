@@ -24,6 +24,7 @@ The three HTML prototypes in the repository root are the product specification w
 | `Kosh_Recipe_Database.html` | Per-dish execution cards: ingredients with prep notes, method steps with critical controls, allergens, plating | Recipes module |
 | `Kosh_Inventory.html` | Ingredient master, vendor directory, par levels, stock, purchasing, vendor outreach, food-cost P&L, vessel kits | Inventory + Procurement + Vendors + Vessels modules |
 | `Kosh_Cash_Flow.html` | Cash ledger with running balance, weekly view, charts, fixed-cost reminders, danger flags | Finance module (`/finance`) |
+| `Kosh_Daily_Run_Sheet.html` | The kitchen's day: brief, macro strip, phased checklist with owners and critical flags, vessel tracker, notes | Run sheet module (`/run-sheet`) |
 | `koshOnboarding` (separate app) | Applicants, the apply form, confirmation | Feeds the Subscribers module via BR-23 |
 
 ---
@@ -180,6 +181,18 @@ Recurring monthly costs are reminders, never auto-posted. One counts as paid for
 ### BR-25 — Capacity
 A seat is held by `onboarding`, `active` and `paused` subscribers; only `ended` frees one. Capacity defaults to 40 and is set with `SUBSCRIBER_CAPACITY`. Over capacity is flagged, not blocked.
 
+### BR-26 — The run sheet is derived
+A production date maps to the cycle whose calendar covers it: day 1 is `week_start`, days run consecutively for `duration_days`. When cycles overlap the live one wins (ACTIVE, then CLOSED, then DRAFT, newest first); ARCHIVED cycles never cover a date. The menu, per-person macros (the sum of the day's four recipe versions, shown only when every meal has the figure), advance prep due that date (`prep_tasks.due_date`, any cycle) and the delivery list are all read live from their owning modules. A subscriber is delivered to on a date when their status is `active` and their start date, if set, has arrived; `onboarding` and `paused` hold a seat (BR-25) but get no vessel. Viewing a date writes nothing; the `run_sheets` row is created by the date's first write, atomically on the unique date.
+
+### BR-27 — The standard checklist
+The day's procedure — phases, tasks, owners, times, critical and vessel flags — is code (`modules/runsheet/domain/checklist.ts`), reviewed like any rule. A tick is a `run_sheet_checks` row keyed on the task id, carrying who and when; unticking deletes it. Task ids are never reused for a different task. Tasks added by hand belong to one date and one phase and can be removed; standard tasks cannot. Ticking is `production:write` (ADMIN, KITCHEN). Ticks are attributed on their row, not audited one by one; brief edits and added/removed tasks are audited.
+
+### BR-28 — Vessel movements
+Per date and subscriber a vessel is `out`, `collected` or `missing` (`CHECK` constraint); no row means not yet dispatched. One row per (sheet, subscriber), so a resend updates rather than duplicates.
+
+### BR-29 — Allergen alerts
+Recipe allergen codes ("Gluten (roti)", "Tree nuts") and the free text subscribers type ("peanuts", "lactose intolerant", "nuts") are both reduced to canonical groups before matching. Matching errs wide — "nuts" covers tree nuts and groundnuts, "shellfish" covers crustaceans and molluscs — because a false alarm costs a glance and a miss costs a guest. An allergy that maps to no group is shown as "check by hand", never dropped. The alerts drive a critical packing task (`pk0`).
+
 ---
 
 ## 4. Architecture
@@ -321,6 +334,9 @@ Application-level checks are a convenience; the database is the guarantee.
 | **`purchase_orders (cycle_id, vendor_id, week_number)` unique** | BR-16 idempotency |
 | `purchase_order_lines (purchase_order_id, ingredient_id)` unique | No duplicate lines |
 | `vendors.name` unique | Prevents the duplicate-vendor drift the prototype had |
+| `run_sheets.production_date` unique | One run sheet per day (BR-26) |
+| `run_sheet_checks (run_sheet_id, task_key)` unique | A task is ticked once (BR-27) |
+| `vessel_dispatches (run_sheet_id, subscriber_id)` unique, status `CHECK` | One vessel state per subscriber per day (BR-28) |
 
 Foreign keys use `RESTRICT` for operational records that must not vanish (ingredients, recipe versions, vendors) and `CASCADE` only for records that are meaningless without their parent (recipe steps, PO lines, meal assignments).
 
@@ -473,6 +489,18 @@ The request ID appears in both the response and the server log line, so a user r
 | `GET` | `/subscription-plans` | Active pricing plans |
 | `PUT` | `/integrations/onboarding/subscribers/:submissionId` | Service-token upsert from the onboarding app (BR-23) |
 
+**Run sheet**
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` / `PATCH` | `/run-sheets/:date` | The derived day (BR-26) / chef, dispatch window, special notes, notes |
+| `PUT` | `/run-sheets/:date/checks` | `{ taskKey, done }` or `{ all: true }` (BR-27) |
+| `POST` | `/run-sheets/:date/tasks` | Add a one-off task to a phase |
+| `DELETE` | `/run-sheets/:date/tasks/:taskId` | Remove an added task |
+| `PUT` | `/run-sheets/:date/vessels/:subscriberId` | `{ status: out \| collected \| missing \| null }` (BR-28) |
+
+Writes are refused for dates more than a year from today (422), so a typo cannot create a far-future sheet.
+
 **Vessels and reference**
 
 | Method | Endpoint | Purpose |
@@ -577,6 +605,7 @@ The domain layer is pure, so the majority of business risk is covered by tests t
 | Sortable ingredient table with per-category counts | ✅ |
 | Full CSV column set | ✅ Plus a stock-status column the prototype lacked |
 | Weekly brief bar with persistence, and "start new week" | ⚠️ **Deferred.** See below |
+| Run sheet brief, checklist, vessel tracker, notes | ✅ Per date in the database, attributed, shared across devices; menu, macros, roster and allergen alerts are live instead of typed in. "New Day" is replaced by date navigation |
 
 The **weekly brief bar** (week, subscribers, cycle days, chef, ordering status, food-cost
 target) was uncontrolled inputs bound to `localStorage` in the prototype and bound to

@@ -86,6 +86,8 @@ model User {
   prepTasks PrepTask[]
   movements InventoryMovement[]
   audits    AuditEvent[]
+  runSheetChecks   RunSheetCheck[]
+  vesselDispatches VesselDispatch[]
 
   @@map("users")
 }
@@ -464,6 +466,7 @@ model Subscriber {
   updatedAt     DateTime          @updatedAt @map("updated_at")
   plan          SubscriptionPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
   kits          VesselKit[]
+  dispatches    VesselDispatch[]
 
   @@index([status])
   @@map("subscribers")
@@ -561,4 +564,73 @@ model CashOpeningBalance {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   @@map("cash_opening_balances")
+}
+
+// ── Daily run sheet ──────────────────────────────────────────────────────────
+// Replaces the browser-only Kosh_Daily_Run_Sheet.html prototype. The menu,
+// roster and allergen alerts are derived; only what the kitchen does on the day
+// is stored here. See docs/system-design.md BR-26..BR-29.
+
+/// One per production date. Created on the first write for that date.
+model RunSheet {
+  id             String            @id @default(uuid()) @db.Uuid
+  productionDate DateTime          @unique @map("production_date") @db.Date
+  /// Overrides the cycle's chef for this day.
+  chefName       String?           @map("chef_name")
+  dispatchWindow String?           @map("dispatch_window")
+  specialNotes   String?           @map("special_notes")
+  /// Kitchen and delivery notes written during the day.
+  notes          String?
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+  checks         RunSheetCheck[]
+  tasks          RunSheetTask[]
+  dispatches     VesselDispatch[]
+
+  @@map("run_sheets")
+}
+
+/// A ticked checklist item. The row existing means done (BR-27).
+model RunSheetCheck {
+  id         String   @id @default(uuid()) @db.Uuid
+  runSheetId String   @map("run_sheet_id") @db.Uuid
+  /// A standard task id (src/modules/runsheet/domain/checklist.ts) or a RunSheetTask id.
+  taskKey    String   @map("task_key")
+  doneById   String?  @map("done_by_id") @db.Uuid
+  doneAt     DateTime @default(now()) @map("done_at")
+  runSheet   RunSheet @relation(fields: [runSheetId], references: [id], onDelete: Cascade)
+  doneBy     User?    @relation(fields: [doneById], references: [id], onDelete: SetNull)
+
+  @@unique([runSheetId, taskKey])
+  @@map("run_sheet_checks")
+}
+
+/// A task added by hand for one day, on top of the standard checklist.
+model RunSheetTask {
+  id         String   @id @default(uuid()) @db.Uuid
+  runSheetId String   @map("run_sheet_id") @db.Uuid
+  phase      String
+  title      String
+  owner      String   @default("Chef")
+  createdAt  DateTime @default(now()) @map("created_at")
+  runSheet   RunSheet @relation(fields: [runSheetId], references: [id], onDelete: Cascade)
+
+  @@index([runSheetId])
+  @@map("run_sheet_tasks")
+}
+
+/// Where a subscriber's vessel is on a given day: out | collected | missing (BR-28).
+model VesselDispatch {
+  id           String     @id @default(uuid()) @db.Uuid
+  runSheetId   String     @map("run_sheet_id") @db.Uuid
+  subscriberId String     @map("subscriber_id") @db.Uuid
+  status       String
+  updatedById  String?    @map("updated_by_id") @db.Uuid
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  runSheet     RunSheet   @relation(fields: [runSheetId], references: [id], onDelete: Cascade)
+  subscriber   Subscriber @relation(fields: [subscriberId], references: [id], onDelete: Restrict)
+  updatedBy    User?      @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+
+  @@unique([runSheetId, subscriberId])
+  @@map("vessel_dispatches")
 }

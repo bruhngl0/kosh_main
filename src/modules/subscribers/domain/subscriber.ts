@@ -91,3 +91,13 @@ export function whatsappNumber(phone: string | null): string | null {
   if (digits.length === 10) return `91${digits}`;
   return digits.length >= 8 ? digits : null;
 }
+
+/**
+ * BR-26 — who gets a vessel on `date` (YYYY-MM-DD): active subscribers whose
+ * start date, if set, has arrived. Onboarding and paused subscribers hold a
+ * seat but are not cooked for.
+ */
+export function deliversOn(subscriber: { status: string; startDate: Date | null }, date: string): boolean {
+  if (subscriber.status !== "active") return false;
+  return !subscriber.startDate || subscriber.startDate.toISOString().slice(0, 10) <= date;
+}

@@ -4,7 +4,7 @@ import { assertCan, type Actor } from "@/server/actor";
 import { recordAudit } from "@/server/audit";
 import { AppError, notFound } from "@/server/errors";
 import { toDateString, toNumber } from "@/shared/money";
-import { DEFAULT_CAPACITY, fromOnboarding, rosterSummary, whatsappNumber } from "@/modules/subscribers/domain/subscriber";
+import { DEFAULT_CAPACITY, deliversOn, fromOnboarding, rosterSummary, whatsappNumber } from "@/modules/subscribers/domain/subscriber";
 import type {
   CreateSubscriberInput,
   OnboardingSyncInput,
@@ -211,3 +211,45 @@ export async function syncFromOnboarding(submissionId: string, input: Onboarding
     return { subscriber: toSubscriberView(row), created: !before };
   });
 }
+
+/**
+ * BR-26 — the delivery list for a production date. Published for the run
+ * sheet. Also counts who starts within the next week, so the kitchen sees
+ * head-count changes coming.
+ */
+export async function listDeliveryRoster(date: string) {
+  const rows = await db.subscriber.findMany({
+    where: { status: "active" },
+    include: { plan: { select: { name: true } } },
+    orderBy: { name: "asc" },
+  });
+  const delivering = rows.filter((row) => deliversOn(row, date));
+  const weekAhead = new Date(`${date}T00:00:00Z`);
+  weekAhead.setUTCDate(weekAhead.getUTCDate() + 7);
+  const startingSoon = rows.filter(
+    (row) => !deliversOn(row, date) && row.startDate && row.startDate <= weekAhead,
+  ).length;
+
+  return {
+    subscribers: delivering.map((row) => ({
+      id: row.id,
+      name: row.name,
+      plan: row.plan?.name ?? null,
+      phone: row.phone,
+      whatsapp: whatsappNumber(row.phone),
+      address: row.address,
+      landmark: row.landmark,
+      deliveryNote: row.deliveryNote,
+      deliverySlot: row.deliverySlot,
+      diet: row.diet,
+      allergies: row.allergies,
+      dislikes: row.dislikes,
+      onboardingRef: row.onboardingRef,
+      startDate: toDateString(row.startDate),
+    })),
+    startingSoon,
+    capacity: subscriberCapacity(),
+  };
+}
+
+export type DeliveryRoster = Awaited<ReturnType<typeof listDeliveryRoster>>;

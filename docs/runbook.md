@@ -263,8 +263,19 @@ Deliberate for the MVP, listed so nobody mistakes them for oversights:
   like every other screen, `/finance` and its GET endpoints are open to anyone who can
   reach the app. The cash position is more sensitive than a recipe card, so this should
   close when real authentication lands.
-- **Subscription revenue is entered by hand.** There is no payments integration, and
-  onboarding (the separate `koshOnboarding` app) does not create `Subscriber` rows here.
+- **Subscription revenue is entered by hand.** There is no payments integration.
+- **The run sheet's standard checklist is code.** Changing a task, time or owner is a
+  change to `src/modules/runsheet/domain/checklist.ts` and a deploy; one-off tasks can be
+  added per day from the screen. Never reuse a task id for a different task — stored
+  ticks point at it.
+- **Allergen alerts are a safety net, not a guarantee.** They match subscribers' free-text
+  allergies to recipe allergen codes by word (system-design BR-29). Anything the matcher
+  does not recognise is shown as "check by hand"; the packing check (`pk0`) stays a human
+  task.
+- **The run sheet cooks for the roster, the planner for its count.** The run sheet's
+  delivery list is live (active subscribers whose start date has arrived), while recipe
+  servings come from the cycle's typed-in subscriber count. When they differ the
+  "Cycle day" card on the run sheet turns amber and shows both numbers.
 - **No real authentication.** Every mutation runs as the seeded operations user. The
   actor is threaded through every use case already (§8.1), so adding sessions is a
   change to `src/server/actor.ts` alone.

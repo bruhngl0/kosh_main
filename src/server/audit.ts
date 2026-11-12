@@ -47,7 +47,10 @@ export type AuditAction =
   | "recurring_cost.updated"
   | "subscriber.created"
   | "subscriber.updated"
-  | "subscriber.synced";
+  | "subscriber.synced"
+  | "run_sheet.updated"
+  | "run_sheet.task_added"
+  | "run_sheet.task_removed";
 
 export type AuditInput = {
   actorId: string | null;
