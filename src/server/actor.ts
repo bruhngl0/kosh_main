@@ -55,6 +55,7 @@ export type Capability =
   | "procurement:write"
   | "inventory:write"
   | "vessels:write"
+  | "finance:write"
   | "read";
 
 const CAPABILITIES: Record<Capability, readonly UserRole[]> = {
@@ -64,6 +65,8 @@ const CAPABILITIES: Record<Capability, readonly UserRole[]> = {
   "procurement:write": ["ADMIN", "PROCUREMENT"],
   "inventory:write": ["ADMIN", "PROCUREMENT", "KITCHEN"],
   "vessels:write": ["ADMIN", "PROCUREMENT"],
+  // Cash position is owner-level information.
+  "finance:write": ["ADMIN"],
   read: ["ADMIN", "PLANNER", "KITCHEN", "PROCUREMENT", "VIEWER"],
 };
 

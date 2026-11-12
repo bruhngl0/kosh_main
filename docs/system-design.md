@@ -23,6 +23,7 @@ The three HTML prototypes in the repository root are the product specification w
 | `Kosh_Cycle_Planner.html` | The 28-day menu, protein rotation safety, advance-prep lead times, weekly production lists | Cycles + Production modules |
 | `Kosh_Recipe_Database.html` | Per-dish execution cards: ingredients with prep notes, method steps with critical controls, allergens, plating | Recipes module |
 | `Kosh_Inventory.html` | Ingredient master, vendor directory, par levels, stock, purchasing, vendor outreach, food-cost P&L, vessel kits | Inventory + Procurement + Vendors + Vessels modules |
+| `Kosh_Cash_Flow.html` | Cash ledger with running balance, weekly view, charts, fixed-cost reminders, danger flags | Finance module (`/finance`) |
 
 ---
 
@@ -156,6 +157,18 @@ The prototype hardcoded a blended rate derived from a 22/10/5 subscriber mix at 
 
 ### BR-18 — Vessel rotation
 Each subscriber normally holds 2 sets. Kits are `active`, `needs-replace`, or `retired`. Sanitisation date is tracked; a kit not sanitised within its interval is flagged.
+
+### BR-19 — Cash transactions
+Every row has a positive amount (enforced by a `CHECK` constraint) and a direction, `IN` or `OUT`, which carries the sign. Its category must belong to that direction — income: Subscriptions, Kit Deposits, Staples & Air Menu, Other Income; expense: Ingredients, Kitchen Staff, Delivery, Vessels & Packaging, Rent, Utilities, Marketing, Equipment, Compliance, Miscellaneous. An update re-checks the resulting pair, because either field may change alone. Rows are hard-deleted; the audit event keeps the full snapshot.
+
+### BR-20 — Opening balance and danger flags
+A month opens at its hand-set balance if one exists, otherwise at the previous month's closing balance, carried through every earlier month. A hand-set month resets the chain from that point — it is how the owner reconciles against the bank. Clearing it resumes carry-forward. Months are calendar months in kitchen-local time (IST); weeks are fixed day ranges 1–7, 8–14, 15–21, 22–28, 29–end. The month is flagged **danger** if the closing balance is negative, or if unpaid fixed costs would make it negative; **warn** if the balance after fixed costs is under ₹1,00,000. Food cost % is month ingredients ÷ month subscription revenue, graded against the latest cycle's target (default 30%): warn above it, danger 5 points over.
+
+### BR-21 — Purchase orders feed the ledger
+Fully received purchase orders in the month (by IST receipt date) can be imported as Ingredients expenses, priced on **received** quantity × line unit cost. Lines without a unit cost are excluded and noted on the row, never guessed. `cash_transactions.purchase_order_id` is unique, so re-running the import — or two people clicking at once — cannot double-count. Finance reads orders only through procurement's published `listReceivedOrderCosts`.
+
+### BR-22 — Fixed costs
+Recurring monthly costs are reminders, never auto-posted. One counts as paid for a month when an expense was posted from it, or an expense's description contains its name. Posting is refused if that cost is already posted in the month. Fixed costs are deactivated, not deleted.
 
 ---
 
@@ -426,6 +439,20 @@ The request ID appears in both the response and the server log line, so a user r
 | `GET` / `PATCH` | `/purchase-orders/:id` | Fetch / transition status (BR-12) |
 | `POST` | `/purchase-orders/:id/receive` | Record receipt → stock (BR-13) |
 | `GET` | `/purchase-orders/:id/outreach` | Vendor message + WhatsApp deep link |
+
+**Finance**
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` | `/finance/months/:month` | Month view: ledger with balances, totals, weeks, categories, fixed costs, flags, unimported orders (BR-20) |
+| `PUT` | `/finance/months/:month/opening-balance` | Set, or clear with `null` (BR-20) |
+| `POST` | `/finance/months/:month/import-purchase-orders` | Idempotent import of received orders (BR-21) |
+| `GET` | `/finance/months/:month/export.csv` | Month ledger as CSV |
+| `POST` | `/finance/transactions` | Record a transaction (BR-19) |
+| `PATCH` / `DELETE` | `/finance/transactions/:id` | Edit / delete |
+| `GET` / `POST` | `/finance/recurring-costs` | List / create fixed costs |
+| `PATCH` / `DELETE` | `/finance/recurring-costs/:id` | Edit / deactivate |
+| `POST` | `/finance/recurring-costs/:id/post` | Log as paid for a month (BR-22) |
 
 **Vessels and reference**
 

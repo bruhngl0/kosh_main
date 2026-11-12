@@ -201,6 +201,7 @@ disagree. Set the Vercel function region to match Neon's.
 5. Send       Copy message or open WhatsApp directly
 6. Receive    Receive goods    writes RECEIVE movements → stock goes up (BR-13)
 7. Cook       Record production → writes CONSUME movements → stock goes down (BR-14)
+8. Money      /finance → add received orders to the ledger, post fixed costs, log subscription payments
 ```
 
 ### Things that will legitimately refuse you
@@ -241,6 +242,12 @@ WHERE request_id = '<request-id>';
 
 Deliberate for the MVP, listed so nobody mistakes them for oversights:
 
+- **Finance reads are not restricted.** Writes need `finance:write` (ADMIN only), but
+  like every other screen, `/finance` and its GET endpoints are open to anyone who can
+  reach the app. The cash position is more sensitive than a recipe card, so this should
+  close when real authentication lands.
+- **Subscription revenue is entered by hand.** There is no payments integration, and
+  onboarding (the separate `koshOnboarding` app) does not create `Subscriber` rows here.
 - **No real authentication.** Every mutation runs as the seeded operations user. The
   actor is threaded through every use case already (§8.1), so adding sessions is a
   change to `src/server/actor.ts` alone.

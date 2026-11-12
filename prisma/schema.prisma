@@ -480,3 +480,60 @@ model AuditEvent {
   @@index([actorId, createdAt])
   @@map("audit_events")
 }
+
+// ── Finance ──────────────────────────────────────────────────────────────────
+// Cash flow ledger. Replaces the browser-only Kosh_Cash_Flow.html prototype.
+// See docs/system-design.md BR-19..BR-22.
+
+enum CashDirection {
+  IN
+  OUT
+}
+
+model CashTransaction {
+  id              String         @id @default(uuid()) @db.Uuid
+  date            DateTime       @db.Date
+  direction       CashDirection
+  /// One of the categories in src/shared/schemas/finance.ts, checked per direction.
+  category        String
+  description     String
+  /// Always positive; `direction` carries the sign (BR-19).
+  amount          Decimal        @db.Decimal(12, 2)
+  notes           String?
+  /// Set when the row was imported from a received purchase order (BR-21).
+  /// Unique, so importing twice cannot double-count. Not a foreign key: finance
+  /// reads procurement only through its published interface (§4.3).
+  purchaseOrderId String?        @unique @map("purchase_order_id") @db.Uuid
+  /// Set when the row was posted from a fixed cost reminder (BR-22).
+  recurringCostId String?        @map("recurring_cost_id") @db.Uuid
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  recurringCost   RecurringCost? @relation(fields: [recurringCostId], references: [id], onDelete: SetNull)
+
+  @@index([date])
+  @@index([recurringCostId, date])
+  @@map("cash_transactions")
+}
+
+/// A monthly fixed cost. A reminder only — never auto-posted (BR-22).
+model RecurringCost {
+  id           String            @id @default(uuid()) @db.Uuid
+  name         String            @unique
+  category     String
+  amount       Decimal           @db.Decimal(12, 2)
+  active       Boolean           @default(true)
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+  transactions CashTransaction[]
+
+  @@map("recurring_costs")
+}
+
+/// Opening balance set by hand for a month, keyed "YYYY-MM" (BR-20).
+model CashOpeningBalance {
+  month     String   @id
+  amount    Decimal  @db.Decimal(14, 2)
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("cash_opening_balances")
+}

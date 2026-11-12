@@ -30,7 +30,8 @@ beforeAll(() => {
 export async function resetDatabase() {
   await db.$executeRawUnsafe(`
     TRUNCATE TABLE
-      audit_events, inventory_movements, inventory_balances,
+      audit_events, cash_transactions, recurring_costs, cash_opening_balances,
+      inventory_movements, inventory_balances,
       purchase_order_lines, purchase_orders,
       prep_tasks, meal_assignments, cycle_days, cycles,
       recipe_allergens, recipe_steps, recipe_ingredients, recipe_versions, recipes,

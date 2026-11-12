@@ -99,3 +99,34 @@ export async function getOutreach(id: string) {
     ...message,
   };
 }
+
+/**
+ * Published for finance (BR-21): what each fully received order actually cost,
+ * priced on received quantity. Lines with no unit cost are counted, not
+ * guessed, so the caller can say the figure is incomplete.
+ */
+export async function listReceivedOrderCosts(range: { from: Date; to: Date }) {
+  const orders = await db.purchaseOrder.findMany({
+    where: { status: "RECEIVED", receivedAt: { gte: range.from, lt: range.to } },
+    select: {
+      id: true,
+      receivedAt: true,
+      vendor: { select: { name: true } },
+      lines: { select: { receivedQty: true, unitCost: true } },
+    },
+    orderBy: { receivedAt: "asc" },
+  });
+
+  return orders.map((order) => {
+    const priced = order.lines.filter((line) => line.unitCost !== null);
+    const cost = priced.reduce((sum, line) => sum + toNumber(line.receivedQty) * toNumber(line.unitCost), 0);
+    return {
+      purchaseOrderId: order.id,
+      vendorName: order.vendor.name,
+      receivedAt: order.receivedAt!,
+      cost: Math.round(cost * 100) / 100,
+      lineCount: order.lines.length,
+      unpricedLineCount: order.lines.length - priced.length,
+    };
+  });
+}

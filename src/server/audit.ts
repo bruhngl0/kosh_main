@@ -37,7 +37,14 @@ export type AuditAction =
   | "purchase_order.received"
   | "production.consumed"
   | "vessel_kit.created"
-  | "vessel_kit.updated";
+  | "vessel_kit.updated"
+  | "cash_transaction.created"
+  | "cash_transaction.updated"
+  | "cash_transaction.deleted"
+  | "cash_transaction.imported"
+  | "cash_opening_balance.set"
+  | "recurring_cost.created"
+  | "recurring_cost.updated";
 
 export type AuditInput = {
   actorId: string | null;
