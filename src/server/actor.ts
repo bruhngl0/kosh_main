@@ -56,6 +56,8 @@ export type Capability =
   | "inventory:write"
   | "vessels:write"
   | "finance:write"
+  | "subscribers:write"
+  | "subscribers:sync"
   | "read";
 
 const CAPABILITIES: Record<Capability, readonly UserRole[]> = {
@@ -67,6 +69,9 @@ const CAPABILITIES: Record<Capability, readonly UserRole[]> = {
   "vessels:write": ["ADMIN", "PROCUREMENT"],
   // Cash position is owner-level information.
   "finance:write": ["ADMIN"],
+  "subscribers:write": ["ADMIN", "PLANNER"],
+  // The onboarding app. INTEGRATION holds this and nothing else (BR-23).
+  "subscribers:sync": ["ADMIN", "INTEGRATION"],
   read: ["ADMIN", "PLANNER", "KITCHEN", "PROCUREMENT", "VIEWER"],
 };
 

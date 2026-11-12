@@ -38,13 +38,21 @@ export type AuditAction =
   | "production.consumed"
   | "vessel_kit.created"
   | "vessel_kit.updated"
+  | "vessel_kit.sanitised"
   | "cash_transaction.created"
   | "cash_transaction.updated"
   | "cash_transaction.deleted"
   | "cash_transaction.imported"
   | "cash_opening_balance.set"
   | "recurring_cost.created"
-  | "recurring_cost.updated";
+  | "recurring_cost.updated"
+  | "subscriber.created"
+  | "subscriber.updated"
+  | "subscriber.synced"
+  | "cycle.headcount_synced"
+  | "run_sheet.updated"
+  | "run_sheet.task_added"
+  | "run_sheet.task_removed";
 
 export type AuditInput = {
   actorId: string | null;

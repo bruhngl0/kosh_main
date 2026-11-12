@@ -5,4 +5,7 @@ export {
   updateVesselKit,
   listVesselKits,
   getVesselSummary,
+  // Published for the daily run sheet (BR-28).
+  kitsForSubscribers,
+  recordSanitised,
 } from "@/modules/vessels/application/vessel-management";

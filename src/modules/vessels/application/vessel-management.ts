@@ -1,4 +1,4 @@
-import { db } from "@/server/db";
+import { db, type DbClient } from "@/server/db";
 import { assertCan, type Actor } from "@/server/actor";
 import { recordAudit } from "@/server/audit";
 import { notFound } from "@/server/errors";
@@ -144,4 +144,61 @@ function toKitView(kit: KitRow) {
       (daysSinceSanitised === null || daysSinceSanitised > SANITISATION_INTERVAL_DAYS),
     notes: kit.notes,
   };
+}
+
+// ── Published for the daily run sheet ───────────────────────────────────────
+
+/**
+ * BR-28/BR-18 — the kit each subscriber's vessel comes from, for the run
+ * sheet's delivery tiles. A subscriber with no kit in circulation maps to
+ * null: there is nothing to pack their food into.
+ */
+export async function kitsForSubscribers(subscriberIds: string[]) {
+  if (!subscriberIds.length) return new Map<string, ReturnType<typeof toKitView>>();
+  const kits = await db.vesselKit.findMany({
+    where: { subscriberId: { in: subscriberIds }, status: { not: "retired" } },
+    include: { subscriber: true },
+    // A subscriber with two kits shows the one most needing attention.
+    orderBy: [{ status: "desc" }, { sanitisedAt: { sort: "asc", nulls: "first" } }],
+  });
+  const bySubscriber = new Map<string, ReturnType<typeof toKitView>>();
+  for (const kit of kits) if (!bySubscriber.has(kit.subscriberId)) bySubscriber.set(kit.subscriberId, toKitView(kit));
+  return bySubscriber;
+}
+
+/**
+ * BR-18 — the evening wash ran: stamp `sanitisedAt` on the kits of the
+ * subscribers whose vessels came back that day. Called inside the run sheet's
+ * transaction, as a consequence of a kitchen tick, so it does not ask for
+ * `vessels:write` itself. Only ever moves the date forward.
+ */
+export async function recordSanitised(
+  tx: DbClient,
+  subscriberIds: string[],
+  date: string,
+  audit: { actorId: string; requestId: string },
+) {
+  if (!subscriberIds.length) return 0;
+  const day = new Date(`${date}T00:00:00Z`);
+  const kits = await tx.vesselKit.findMany({
+    where: {
+      subscriberId: { in: subscriberIds },
+      status: { not: "retired" },
+      OR: [{ sanitisedAt: null }, { sanitisedAt: { lt: day } }],
+    },
+    select: { id: true, sanitisedAt: true },
+  });
+  if (!kits.length) return 0;
+
+  await tx.vesselKit.updateMany({ where: { id: { in: kits.map((kit) => kit.id) } }, data: { sanitisedAt: day } });
+  await recordAudit(tx, {
+    actorId: audit.actorId,
+    action: "vessel_kit.sanitised",
+    entityType: "VesselKit",
+    entityId: kits.length === 1 ? kits[0].id : "batch",
+    before: { kits: kits.map((kit) => ({ id: kit.id, sanitisedAt: toDateString(kit.sanitisedAt) })) },
+    after: { sanitisedAt: date, count: kits.length },
+    requestId: audit.requestId,
+  });
+  return kits.length;
 }

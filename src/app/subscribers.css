@@ -1,0 +1,31 @@
+/* Subscribers — /subscribers roster. Builds on the inventory card, table and KPI styles. */
+.subscribers-kpis{grid-template-columns:repeat(5,minmax(0,1fr))}
+.subscribers-count{margin-left:6px;font:10px var(--mono);color:var(--stone);background:var(--bg);border-radius:8px;padding:1px 6px}
+.subscribers-search{width:260px;max-width:100%}
+.subscribers-table{width:100%;border-collapse:collapse}
+.subscribers-table td{vertical-align:top}
+.subscribers-busy{opacity:.55}
+.subscribers-empty{text-align:center;padding:32px!important;color:var(--stone);white-space:normal!important}
+.subscribers-muted{color:var(--stone)}
+.subscribers-name small,.subscribers-contact small,.subscribers-delivery small{display:block;font-size:10px;color:var(--stone)}
+.subscribers-link{background:none;border:none;padding:0;font:600 13px var(--sans);color:var(--ink);text-align:left}
+.subscribers-link:hover{color:var(--copper);text-decoration:underline}
+.subscribers-ref{font:10px var(--mono);color:var(--copper);margin-right:6px}
+.subscribers-contact a{color:var(--green)}
+.subscribers-contact a:hover{text-decoration:underline}
+.subscribers-diet{white-space:normal!important;min-width:140px}
+.subscribers-allergies{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px}
+.subscribers-delivery b{font-weight:500;display:block}
+.status-select{font-weight:600}
+.status-onboarding{color:var(--copper);background:var(--copper-bg)}
+.status-active{color:var(--green);background:var(--green-bg)}
+.status-paused{color:var(--amber);background:var(--amber-bg)}
+.status-ended{color:var(--stone)}
+.subscriber-profile{margin-top:16px;padding-top:12px;border-top:1px solid var(--bg)}
+.subscriber-profile h3{font:10px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--stone);margin:0 0 8px}
+.subscriber-profile dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 16px;margin:0}
+.subscriber-profile dl div{display:flex;justify-content:space-between;gap:8px;font-size:12px;border-bottom:1px dashed var(--bg);padding:3px 0}
+.subscriber-profile dt{color:var(--stone)}
+.subscriber-profile dd{margin:0;text-align:right}
+@media(max-width:1100px){.subscribers-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:600px){.subscribers-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.subscriber-profile dl{grid-template-columns:1fr}}
