@@ -143,7 +143,13 @@ preview data away from production.
 
 ### 4.3 Migrate and seed
 
-Migrations are **not** run automatically at runtime. Run them deliberately:
+Production builds apply pending migrations themselves: `vercel.json` runs
+`scripts/vercel-build.mjs`, which runs `prisma migrate deploy` with Vercel's own
+`DIRECT_URL` before `next build` when `VERCEL_ENV=production`. A failed migration fails the
+build, and the current production deployment keeps serving. Preview builds skip it. Nothing
+migrates at runtime.
+
+To migrate by hand (a fresh database, or diagnosing a failed build):
 
 ```bash
 DATABASE_URL="<direct-url>" DIRECT_URL="<direct-url>" npx prisma migrate deploy
