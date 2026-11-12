@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useRef, useState } from "react";
-import { api, errorMessage } from "@/lib/api-client";
+import { api, ApiError, errorMessage } from "@/lib/api-client";
 import { ActionMessage, useFeedback } from "@/components/ui/action-message";
 import type { RunSheetView } from "@/modules/runsheet";
 import { TASK_OWNERS, type PhaseId, type TaskOwner, type VesselState } from "@/shared/schemas/run-sheet";
@@ -30,6 +30,8 @@ export function RunSheet({ initialSheet, today }: { initialSheet: RunSheetView; 
   const [sheet, setSheet] = useState(initialSheet);
   const [collapsed, setCollapsed] = useState<Set<PhaseId>>(new Set());
   const [busy, setBusy] = useState<string | null>(null);
+  const [shortfall, setShortfall] = useState<string | null>(null);
+  const [showAllStock, setShowAllStock] = useState(false);
   const { feedback, succeed, fail, clear } = useFeedback();
   const ticket = useRef(0);
   const { date } = sheet;
@@ -67,6 +69,30 @@ export function RunSheet({ initialSheet, today }: { initialSheet: RunSheetView; 
     await act(`brief-${field}`, () => api.patch(base, { [field]: value }), field === "notes" ? "Notes saved." : undefined);
   }
 
+  /** BR-31 — take the day's unrecorded meals off stock. A shortfall offers an explicit override. */
+  async function recordProduction(allowNegative = false) {
+    if (!cycle) return;
+    if (allowNegative && !window.confirm("Stock will go below zero for the short ingredients. The override is recorded on each movement. Continue?")) return;
+    setBusy("production");
+    setShortfall(null);
+    try {
+      const result = await api.post<{ meals: string[]; consumed: unknown[]; exceptions: unknown[] }>(
+        `/cycles/${cycle.id}/days/${cycle.dayNumber}/consume`,
+        { allowNegative },
+      );
+      await reload();
+      succeed(
+        `${result.meals.map((m) => MEAL_NAMES[m]).join(", ")} taken off stock: ${result.consumed.length} ingredient(s).` +
+          (result.exceptions.length ? ` ${result.exceptions.length} could not be converted — check them in Inventory.` : ""),
+      );
+    } catch (error) {
+      if (error instanceof ApiError && error.code === "INSUFFICIENT_STOCK") setShortfall(error.message);
+      else fail(errorMessage(error));
+    } finally {
+      setBusy(null);
+    }
+  }
+
   function toggleTask(key: string, done: boolean) {
     // Optimistic: the tick shows immediately; the reload corrects it if the write fails.
     setSheet((s) => ({
@@ -77,7 +103,10 @@ export function RunSheet({ initialSheet, today }: { initialSheet: RunSheetView; 
       })),
       progress: { ...s.progress, done: s.progress.done + (done ? 1 : -1) },
     }));
-    void act(key, () => api.put(`${base}/checks`, { taskKey: key, done }));
+    void act(key, async () => {
+      const result = await api.put<{ sanitised?: number }>(`${base}/checks`, { taskKey: key, done });
+      if (result.sanitised) succeed(`${result.sanitised} vessel kit(s) marked sanitised today.`);
+    });
   }
 
   function cycleVessel(subscriberId: string, current: VesselState | null) {
@@ -98,6 +127,11 @@ export function RunSheet({ initialSheet, today }: { initialSheet: RunSheetView; 
   );
   const servingsDrift = roster.plannedServings !== null && roster.plannedServings !== roster.count;
   const prepOpen = sheet.prep.filter((task) => task.status === "OPEN").length;
+  const { stock } = sheet;
+  const shortLines = stock?.lines.filter((line) => line.shortBy > 0) ?? [];
+  const stockLines = showAllStock ? (stock?.lines ?? []) : shortLines;
+  const withoutKit = sheet.vessels.filter((v) => !v.kit).length;
+  const stillMissing = sheet.vessels.filter((v) => v.missingSince).length;
 
   return (
     <main className="run-sheet-page">
@@ -347,6 +381,92 @@ export function RunSheet({ initialSheet, today }: { initialSheet: RunSheetView; 
         </div>
       </div>
 
+      {/* ── Stock (BR-31) ─────────────────────────────────────────────── */}
+      {stock && (
+        <section className={`inventory-card rs-stock ${shortLines.length && stock.pendingMeals.length ? "rs-stock-short" : ""}`}>
+          <div className="card-toolbar">
+            <h2>Stock for today&apos;s menu</h2>
+            <span>
+              {stock.pendingMeals.length === 0 && stock.assignedMeals.length
+                ? "recorded"
+                : `${stock.lines.length} ingredients · ${shortLines.length} short`}
+            </span>
+          </div>
+          {stock.runs.length > 0 && (
+            <p className="rs-stock-runs">
+              {stock.runs.map((run) => (
+                <span key={run.mealType}>
+                  ✓ {MEAL_NAMES[run.mealType]} taken off stock{" "}
+                  {new Date(run.recordedAt).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                  {run.recordedBy && ` by ${run.recordedBy}`}
+                  {run.negativeOverride && " (override)"}
+                </span>
+              ))}
+            </p>
+          )}
+          {stock.pendingMeals.length > 0 && (
+            <>
+              {stockLines.length > 0 ? (
+                <table className="rs-stock-table">
+                  <thead>
+                    <tr>
+                      <th>Ingredient</th>
+                      <th>Needed</th>
+                      <th>On hand</th>
+                      <th>Short by</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {stockLines.map((line) => (
+                      <tr key={line.ingredientId} className={line.shortBy > 0 ? "short" : ""}>
+                        <td>{line.ingredientName}</td>
+                        <td>
+                          {line.needed.toLocaleString("en-IN")} {line.unit}
+                        </td>
+                        <td>
+                          {line.onHand.toLocaleString("en-IN")} {line.unit}
+                        </td>
+                        <td>{line.shortBy > 0 ? `${line.shortBy.toLocaleString("en-IN")} ${line.unit}` : "—"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              ) : (
+                <p className="rs-empty">Everything the menu needs is in stock.</p>
+              )}
+              <div className="rs-stock-actions">
+                {stock.lines.length > shortLines.length && (
+                  <button className="subscribers-link" onClick={() => setShowAllStock((v) => !v)}>
+                    {showAllStock ? "Show shortages only" : `Show all ${stock.lines.length} ingredients`}
+                  </button>
+                )}
+                {stock.exceptions.length > 0 && (
+                  <span className="rs-unknown">{stock.exceptions.length} ingredient(s) have units that cannot be converted and will be skipped.</span>
+                )}
+                <span className="rs-spacer" />
+                {stock.cycleStatus === "DRAFT" ? (
+                  <span className="rs-hint-inline">Publish the cycle to record production.</span>
+                ) : (
+                  <button className="btn btn-copper" disabled={busy === "production"} onClick={() => void recordProduction()}>
+                    {busy === "production"
+                      ? "Recording…"
+                      : `Record production — take ${stock.pendingMeals.map((m) => MEAL_NAMES[m]).join(", ")} off stock`}
+                  </button>
+                )}
+              </div>
+              {shortfall && (
+                <div className="rs-shortfall" role="alert">
+                  <span>{shortfall} Receive stock in Inventory first, or record anyway.</span>
+                  <button className="btn btn-ghost" disabled={busy === "production"} onClick={() => void recordProduction(true)}>
+                    Record anyway (override)
+                  </button>
+                </div>
+              )}
+            </>
+          )}
+        </section>
+      )}
+
       {/* ── Checklist ──────────────────────────────────────────────────── */}
       <div className="rs-progress">
         <div>
@@ -392,11 +512,18 @@ export function RunSheet({ initialSheet, today }: { initialSheet: RunSheetView; 
                     key={task.key}
                     className={`rs-task ${task.done ? "done" : ""} ${task.critical ? "critical" : ""} ${task.vessel ? "vessel" : ""}`}
                   >
-                    <input type="checkbox" checked={task.done} onChange={(event) => toggleTask(task.key, event.target.checked)} />
+                    <input
+                      type="checkbox"
+                      checked={task.done}
+                      disabled={task.derived}
+                      title={task.derived ? "Ticks itself when production is recorded" : undefined}
+                      onChange={(event) => toggleTask(task.key, event.target.checked)}
+                    />
                     <div className="rs-task-body">
                       <span>{task.title}</span>
                       {task.sub && <small>{task.sub}</small>}
                       {task.done && task.doneBy && <small className="rs-by">✓ {task.doneBy}</small>}
+                      {task.derived && !task.done && <small className="rs-auto">Automatic — record production in the Stock card</small>}
                     </div>
                     <span className={`rs-owner owner-${task.owner.toLowerCase()}`}>{task.owner}</span>
                     <span className="rs-time">
@@ -432,6 +559,8 @@ export function RunSheet({ initialSheet, today }: { initialSheet: RunSheetView; 
           <span>
             {vesselCounts.out ?? 0} out · {vesselCounts.collected ?? 0} collected · {vesselCounts.missing ?? 0} missing ·{" "}
             {vesselCounts.none ?? 0} not dispatched
+            {withoutKit > 0 && ` · ${withoutKit} without a kit`}
+            {stillMissing > 0 && ` · ${stillMissing} missing from earlier days`}
           </span>
         </div>
         <p className="rs-hint">Click a vessel to move it on: dispatched → collected → missing → reset.</p>
@@ -451,6 +580,18 @@ export function RunSheet({ initialSheet, today }: { initialSheet: RunSheetView; 
                   {[v.deliverySlot, v.landmark].filter(Boolean).join(" · ") || v.plan || "—"}
                 </small>
                 {v.allergies.length > 0 && <small className="rs-vessel-allergy">⚠ {v.allergies.join(", ")}</small>}
+                {v.missingSince && <small className="rs-vessel-warn">Missing since {shortDate(v.missingSince)}</small>}
+                {!v.kit ? (
+                  <small className="rs-vessel-warn">No kit registered</small>
+                ) : v.kit.status === "needs-replace" ? (
+                  <small className="rs-vessel-warn">Kit needs replacing</small>
+                ) : v.kit.sanitisationOverdue ? (
+                  <small className="rs-vessel-amber">Clean overdue{v.kit.sanitisedAt ? ` · last ${shortDate(v.kit.sanitisedAt)}` : ""}</small>
+                ) : (
+                  <small>
+                    {v.kit.type === "copper" ? "Copper" : "Steel"} · {v.kit.sets} set{v.kit.sets === 1 ? "" : "s"}
+                  </small>
+                )}
                 <span className="rs-vessel-state">{VESSEL_LABEL[v.vessel ?? "none"]}</span>
               </button>
             ))}

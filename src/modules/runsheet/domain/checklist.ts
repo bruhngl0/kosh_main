@@ -20,6 +20,11 @@ export type ChecklistTask = {
   time: string;
   critical?: boolean;
   vessel?: boolean;
+  /**
+   * Ticked by the system, not by hand: "production" is done once every meal
+   * of the day has been recorded against stock (BR-31).
+   */
+  derived?: "production";
 };
 
 export type ChecklistPhase = {
@@ -94,6 +99,7 @@ export const CHECKLIST: readonly ChecklistPhase[] = [
     name: "Kitchen Close & Advance Prep",
     window: "9:00 AM – 12:00 PM",
     tasks: [
+      { id: "k0", title: "Production recorded against stock", sub: "Ticks itself once today's meals are taken off inventory — use the Stock card", owner: "Chef", time: "9:00 AM", critical: true, derived: "production" },
       { id: "k1", title: "Full kitchen clean-down after dispatch", sub: "Surfaces, equipment, floors. No exceptions.", owner: "Assist", time: "9:00 AM" },
       { id: "k2", title: "Advance prep due today (see the prep list)", sub: "Every item due today ticked off or skipped with a reason", owner: "Chef", time: "9:30 AM" },
       { id: "k3", title: "Start any long-cook items for tomorrow", sub: "Braises, bone broths, marinades, sous-vide items", owner: "Chef", time: "10:00 AM" },
@@ -124,3 +130,11 @@ export const CHECKLIST: readonly ChecklistPhase[] = [
 export const STANDARD_TASK_IDS: ReadonlySet<string> = new Set(CHECKLIST.flatMap((phase) => phase.tasks.map((task) => task.id)));
 
 export const isStandardTask = (key: string) => STANDARD_TASK_IDS.has(key);
+
+/** Tasks the system ticks. They cannot be ticked by hand or by "mark all done". */
+export const DERIVED_TASK_IDS: ReadonlySet<string> = new Set(
+  CHECKLIST.flatMap((phase) => phase.tasks.filter((task) => task.derived).map((task) => task.id)),
+);
+
+/** The evening wash. Ticking it stamps the sanitisation date on every vessel collected that day (BR-32). */
+export const SANITISE_TASK_ID = "e6";

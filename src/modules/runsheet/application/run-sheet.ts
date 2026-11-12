@@ -4,9 +4,10 @@ import { assertCan, type Actor } from "@/server/actor";
 import { recordAudit } from "@/server/audit";
 import { notFound, unprocessable } from "@/server/errors";
 import { getCycleDateRanges, getMenuForDate, MEAL_NAMES, type MealType } from "@/modules/cycles";
-import { listPrepDueOn } from "@/modules/production";
+import { listPrepDueOn, previewDayStock } from "@/modules/production";
 import { listDeliveryRoster } from "@/modules/subscribers";
-import { CHECKLIST, isStandardTask } from "@/modules/runsheet/domain/checklist";
+import { kitsForSubscribers, recordSanitised } from "@/modules/vessels";
+import { CHECKLIST, DERIVED_TASK_IDS, isStandardTask, SANITISE_TASK_ID } from "@/modules/runsheet/domain/checklist";
 import { findClashes } from "@/modules/runsheet/domain/allergens";
 import type {
   AddRunSheetTaskInput,
@@ -22,6 +23,9 @@ import type {
  * its menu (cycles), who is delivered to (subscribers), what advance prep is
  * due (production), and who clashes with which dish. Only what the kitchen
  * DOES on the day is stored: ticks, added tasks, vessel movements, notes.
+ * Two actions reach into other modules: recording production takes the day
+ * off stock (BR-31, production → inventory), and the evening wash tick stamps
+ * vessel kits as sanitised (BR-32, vessels).
  * The row for a date is created by its first write, so browsing ahead or back
  * leaves nothing behind.
  */
@@ -49,6 +53,13 @@ export async function getRunSheet(date: string) {
     }),
   ]);
 
+  const rosterIds = roster.subscribers.map((s) => s.id);
+  const [stock, kits, missingSince] = await Promise.all([
+    menu ? previewDayStock({ cycleId: menu.cycle.id, dayNumber: menu.dayNumber }) : null,
+    kitsForSubscribers(rosterIds),
+    vesselsStillMissing(rosterIds, date),
+  ]);
+
   const meals = menu?.meals ?? [];
   const sum = (pick: (meal: (typeof meals)[number]) => number | null) =>
     meals.length && meals.every((meal) => pick(meal) !== null)
@@ -71,7 +82,14 @@ export async function getRunSheet(date: string) {
   });
 
   const checks = new Map(sheet?.checks.map((check) => [check.taskKey, check]) ?? []);
+  const productionDone = Boolean(stock && stock.assignedMeals.length && !stock.pendingMeals.length);
+  const lastRun = stock?.runs.at(-1);
   const doneInfo = (key: string) => {
+    if (DERIVED_TASK_IDS.has(key)) {
+      return productionDone
+        ? { done: true, doneBy: lastRun?.recordedBy ?? null, doneAt: lastRun?.recordedAt ?? null }
+        : { done: false, doneBy: null, doneAt: null };
+    }
     const check = checks.get(key);
     return check ? { done: true, doneBy: check.doneBy?.name ?? null, doneAt: check.doneAt.toISOString() } : { done: false, doneBy: null, doneAt: null };
   };
@@ -90,6 +108,7 @@ export async function getRunSheet(date: string) {
         critical: task.critical ?? false,
         vessel: task.vessel ?? false,
         custom: false,
+        derived: Boolean(task.derived),
         ...doneInfo(task.id),
       })),
       ...(sheet?.tasks ?? [])
@@ -103,6 +122,7 @@ export async function getRunSheet(date: string) {
           critical: false,
           vessel: false,
           custom: true,
+          derived: false,
           ...doneInfo(task.id),
         })),
     ],
@@ -156,14 +176,55 @@ export async function getRunSheet(date: string) {
     },
     allergyAlerts,
     prep,
+    stock,
     phases,
     progress: { done: allTasks.filter((task) => task.done).length, total: allTasks.length },
     vessels: roster.subscribers.map((subscriber) => ({
       ...subscriber,
       vessel: dispatchBySubscriber.get(subscriber.id) ?? null,
       flagged: allergyAlerts.some((alert) => alert.subscriberId === subscriber.id && alert.clashes.length > 0),
+      kit: kitView(kits.get(subscriber.id)),
+      missingSince: missingSince.get(subscriber.id) ?? null,
     })),
   };
+}
+
+type Kit = ReturnType<Awaited<ReturnType<typeof kitsForSubscribers>>["get"]>;
+
+function kitView(kit: Kit) {
+  if (!kit) return null;
+  return {
+    id: kit.id,
+    type: kit.type,
+    status: kit.status,
+    sets: kit.sets,
+    sanitisedAt: kit.sanitisedAt,
+    sanitisationOverdue: kit.sanitisationOverdue,
+  };
+}
+
+/**
+ * BR-32 — vessels marked missing on an earlier day and not seen since. For
+ * each subscriber, walks their recent days back from the latest: a trailing
+ * run of "missing" gives the first day it went missing. Any later dispatch or
+ * collection ends the run.
+ */
+async function vesselsStillMissing(subscriberIds: string[], date: string) {
+  const since = asDate(date);
+  since.setUTCDate(since.getUTCDate() - 30);
+  const rows = await db.vesselDispatch.findMany({
+    where: { subscriberId: { in: subscriberIds }, runSheet: { productionDate: { lt: asDate(date), gte: since } } },
+    select: { subscriberId: true, status: true, runSheet: { select: { productionDate: true } } },
+    orderBy: { runSheet: { productionDate: "desc" } },
+  });
+  const result = new Map<string, string>();
+  const settled = new Set<string>();
+  for (const row of rows) {
+    if (settled.has(row.subscriberId)) continue;
+    if (row.status === "missing") result.set(row.subscriberId, row.runSheet.productionDate.toISOString().slice(0, 10));
+    else settled.add(row.subscriberId);
+  }
+  return result;
 }
 
 // ── Writes ───────────────────────────────────────────────────────────────────
@@ -221,16 +282,23 @@ export async function setCheck(date: string, input: SetCheckInput, context: Cont
     const customIds = new Set(custom.map((task) => task.id));
 
     if ("all" in input) {
-      const keys = [...CHECKLIST.flatMap((phase) => phase.tasks.map((task) => task.id)), ...customIds];
+      const keys = [
+        ...CHECKLIST.flatMap((phase) => phase.tasks.map((task) => task.id)).filter((key) => !DERIVED_TASK_IDS.has(key)),
+        ...customIds,
+      ];
       const { count } = await tx.runSheetCheck.createMany({
         data: keys.map((taskKey) => ({ runSheetId: sheet.id, taskKey, doneById: context.actor.id })),
         skipDuplicates: true,
       });
-      return { ticked: count };
+      const sanitised = await sanitiseCollected(tx, sheet.id, date, context);
+      return { ticked: count, sanitised };
     }
 
     if (!isStandardTask(input.taskKey) && !customIds.has(input.taskKey)) {
       throw notFound("Run sheet task", input.taskKey);
+    }
+    if (DERIVED_TASK_IDS.has(input.taskKey)) {
+      throw unprocessable("This task ticks itself when today's production is recorded against stock.", { taskKey: input.taskKey });
     }
 
     if (input.done) {
@@ -239,6 +307,9 @@ export async function setCheck(date: string, input: SetCheckInput, context: Cont
         data: [{ runSheetId: sheet.id, taskKey: input.taskKey, doneById: context.actor.id }],
         skipDuplicates: true,
       });
+      if (input.taskKey === SANITISE_TASK_ID) {
+        return { taskKey: input.taskKey, done: true, sanitised: await sanitiseCollected(tx, sheet.id, date, context) };
+      }
     } else {
       await tx.runSheetCheck.deleteMany({ where: { runSheetId: sheet.id, taskKey: input.taskKey } });
     }
@@ -303,7 +374,15 @@ export async function setVesselState(date: string, subscriberId: string, status:
           update: { status, updatedById: context.actor.id },
         });
       }
-      return { subscriberId, status };
+      // A vessel logged as collected after the wash was already ticked went
+      // through that wash too.
+      const washed =
+        status === "collected" &&
+        (await tx.runSheetCheck.count({ where: { runSheetId: sheet.id, taskKey: SANITISE_TASK_ID } })) > 0;
+      const sanitised = washed
+        ? await recordSanitised(tx, [subscriberId], date, { actorId: context.actor.id, requestId: context.requestId })
+        : 0;
+      return { subscriberId, status, sanitised };
     });
   } catch (error) {
     // The subscriber id did not exist: a foreign-key violation, not a server fault.
@@ -312,6 +391,17 @@ export async function setVesselState(date: string, subscriberId: string, status:
     }
     throw error;
   }
+}
+
+/** BR-32 — the wash ran: every vessel collected today is now sanitised. */
+async function sanitiseCollected(tx: DbClient, runSheetId: string, date: string, context: Context) {
+  const collected = await tx.vesselDispatch.findMany({ where: { runSheetId, status: "collected" }, select: { subscriberId: true } });
+  return recordSanitised(
+    tx,
+    collected.map((row) => row.subscriberId),
+    date,
+    { actorId: context.actor.id, requestId: context.requestId },
+  );
 }
 
 /** Guard used by the route: a run sheet for a date years away is a typo, not a plan. */
