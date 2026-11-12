@@ -171,18 +171,20 @@ export async function getRunSheet(date: string) {
 /**
  * The run sheet row for a date, created if this is the day's first write.
  *
- * Plain INSERT … ON CONFLICT rather than Prisma's upsert: with nothing to
- * update, Prisma falls back to read-then-create, and two people ticking the
- * first task of the day at the same moment would collide on the unique date.
+ * INSERT … ON CONFLICT DO NOTHING, then read: neither statement locks the
+ * row, so people ticking at the same moment do not queue behind each other.
+ * (Prisma's upsert with nothing to update reads then creates, and races on
+ * the unique date; DO UPDATE would take a row lock every write then waits on.)
+ * If a concurrent first write is still in flight, the INSERT waits for it to
+ * commit, so the read that follows always finds the row.
  */
 async function ensureSheet(tx: DbClient, date: string): Promise<{ id: string }> {
-  const [row] = await tx.$queryRaw<{ id: string }[]>`
+  await tx.$executeRaw`
     INSERT INTO run_sheets (id, production_date, updated_at)
     VALUES (gen_random_uuid(), ${date}::date, NOW())
-    ON CONFLICT (production_date) DO UPDATE SET production_date = EXCLUDED.production_date
-    RETURNING id
+    ON CONFLICT (production_date) DO NOTHING
   `;
-  return row;
+  return tx.runSheet.findUniqueOrThrow({ where: { productionDate: asDate(date) }, select: { id: true } });
 }
 
 export async function updateRunSheet(date: string, input: UpdateRunSheetInput, context: Context) {

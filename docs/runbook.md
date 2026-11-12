@@ -272,10 +272,13 @@ Deliberate for the MVP, listed so nobody mistakes them for oversights:
   allergies to recipe allergen codes by word (system-design BR-29). Anything the matcher
   does not recognise is shown as "check by hand"; the packing check (`pk0`) stays a human
   task.
-- **The run sheet cooks for the roster, the planner for its count.** The run sheet's
-  delivery list is live (active subscribers whose start date has arrived), while recipe
-  servings come from the cycle's typed-in subscriber count. When they differ the
-  "Cycle day" card on the run sheet turns amber and shows both numbers.
+- **Servings follow the roster, purchase orders do not.** Servings in open cycles move
+  with the subscriber roster day by day (system-design BR-30), but purchase orders already
+  generated keep their quantities — regenerate after a big roster change to refresh the
+  ones still in draft; orders already sent stay as sent. Servings
+  set by hand in the day modal stay fixed until "Follow roster" is pressed, and past days
+  never change. When the run sheet's planned servings differ from the delivery list (a
+  hand-set day, or a past day), its "Cycle day" card turns amber and shows both numbers.
 - **No real authentication.** Every mutation runs as the seeded operations user. The
   actor is threaded through every use case already (§8.1), so adding sessions is a
   change to `src/server/actor.ts` alone.

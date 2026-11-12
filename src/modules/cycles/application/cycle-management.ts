@@ -5,6 +5,7 @@ import { conflict, notFound, unprocessable } from "@/server/errors";
 import { buildCycleDays, describePublishProblem, isDeletable, validatePublish } from "@/modules/cycles/domain/cycle";
 import type { CreateCycleInput, UpdateCycleInput } from "@/shared/schemas/cycle";
 import * as repository from "@/modules/cycles/infrastructure/cycle-repository";
+import { applyRosterHeadcount } from "@/modules/cycles/application/headcount";
 
 /**
  * Cycle lifecycle use cases. See docs/system-design.md §4.1.
@@ -37,6 +38,10 @@ export async function createCycle(input: CreateCycleInput, context: Context) {
       days: { create: buildCycleDays(input.durationDays) },
     });
 
+    // BR-30: a new cycle starts at the roster's head-count when there is one.
+    const [headcount] = await applyRosterHeadcount(tx, { actorId: context.actor.id, requestId: context.requestId, reason: "cycle created" }, [cycle.id]);
+    if (headcount) cycle.subscriberCount = headcount.headcount;
+
     await recordAudit(tx, {
       actorId: context.actor.id,
       action: "cycle.created",
@@ -57,7 +62,7 @@ export async function updateCycle(id: string, input: UpdateCycleInput, context: 
   if (!before) throw notFound("Cycle", id);
 
   return db.$transaction(async (tx) => {
-    const after = await repository.updateCycle(tx, id, {
+    let after = await repository.updateCycle(tx, id, {
       name: input.name,
       weekStart: input.weekStart,
       subscriberCount: input.subscriberCount,
@@ -65,6 +70,13 @@ export async function updateCycle(id: string, input: UpdateCycleInput, context: 
       chefName: input.chefName,
       proteinWindowDays: input.proteinWindowDays,
     });
+
+    // BR-30: moving the start date moves which roster day each meal falls on,
+    // and a typed head-count only stands while the roster is empty.
+    if (input.weekStart !== undefined || input.subscriberCount !== undefined) {
+      await applyRosterHeadcount(tx, { actorId: context.actor.id, requestId: context.requestId, reason: "cycle updated" }, [id]);
+      after = (await repository.findCycleMeta(tx, id)) ?? after;
+    }
 
     await recordAudit(tx, {
       actorId: context.actor.id,

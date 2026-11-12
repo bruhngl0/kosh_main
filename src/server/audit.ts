@@ -48,6 +48,7 @@ export type AuditAction =
   | "subscriber.created"
   | "subscriber.updated"
   | "subscriber.synced"
+  | "cycle.headcount_synced"
   | "run_sheet.updated"
   | "run_sheet.task_added"
   | "run_sheet.task_removed";

@@ -13,6 +13,7 @@ export const createCycleSchema = z.object({
   cycleNumber: z.number().int().positive("Cycle number must be positive."),
   durationDays: z.number().int().min(1).max(366).default(28),
   weekStart: z.coerce.date().optional(),
+  /** Used only until the roster has active subscribers (BR-30), then the roster wins. */
   subscriberCount: z.number().int().positive("There must be at least one subscriber.").default(1),
   foodCostTargetPercent: z.number().min(0).max(100).optional(),
   chefName: optionalText(120),
@@ -26,6 +27,7 @@ export const updateCycleSchema = z
   .object({
     name: z.string().trim().min(1).max(120).optional(),
     weekStart: z.coerce.date().nullish(),
+    /** Used only until the roster has active subscribers (BR-30), then the roster wins. */
     subscriberCount: z.number().int().positive().optional(),
     foodCostTargetPercent: z.number().min(0).max(100).nullish(),
     chefName: optionalText(120),
@@ -35,8 +37,11 @@ export const updateCycleSchema = z
 
 export const assignMealSchema = z.object({
   recipeVersionId: idSchema,
-  /** Defaults to the cycle's subscriber count when omitted. */
-  servings: z.number().int().positive().optional(),
+  /**
+   * BR-30. A number fixes servings by hand; null returns them to the roster;
+   * omitted keeps a hand-set figure, otherwise follows the roster.
+   */
+  servings: z.number().int().positive().nullish(),
   notes: optionalText(1000),
 });
 

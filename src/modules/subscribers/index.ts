@@ -11,6 +11,8 @@ export {
   subscriberCapacity,
   // Published for the daily run sheet (BR-26).
   listDeliveryRoster,
+  // Published for the cycle head-count (BR-30).
+  deliveryCounts,
   type DeliveryRoster,
   type SubscriberView,
 } from "@/modules/subscribers/application/subscriber-management";

@@ -99,7 +99,11 @@ model Cycle {
   durationDays          Int             @default(28) @map("duration_days")
   status                CycleStatus     @default(DRAFT)
   weekStart             DateTime?       @map("week_start") @db.Date
+  /// Head-count. Follows the subscriber roster once it has active subscribers (BR-30);
+  /// typed in only before then.
   subscriberCount       Int             @default(1) @map("subscriber_count")
+  /// When servings were last brought in line with the roster (BR-30).
+  headcountSyncedAt     DateTime?       @map("headcount_synced_at")
   foodCostTargetPercent Decimal?        @map("food_cost_target_percent") @db.Decimal(5, 2)
   chefName              String?         @map("chef_name")
   /// BR-1: rolling window, in days, within which a dinner protein may not repeat.
@@ -251,6 +255,8 @@ model MealAssignment {
   mealType        MealType      @map("meal_type")
   recipeVersionId String        @map("recipe_version_id") @db.Uuid
   servings        Int           @default(1)
+  /// True when someone set the servings by hand; the roster sync leaves it alone (BR-30).
+  servingsLocked  Boolean       @default(false) @map("servings_locked")
   notes           String?
   createdAt       DateTime      @default(now()) @map("created_at")
   updatedAt       DateTime      @updatedAt @map("updated_at")

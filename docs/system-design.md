@@ -193,6 +193,11 @@ Per date and subscriber a vessel is `out`, `collected` or `missing` (`CHECK` con
 ### BR-29 — Allergen alerts
 Recipe allergen codes ("Gluten (roti)", "Tree nuts") and the free text subscribers type ("peanuts", "lactose intolerant", "nuts") are both reduced to canonical groups before matching. Matching errs wide — "nuts" covers tree nuts and groundnuts, "shellfish" covers crustaceans and molluscs — because a false alarm costs a glance and a miss costs a guest. An allergy that maps to no group is shown as "check by hand", never dropped. The alerts drive a critical packing task (`pk0`).
 
+### BR-30 — Servings follow the roster
+Each meal in a DRAFT or ACTIVE cycle is cooked for the subscribers delivered to on its date (BR-26's rule), so someone starting on day 10 is cooked for from day 10. Two kinds of servings are never moved: those set by hand (`meal_assignments.servings_locked`) and days before today, which record what was cooked and may have had production consumed against them (BR-14). A cycle without a start date uses today's count for every day. `cycles.subscriber_count` becomes the roster count for today, or for the cycle's first day if it has not started; it is only typed in while the roster has no active subscribers, and then it stands. Servings never drop below 1.
+
+It runs inside the same transaction as any subscriber change that alters who is delivered to (added as active; status into or out of `active`; start date moved while active), when a cycle is created or its start date or head-count is edited, and on demand (`POST /cycles/:id/headcount`). Onboarding syncs never trigger it: a new applicant is `onboarding`, not delivered to. Filling a slot defaults to that day's roster count; sending a number fixes servings by hand, `null` hands them back to the roster, and omitting servings when swapping a dish keeps a hand-set figure. Every change is audited as `cycle.headcount_synced` with the reason. Purchase orders already generated keep their quantities; regenerating refreshes the ones still in `DRAFT`, and orders already sent stay as sent (BR-16). Cycles depend on subscribers for the roster; the subscribers module reaches back to cycles through a lazy import so the two modules do not load each other.
+
 ---
 
 ## 4. Architecture
@@ -337,6 +342,7 @@ Application-level checks are a convenience; the database is the guarantee.
 | `run_sheets.production_date` unique | One run sheet per day (BR-26) |
 | `run_sheet_checks (run_sheet_id, task_key)` unique | A task is ticked once (BR-27) |
 | `vessel_dispatches (run_sheet_id, subscriber_id)` unique, status `CHECK` | One vessel state per subscriber per day (BR-28) |
+| `meal_assignments.servings > 0`, `cycles.subscriber_count > 0` | Nobody cooks for zero (BR-30) |
 
 Foreign keys use `RESTRICT` for operational records that must not vanish (ingredients, recipe versions, vendors) and `CASCADE` only for records that are meaningless without their parent (recipe steps, PO lines, meal assignments).
 
@@ -420,6 +426,7 @@ The request ID appears in both the response and the server log line, so a user r
 | `PATCH` | `/cycles/:id` | Edit metadata (name, dates, subscribers, targets) |
 | `DELETE` | `/cycles/:id` | Delete — drafts only |
 | `POST` | `/cycles/:id/publish` | Validate (BR-4) and activate atomically |
+| `POST` | `/cycles/:id/headcount` | Bring servings in line with the roster now (BR-30) |
 | `PUT` | `/cycles/:id/days/:day/meals/:meal` | Assign a recipe version (BR-5) |
 | `DELETE` | `/cycles/:id/days/:day/meals/:meal` | Clear a slot |
 | `GET` | `/cycles/:id/conflicts` | Protein conflicts (BR-1, BR-2) |

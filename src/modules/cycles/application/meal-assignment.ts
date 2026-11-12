@@ -5,6 +5,7 @@ import { notFound, unprocessable } from "@/server/errors";
 import { MEAL_NAMES, isSlotCompatible, type MealType } from "@/modules/cycles/domain/cycle";
 import type { AssignMealInput } from "@/shared/schemas/cycle";
 import * as repository from "@/modules/cycles/infrastructure/cycle-repository";
+import { rosterServingsFor } from "@/modules/cycles/application/headcount";
 
 type Context = { actor: Actor; requestId: string };
 
@@ -51,13 +52,25 @@ export async function assignMeal(target: AssignTarget, input: AssignMealInput, c
 
     const previous = await repository.findAssignment(tx, day.id, target.mealType);
 
+    // BR-30. A number fixes the servings by hand; null hands them back to the
+    // roster; omitted keeps a hand-set figure when swapping the dish, and
+    // otherwise follows the roster. Never 1 by default, which is what makes
+    // demand aggregation meaningful (BR-6).
+    const keepPrevious = input.servings === undefined && previous?.servingsLocked;
+    const servingsLocked = typeof input.servings === "number" || Boolean(keepPrevious);
+    const servings =
+      typeof input.servings === "number"
+        ? input.servings
+        : keepPrevious
+          ? previous!.servings
+          : await rosterServingsFor(tx, cycle.weekStart, day.dayNumber, cycle.subscriberCount);
+
     const assignment = await repository.upsertAssignment(tx, {
       cycleDayId: day.id,
       mealType: target.mealType,
       recipeVersionId: version.id,
-      // Servings default to the cycle roster rather than 1, which is what makes
-      // demand aggregation meaningful (BR-6).
-      servings: input.servings ?? cycle.subscriberCount,
+      servings,
+      servingsLocked,
       notes: input.notes,
     });
 
@@ -67,7 +80,7 @@ export async function assignMeal(target: AssignTarget, input: AssignMealInput, c
       entityType: "MealAssignment",
       entityId: assignment.id,
       before: previous
-        ? { recipeVersionId: previous.recipeVersionId, servings: previous.servings }
+        ? { recipeVersionId: previous.recipeVersionId, servings: previous.servings, servingsLocked: previous.servingsLocked }
         : undefined,
       after: {
         cycleId: target.cycleId,
@@ -75,6 +88,7 @@ export async function assignMeal(target: AssignTarget, input: AssignMealInput, c
         mealType: target.mealType,
         recipeVersionId: assignment.recipeVersionId,
         servings: assignment.servings,
+        servingsLocked: assignment.servingsLocked,
       },
       requestId: context.requestId,
     });
