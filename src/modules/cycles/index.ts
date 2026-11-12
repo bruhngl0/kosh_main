@@ -16,6 +16,13 @@ export {
 export { assignMeal, clearMeal } from "@/modules/cycles/application/meal-assignment";
 
 export {
+  syncCycleHeadcount,
+  // Published for the subscribers module: roster changes re-run BR-30 in their own transaction.
+  applyRosterHeadcount,
+  type HeadcountResult,
+} from "@/modules/cycles/application/headcount";
+
+export {
   listCycles,
   getCycleCalendar,
   getConflicts,
@@ -23,7 +30,11 @@ export {
   // Cross-module query interface, consumed by procurement and production.
   getWeekDemandInputs,
   getDayDemandInputs,
+  // Published for the daily run sheet (BR-26).
+  getMenuForDate,
+  getCycleDateRanges,
   type CycleCalendar,
+  type DayMenu,
 } from "@/modules/cycles/application/cycle-queries";
 
 export {
@@ -39,6 +50,8 @@ export {
   isSlotCompatible,
   isStructurallyEditable,
   isDeletable,
+  dayNumberOn,
+  cycleCovering,
   type MealType,
   type CycleStatus,
 } from "@/modules/cycles/domain/cycle";

@@ -120,3 +120,29 @@ export function describePublishProblem(problem: PublishProblem): string {
 // ── BR-5, slot compatibility ─────────────────────────────────────────────────
 
 export const isSlotCompatible = (slot: MealType, recipeMealType: MealType) => slot === recipeMealType;
+
+// ── BR-26, which cycle day a calendar date is ───────────────────────────────
+
+type DatedCycle = { status: CycleStatus; cycleNumber: number; weekStart: Date | null; durationDays: number };
+
+/** Day number of `date` (YYYY-MM-DD) within a cycle, or null when it falls outside it. */
+export function dayNumberOn(cycle: Pick<DatedCycle, "weekStart" | "durationDays">, date: string): number | null {
+  if (!cycle.weekStart) return null;
+  const offset = Math.round((Date.parse(`${date}T00:00:00Z`) - cycle.weekStart.getTime()) / 86_400_000);
+  return offset >= 0 && offset < cycle.durationDays ? offset + 1 : null;
+}
+
+/**
+ * The cycle whose calendar covers `date`. Cycles can overlap while a new one
+ * is drafted; the live one wins (ACTIVE, then CLOSED, then DRAFT), and the
+ * newer cycle breaks a tie. Archived cycles are history, never "today".
+ */
+export function cycleCovering<T extends DatedCycle>(cycles: T[], date: string): { cycle: T; dayNumber: number } | null {
+  const rank: Record<CycleStatus, number> = { ACTIVE: 0, CLOSED: 1, DRAFT: 2, ARCHIVED: 9 };
+  const covering = cycles
+    .filter((cycle) => cycle.status !== "ARCHIVED")
+    .map((cycle) => ({ cycle, dayNumber: dayNumberOn(cycle, date) }))
+    .filter((entry): entry is { cycle: T; dayNumber: number } => entry.dayNumber !== null)
+    .sort((a, b) => rank[a.cycle.status] - rank[b.cycle.status] || b.cycle.cycleNumber - a.cycle.cycleNumber);
+  return covering[0] ?? null;
+}

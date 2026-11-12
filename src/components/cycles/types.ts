@@ -21,6 +21,8 @@ export type MealSlot = {
   kcal: number | null;
   proteinGrams: number | null;
   servings: number;
+  /** Set by hand; the roster sync leaves it alone (BR-30). */
+  servingsLocked: boolean;
   advanceCount: number;
 };
 
@@ -51,6 +53,7 @@ export type CycleSummary = {
   status: string;
   durationDays: number;
   subscriberCount: number;
+  headcountSyncedAt: string | null;
   weekStart: string | null;
   chefName: string | null;
   foodCostTargetPercent: number | null;

@@ -9,7 +9,12 @@ export {
   updateSubscriber,
   syncFromOnboarding,
   subscriberCapacity,
+  // Published for the daily run sheet (BR-26).
+  listDeliveryRoster,
+  // Published for the cycle head-count (BR-30).
+  deliveryCounts,
+  type DeliveryRoster,
   type SubscriberView,
 } from "@/modules/subscribers/application/subscriber-management";
 
-export { rosterSummary, whatsappNumber, HOLDS_SEAT, type RosterSummary } from "@/modules/subscribers/domain/subscriber";
+export { rosterSummary, whatsappNumber, deliversOn, HOLDS_SEAT, type RosterSummary } from "@/modules/subscribers/domain/subscriber";

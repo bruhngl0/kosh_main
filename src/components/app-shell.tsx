@@ -32,6 +32,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </Link>
         <div className="header-rule" />
         <nav className="global-nav">
+          <Link href="/run-sheet">Run Sheet</Link>
           <Link href="/cycles">Cycle Planner</Link>
           <Link href="/recipes">Recipe Database</Link>
           <Link href="/inventory">Inventory</Link>

@@ -123,13 +123,20 @@ export function findDaysForWeek(client: DbClient, cycleId: string, weekNumber: n
 
 export function upsertAssignment(
   client: DbClient,
-  input: { cycleDayId: string; mealType: Prisma.MealAssignmentCreateInput["mealType"]; recipeVersionId: string; servings: number; notes?: string },
+  input: {
+    cycleDayId: string;
+    mealType: Prisma.MealAssignmentCreateInput["mealType"];
+    recipeVersionId: string;
+    servings: number;
+    servingsLocked: boolean;
+    notes?: string;
+  },
 ) {
-  const { cycleDayId, mealType, recipeVersionId, servings, notes } = input;
+  const { cycleDayId, mealType, recipeVersionId, servings, servingsLocked, notes } = input;
   return client.mealAssignment.upsert({
     where: { cycleDayId_mealType: { cycleDayId, mealType } },
-    update: { recipeVersionId, servings, notes },
-    create: { cycleDayId, mealType, recipeVersionId, servings, notes },
+    update: { recipeVersionId, servings, servingsLocked, notes },
+    create: { cycleDayId, mealType, recipeVersionId, servings, servingsLocked, notes },
     include: assignmentInclude,
   });
 }
@@ -188,6 +195,55 @@ export function findDayIngredientDemand(client: DbClient, cycleDayId: string, me
               quantity: true,
               unit: true,
               ingredient: { select: { name: true } },
+            },
+          },
+        },
+      },
+    },
+  });
+}
+
+/** Cycles that could cover a date: started on or before it and not archived. */
+export function findCyclesStartedBy(client: DbClient, date: Date) {
+  return client.cycle.findMany({
+    where: { weekStart: { lte: date }, status: { not: "ARCHIVED" } },
+    select: {
+      id: true,
+      name: true,
+      cycleNumber: true,
+      status: true,
+      weekStart: true,
+      durationDays: true,
+      chefName: true,
+      subscriberCount: true,
+    },
+  });
+}
+
+/** One day's menu with what the run sheet shows: macros, protein, allergens. */
+export function findDayMenu(client: DbClient, cycleId: string, dayNumber: number) {
+  return client.cycleDay.findUnique({
+    where: { cycleId_dayNumber: { cycleId, dayNumber } },
+    select: {
+      id: true,
+      dayNumber: true,
+      weekNumber: true,
+      phaseLabel: true,
+      assignments: {
+        select: {
+          mealType: true,
+          servings: true,
+          notes: true,
+          recipeVersion: {
+            select: {
+              calories: true,
+              proteinGrams: true,
+              carbsGrams: true,
+              fatGrams: true,
+              proteinSource: true,
+              platingNotes: true,
+              recipe: { select: { title: true, subtitle: true } },
+              allergens: { select: { allergenCode: true }, orderBy: { allergenCode: "asc" } },
             },
           },
         },

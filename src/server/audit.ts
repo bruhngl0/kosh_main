@@ -38,6 +38,7 @@ export type AuditAction =
   | "production.consumed"
   | "vessel_kit.created"
   | "vessel_kit.updated"
+  | "vessel_kit.sanitised"
   | "cash_transaction.created"
   | "cash_transaction.updated"
   | "cash_transaction.deleted"
@@ -47,7 +48,11 @@ export type AuditAction =
   | "recurring_cost.updated"
   | "subscriber.created"
   | "subscriber.updated"
-  | "subscriber.synced";
+  | "subscriber.synced"
+  | "cycle.headcount_synced"
+  | "run_sheet.updated"
+  | "run_sheet.task_added"
+  | "run_sheet.task_removed";
 
 export type AuditInput = {
   actorId: string | null;

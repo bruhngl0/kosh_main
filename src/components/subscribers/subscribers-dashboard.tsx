@@ -21,6 +21,14 @@ const FILTERS: ["" | SubscriberStatus, string][] = [
 
 const inr = (value: number) => `₹${Math.round(value).toLocaleString("en-IN")}`;
 
+type SaveResult = { servingsChanged?: { cycleName: string; changed: number; headcount: number }[] };
+
+/** BR-30 — say when a roster change moved the kitchen's servings. */
+const servingsNote = (result: SaveResult | undefined) =>
+  result?.servingsChanged?.length
+    ? " " + result.servingsChanged.map((c) => `${c.cycleName} now cooks for ${c.headcount} (${c.changed} meal${c.changed === 1 ? "" : "s"} updated).`).join(" ")
+    : "";
+
 export function SubscribersDashboard({ initialRoster, plans }: { initialRoster: Roster; plans: Plan[] }) {
   const [roster, setRoster] = useState(initialRoster);
   const [filter, setFilter] = useState<"" | SubscriberStatus>("");
@@ -55,9 +63,9 @@ export function SubscribersDashboard({ initialRoster, plans }: { initialRoster: 
   async function patch(subscriber: SubscriberView, change: Partial<SubscriberDraft>, message: string) {
     setBusyId(subscriber.id);
     try {
-      await api.patch(`/subscribers/${subscriber.id}`, change);
+      const result = await api.patch<SaveResult>(`/subscribers/${subscriber.id}`, change);
       await reload();
-      succeed(message);
+      succeed(message + servingsNote(result));
     } catch (error) {
       fail(errorMessage(error));
     } finally {
@@ -68,10 +76,11 @@ export function SubscribersDashboard({ initialRoster, plans }: { initialRoster: 
   async function save(draft: SubscriberDraft, existing: SubscriberView | null) {
     setSaving(true);
     try {
-      if (existing) await api.patch(`/subscribers/${existing.id}`, draft);
-      else await api.post("/subscribers", draft);
+      const result = existing
+        ? await api.patch<SaveResult>(`/subscribers/${existing.id}`, draft)
+        : await api.post<SaveResult>("/subscribers", draft);
       await reload();
-      succeed(existing ? `${draft.name} updated.` : `${draft.name} added.`);
+      succeed((existing ? `${draft.name} updated.` : `${draft.name} added.`) + servingsNote(result));
       setModal(null);
     } catch (error) {
       fail(errorMessage(error));
