@@ -23,6 +23,9 @@ The three HTML prototypes in the repository root are the product specification w
 | `Kosh_Cycle_Planner.html` | The 28-day menu, protein rotation safety, advance-prep lead times, weekly production lists | Cycles + Production modules |
 | `Kosh_Recipe_Database.html` | Per-dish execution cards: ingredients with prep notes, method steps with critical controls, allergens, plating | Recipes module |
 | `Kosh_Inventory.html` | Ingredient master, vendor directory, par levels, stock, purchasing, vendor outreach, food-cost P&L, vessel kits | Inventory + Procurement + Vendors + Vessels modules |
+| `Kosh_Cash_Flow.html` | Cash ledger with running balance, weekly view, charts, fixed-cost reminders, danger flags | Finance module (`/finance`) |
+| `Kosh_Daily_Run_Sheet.html` | The kitchen's day: brief, macro strip, phased checklist with owners and critical flags, vessel tracker, notes | Run sheet module (`/run-sheet`) |
+| `koshOnboarding` (separate app) | Applicants, the apply form, confirmation | Feeds the Subscribers module via BR-23 |
 
 ---
 
@@ -134,7 +137,7 @@ DRAFT → OUTREACH_READY → ORDERED → PARTIALLY_RECEIVED → RECEIVED
 Recording receipt against purchase order lines writes `RECEIVE` movements for each line, in one transaction. The order becomes `PARTIALLY_RECEIVED` when some lines are short, `RECEIVED` when all lines are fully received. **This is the only bridge between procurement and inventory.**
 
 ### BR-14 — Production consumes stock
-Executing a production run for a cycle day computes required ingredients from its assignments and writes `CONSUME` movements, subject to BR-10.
+Executing a production run for a cycle day computes required ingredients from its assignments and writes `CONSUME` movements, subject to BR-10. Each meal is consumed at most once (BR-31).
 
 ### BR-15 — Recipe version immutability
 A `PUBLISHED` recipe version is immutable. Changes require a new version. A version referenced by an assignment in a non-draft cycle can never be deleted or archived out from under it.
@@ -156,6 +159,50 @@ The prototype hardcoded a blended rate derived from a 22/10/5 subscriber mix at 
 
 ### BR-18 — Vessel rotation
 Each subscriber normally holds 2 sets. Kits are `active`, `needs-replace`, or `retired`. Sanitisation date is tracked; a kit not sanitised within its interval is flagged.
+
+### BR-19 — Cash transactions
+Every row has a positive amount (enforced by a `CHECK` constraint) and a direction, `IN` or `OUT`, which carries the sign. Its category must belong to that direction — income: Subscriptions, Kit Deposits, Staples & Air Menu, Other Income; expense: Ingredients, Kitchen Staff, Delivery, Vessels & Packaging, Rent, Utilities, Marketing, Equipment, Compliance, Miscellaneous. An update re-checks the resulting pair, because either field may change alone. Rows are hard-deleted; the audit event keeps the full snapshot.
+
+### BR-20 — Opening balance and danger flags
+A month opens at its hand-set balance if one exists, otherwise at the previous month's closing balance, carried through every earlier month. A hand-set month resets the chain from that point — it is how the owner reconciles against the bank. Clearing it resumes carry-forward. Months are calendar months in kitchen-local time (IST); weeks are fixed day ranges 1–7, 8–14, 15–21, 22–28, 29–end. The month is flagged **danger** if the closing balance is negative, or if unpaid fixed costs would make it negative; **warn** if the balance after fixed costs is under ₹1,00,000. Food cost % is month ingredients ÷ month subscription revenue, graded against the latest cycle's target (default 30%): warn above it, danger 5 points over.
+
+### BR-21 — Purchase orders feed the ledger
+Fully received purchase orders in the month (by IST receipt date) can be imported as Ingredients expenses, priced on **received** quantity × line unit cost. Lines without a unit cost are excluded and noted on the row, never guessed. `cash_transactions.purchase_order_id` is unique, so re-running the import — or two people clicking at once — cannot double-count. Finance reads orders only through procurement's published `listReceivedOrderCosts`.
+
+### BR-22 — Fixed costs
+Recurring monthly costs are reminders, never auto-posted. One counts as paid for a month when an expense was posted from it, or an expense's description contains its name. Posting is refused if that cost is already posted in the month. Fixed costs are deactivated, not deleted.
+
+### BR-23 — Onboarding creates subscribers
+`koshOnboarding` owns applicants; this app owns the roster. When an admin confirms a submission there, it calls `PUT /integrations/onboarding/subscribers/:submissionId` here with `Authorization: Bearer <ONBOARDING_SYNC_TOKEN>`. The call is keyed on the submission id (`subscribers.external_ref`, unique), so retries and concurrent calls create exactly one subscriber. The first sync creates it with status `onboarding` and source `onboarding`; later syncs refresh contact, delivery and dietary fields and the profile, and **never** touch status, plan, start date or ops notes — those belong to operations. The onboarding form's "delivery plan" (Single/Multi Slot) is a delivery slot, not a pricing plan; the pricing plan is assigned here. A valid token resolves to a dedicated `INTEGRATION` user whose only capability is `subscribers:sync`, so the audit trail attributes every synced change. Reverting a submission to pending in onboarding does not end the subscriber; that is an operations decision.
+
+### BR-24 — Subscriber status
+`onboarding` (confirmed, not yet receiving meals) → `active` → `paused` → `ended`, enforced by a `CHECK` constraint. Any move is allowed — people pause, return, and rejoin. Subscribers are never deleted; vessel kits and history reference them.
+
+### BR-25 — Capacity
+A seat is held by `onboarding`, `active` and `paused` subscribers; only `ended` frees one. Capacity defaults to 40 and is set with `SUBSCRIBER_CAPACITY`. Over capacity is flagged, not blocked.
+
+### BR-26 — The run sheet is derived
+A production date maps to the cycle whose calendar covers it: day 1 is `week_start`, days run consecutively for `duration_days`. When cycles overlap the live one wins (ACTIVE, then CLOSED, then DRAFT, newest first); ARCHIVED cycles never cover a date. The menu, per-person macros (the sum of the day's four recipe versions, shown only when every meal has the figure), advance prep due that date (`prep_tasks.due_date`, any cycle) and the delivery list are all read live from their owning modules. A subscriber is delivered to on a date when their status is `active` and their start date, if set, has arrived; `onboarding` and `paused` hold a seat (BR-25) but get no vessel. Viewing a date writes nothing; the `run_sheets` row is created by the date's first write, atomically on the unique date.
+
+### BR-27 — The standard checklist
+The day's procedure — phases, tasks, owners, times, critical and vessel flags — is code (`modules/runsheet/domain/checklist.ts`), reviewed like any rule. A tick is a `run_sheet_checks` row keyed on the task id, carrying who and when; unticking deletes it. Task ids are never reused for a different task. Tasks added by hand belong to one date and one phase and can be removed; standard tasks cannot. Ticking is `production:write` (ADMIN, KITCHEN). Ticks are attributed on their row, not audited one by one; brief edits and added/removed tasks are audited.
+
+### BR-28 — Vessel movements
+Per date and subscriber a vessel is `out`, `collected` or `missing` (`CHECK` constraint); no row means not yet dispatched. One row per (sheet, subscriber), so a resend updates rather than duplicates.
+
+### BR-29 — Allergen alerts
+Recipe allergen codes ("Gluten (roti)", "Tree nuts") and the free text subscribers type ("peanuts", "lactose intolerant", "nuts") are both reduced to canonical groups before matching. Matching errs wide — "nuts" covers tree nuts and groundnuts, "shellfish" covers crustaceans and molluscs — because a false alarm costs a glance and a miss costs a guest. An allergy that maps to no group is shown as "check by hand", never dropped. The alerts drive a critical packing task (`pk0`).
+
+### BR-30 — Servings follow the roster
+Each meal in a DRAFT or ACTIVE cycle is cooked for the subscribers delivered to on its date (BR-26's rule), so someone starting on day 10 is cooked for from day 10. Two kinds of servings are never moved: those set by hand (`meal_assignments.servings_locked`) and days before today, which record what was cooked and may have had production consumed against them (BR-14). A cycle without a start date uses today's count for every day. `cycles.subscriber_count` becomes the roster count for today, or for the cycle's first day if it has not started; it is only typed in while the roster has no active subscribers, and then it stands. Servings never drop below 1.
+
+It runs inside the same transaction as any subscriber change that alters who is delivered to (added as active; status into or out of `active`; start date moved while active), when a cycle is created or its start date or head-count is edited, and on demand (`POST /cycles/:id/headcount`). Onboarding syncs never trigger it: a new applicant is `onboarding`, not delivered to. Filling a slot defaults to that day's roster count; sending a number fixes servings by hand, `null` hands them back to the roster, and omitting servings when swapping a dish keeps a hand-set figure. Every change is audited as `cycle.headcount_synced` with the reason. Purchase orders already generated keep their quantities; regenerating refreshes the ones still in `DRAFT`, and orders already sent stay as sent (BR-16). Cycles depend on subscribers for the roster; the subscribers module reaches back to cycles through a lazy import so the two modules do not load each other.
+
+### BR-31 — Production is recorded once, from the run sheet
+Each (cycle day, meal) consumed writes a `production_runs` row in the same transaction as its `CONSUME` movements, unique on that pair, claimed before any stock moves — so a second press, a retry or two people at once cannot deduct twice. Recording without naming meals takes every assigned meal not yet recorded; naming a meal already recorded is a `CONFLICT`, as is a day with nothing left to record. A DRAFT cycle cannot be consumed against. The run sheet's Stock card previews what the day's unrecorded meals will take — needed, on hand and short by, shortages first, with ingredients that cannot be converted listed rather than skipped — and records production through the same endpoint; a shortfall offers the BR-10 override, which is stamped on the run and each movement. The checklist task `k0` ("Production recorded against stock") is derived: it is done when every assigned meal is recorded and cannot be ticked by hand, and "tick all" leaves it alone. The migration backfilled `production_runs` from earlier `production.consumed` audit events. A recorded run is not undone; a mistake is corrected with `RETURN` or `ADJUST` movements (BR-9).
+
+### BR-32 — Vessel kits on the run sheet
+Each delivery tile shows the subscriber's kit state from the vessels module (BR-18): no kit registered, kit needs replacing, or clean overdue, most-urgent kit first. A vessel whose latest state in the previous 30 days is `missing` is carried onto later sheets as "missing since <date>", the earliest day of that missing run, until a later day records it `out` or `collected`. Ticking the dishwasher task (`e6`) stamps `sanitised_at` on the kits of every subscriber whose vessel is `collected` that day, and a vessel marked collected after `e6` is ticked is stamped then; sanitisation dates only move forward and each stamp is audited as `vessel_kit.sanitised`.
 
 ---
 
@@ -298,6 +345,11 @@ Application-level checks are a convenience; the database is the guarantee.
 | **`purchase_orders (cycle_id, vendor_id, week_number)` unique** | BR-16 idempotency |
 | `purchase_order_lines (purchase_order_id, ingredient_id)` unique | No duplicate lines |
 | `vendors.name` unique | Prevents the duplicate-vendor drift the prototype had |
+| `run_sheets.production_date` unique | One run sheet per day (BR-26) |
+| `run_sheet_checks (run_sheet_id, task_key)` unique | A task is ticked once (BR-27) |
+| `vessel_dispatches (run_sheet_id, subscriber_id)` unique, status `CHECK` | One vessel state per subscriber per day (BR-28) |
+| `meal_assignments.servings > 0`, `cycles.subscriber_count > 0` | Nobody cooks for zero (BR-30) |
+| `production_runs (cycle_day_id, meal_type)` unique, cycle day `RESTRICT` | A meal's production is deducted once (BR-31) |
 
 Foreign keys use `RESTRICT` for operational records that must not vanish (ingredients, recipe versions, vendors) and `CASCADE` only for records that are meaningless without their parent (recipe steps, PO lines, meal assignments).
 
@@ -381,6 +433,7 @@ The request ID appears in both the response and the server log line, so a user r
 | `PATCH` | `/cycles/:id` | Edit metadata (name, dates, subscribers, targets) |
 | `DELETE` | `/cycles/:id` | Delete — drafts only |
 | `POST` | `/cycles/:id/publish` | Validate (BR-4) and activate atomically |
+| `POST` | `/cycles/:id/headcount` | Bring servings in line with the roster now (BR-30) |
 | `PUT` | `/cycles/:id/days/:day/meals/:meal` | Assign a recipe version (BR-5) |
 | `DELETE` | `/cycles/:id/days/:day/meals/:meal` | Clear a slot |
 | `GET` | `/cycles/:id/conflicts` | Protein conflicts (BR-1, BR-2) |
@@ -388,7 +441,7 @@ The request ID appears in both the response and the server log line, so a user r
 | `POST` | `/cycles/:id/prep-tasks/generate` | Idempotent generation (BR-3, BR-16) |
 | `PATCH` | `/prep-tasks/:id` | Complete, reopen, or skip |
 | `GET` | `/cycles/:id/production?week=n` | Weekly production projection |
-| `POST` | `/cycles/:id/days/:day/consume` | Record production consumption (BR-14) |
+| `POST` | `/cycles/:id/days/:day/consume` | Record production consumption, once per meal (BR-14, BR-31) |
 
 **Recipes**
 
@@ -427,6 +480,41 @@ The request ID appears in both the response and the server log line, so a user r
 | `POST` | `/purchase-orders/:id/receive` | Record receipt → stock (BR-13) |
 | `GET` | `/purchase-orders/:id/outreach` | Vendor message + WhatsApp deep link |
 
+**Finance**
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` | `/finance/months/:month` | Month view: ledger with balances, totals, weeks, categories, fixed costs, flags, unimported orders (BR-20) |
+| `PUT` | `/finance/months/:month/opening-balance` | Set, or clear with `null` (BR-20) |
+| `POST` | `/finance/months/:month/import-purchase-orders` | Idempotent import of received orders (BR-21) |
+| `GET` | `/finance/months/:month/export.csv` | Month ledger as CSV |
+| `POST` | `/finance/transactions` | Record a transaction (BR-19) |
+| `PATCH` / `DELETE` | `/finance/transactions/:id` | Edit / delete |
+| `GET` / `POST` | `/finance/recurring-costs` | List / create fixed costs |
+| `PATCH` / `DELETE` | `/finance/recurring-costs/:id` | Edit / deactivate |
+| `POST` | `/finance/recurring-costs/:id/post` | Log as paid for a month (BR-22) |
+
+**Subscribers**
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` / `POST` | `/subscribers` | Roster with capacity summary (BR-25) / add manually |
+| `GET` / `PATCH` | `/subscribers/:id` | Detail with kits / edit status, plan, contact, diet (BR-24) |
+| `GET` | `/subscription-plans` | Active pricing plans |
+| `PUT` | `/integrations/onboarding/subscribers/:submissionId` | Service-token upsert from the onboarding app (BR-23) |
+
+**Run sheet**
+
+| Method | Endpoint | Purpose |
+| --- | --- | --- |
+| `GET` / `PATCH` | `/run-sheets/:date` | The derived day (BR-26) / chef, dispatch window, special notes, notes |
+| `PUT` | `/run-sheets/:date/checks` | `{ taskKey, done }` or `{ all: true }` (BR-27) |
+| `POST` | `/run-sheets/:date/tasks` | Add a one-off task to a phase |
+| `DELETE` | `/run-sheets/:date/tasks/:taskId` | Remove an added task |
+| `PUT` | `/run-sheets/:date/vessels/:subscriberId` | `{ status: out \| collected \| missing \| null }` (BR-28) |
+
+Writes are refused for dates more than a year from today (422), so a typo cannot create a far-future sheet.
+
 **Vessels and reference**
 
 | Method | Endpoint | Purpose |
@@ -434,7 +522,6 @@ The request ID appears in both the response and the server log line, so a user r
 | `GET` / `POST` | `/vessel-kits` | Registry |
 | `PATCH` | `/vessel-kits/:id` | Update status, sanitisation |
 | `GET` | `/vessel-kits/summary` | Rotation and replacement view |
-| `GET` / `POST` | `/subscribers` | Roster |
 | `GET` | `/health` | Liveness and database check |
 
 ---
@@ -532,6 +619,7 @@ The domain layer is pure, so the majority of business risk is covered by tests t
 | Sortable ingredient table with per-category counts | ✅ |
 | Full CSV column set | ✅ Plus a stock-status column the prototype lacked |
 | Weekly brief bar with persistence, and "start new week" | ⚠️ **Deferred.** See below |
+| Run sheet brief, checklist, vessel tracker, notes | ✅ Per date in the database, attributed, shared across devices; menu, macros, roster and allergen alerts are live instead of typed in. "New Day" is replaced by date navigation. Beyond the prototype: a stock check that records production (BR-31), and kit state, carried-forward missing vessels and wash-driven sanitisation on the vessel tracker (BR-32) |
 
 The **weekly brief bar** (week, subscribers, cycle days, chef, ordering status, food-cost
 target) was uncontrolled inputs bound to `localStorage` in the prototype and bound to

@@ -54,14 +54,17 @@ export function CyclePlanner({
   const [productionWeek, setProductionWeek] = useState(1);
   const [production, setProduction] = useState<ProductionPlan | null>(null);
   const [loadingProduction, setLoadingProduction] = useState(false);
-  const [busy, setBusy] = useState<null | "publish" | "prep" | "create">(null);
+  const [busy, setBusy] = useState<null | "publish" | "prep" | "create" | "headcount">(null);
+  const [headcount, setHeadcount] = useState({ count: cycle.subscriberCount, syncedAt: cycle.headcountSyncedAt });
+  const followsRoster = cycle.status === "DRAFT" || cycle.status === "ACTIVE";
 
   const criticalPrep = prepTasks.filter((task) => task.urgent && task.status === "OPEN").length;
 
   const refreshCalendar = useCallback(async () => {
-    const data = await api.get<{ days: CycleDay[]; conflicts: Conflict[]; stats: CycleStats }>(
+    const data = await api.get<{ cycle: CycleSummary; days: CycleDay[]; conflicts: Conflict[]; stats: CycleStats }>(
       `/cycles/${cycle.id}`,
     );
+    setHeadcount({ count: data.cycle.subscriberCount, syncedAt: data.cycle.headcountSyncedAt });
     setDays(data.days);
     setConflicts(data.conflicts);
     setStats(data.stats);
@@ -87,10 +90,35 @@ export function CyclePlanner({
 
   // ── Mutations ──────────────────────────────────────────────────────────────
 
-  async function assignRecipe(dayNumber: number, meal: MealType, recipeVersionId: string) {
+  /** BR-30 — "Sync from roster": servings follow who is actually delivered to each day. */
+  async function syncHeadcount() {
+    setBusy("headcount");
+    try {
+      const result = await api.post<{ source: "roster" | "cycle"; headcount: number; changed: number }>(
+        `/cycles/${cycle.id}/headcount`,
+      );
+      await refreshCalendar();
+      succeed(
+        result.source === "cycle"
+          ? `No active subscribers on the roster yet, so the typed head-count of ${result.headcount} stands.`
+          : result.changed
+            ? `Head-count ${result.headcount}. Servings updated on ${result.changed} meal(s); hand-set servings and past days left alone.`
+            : `Head-count ${result.headcount}. Servings already match the roster.`,
+      );
+    } catch (error) {
+      fail(errorMessage(error));
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function assignRecipe(dayNumber: number, meal: MealType, recipeVersionId: string, servings?: number | null) {
     if (!recipeVersionId) return;
     try {
-      await api.put(`/cycles/${cycle.id}/days/${dayNumber}/meals/${meal}`, { recipeVersionId });
+      await api.put(`/cycles/${cycle.id}/days/${dayNumber}/meals/${meal}`, {
+        recipeVersionId,
+        ...(servings !== undefined ? { servings } : {}),
+      });
       await refreshCalendar();
       const updated = await api.get<{ days: CycleDay[] }>(`/cycles/${cycle.id}`);
       setSelectedDay(updated.days.find((day) => day.dayNumber === dayNumber) ?? null);
@@ -245,6 +273,11 @@ export function CyclePlanner({
         <div className="header-actions">
           <button className="btn btn-ghost" onClick={() => setShowCreate(true)}>+ New Cycle</button>
           <button className="btn btn-ghost" onClick={() => window.print()}>🖨 Print</button>
+          {followsRoster && (
+            <button className="btn btn-ghost" onClick={() => void syncHeadcount()} disabled={busy === "headcount"}>
+              {busy === "headcount" ? "Syncing…" : "⇄ Sync from roster"}
+            </button>
+          )}
           <button className="btn btn-ghost" onClick={() => void generatePrep()} disabled={busy === "prep"}>
             {busy === "prep" ? "Generating…" : "Generate Prep"}
           </button>
@@ -279,6 +312,18 @@ export function CyclePlanner({
           tone={criticalPrep ? "warn" : "ok"}
         />
         <Status n={String(prepTasks.length)} label="Prep tasks" sub="Across the cycle" tone="ok" />
+        <Status
+          n={String(headcount.count)}
+          label="Head-count"
+          sub={
+            !followsRoster
+              ? "Cycle closed — fixed"
+              : headcount.syncedAt
+                ? `From roster · ${new Date(headcount.syncedAt).toLocaleString("en-IN", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}`
+                : "Typed in — not synced yet"
+          }
+          tone={followsRoster && !headcount.syncedAt ? "warn" : "ok"}
+        />
       </div>
 
       <div className="tabs">
@@ -320,7 +365,7 @@ export function CyclePlanner({
           recipeOptions={recipeOptions}
           conflicts={conflicts.filter((conflict) => conflict.dayNumber === selectedDay.dayNumber)}
           onClose={() => setSelectedDay(null)}
-          onAssign={(meal, versionId) => void assignRecipe(selectedDay.dayNumber, meal, versionId)}
+          onAssign={(meal, versionId, servings) => void assignRecipe(selectedDay.dayNumber, meal, versionId, servings)}
           onClear={(meal) => void clearSlot(selectedDay.dayNumber, meal)}
         />
       )}
@@ -339,7 +384,7 @@ export function CyclePlanner({
             <Field label="Cycle number *" name="cycleNumber" type="number" min="1" required defaultValue={cycle.cycleNumber + 1} hint="Unique internal sequence number." />
             <Field label="Start date" name="weekStart" type="date" hint="Required for advance-prep due dates to be calculated." />
             <Field label="Duration in days *" name="durationDays" type="number" min="1" max="366" required defaultValue="28" />
-            <Field label="Subscribers *" name="subscriberCount" type="number" min="1" required defaultValue={cycle.subscriberCount} hint="Default servings for each meal assignment." />
+            <Field label="Head-count *" name="subscriberCount" type="number" min="1" required defaultValue={cycle.subscriberCount} hint="Only used while the subscriber roster is empty; otherwise servings follow the roster day by day." />
             <Field label="Food-cost target (%)" name="foodCostTargetPercent" type="number" min="0" max="100" step="0.01" defaultValue="30" />
             <Field label="Protein repeat window (days)" name="proteinWindowDays" type="number" min="1" max="28" defaultValue="4" hint="No dinner protein may repeat inside this window." />
           </div>
@@ -371,7 +416,7 @@ function DayModal({
   recipeOptions: RecipeOption[];
   conflicts: Conflict[];
   onClose: () => void;
-  onAssign: (meal: MealType, recipeVersionId: string) => void;
+  onAssign: (meal: MealType, recipeVersionId: string, servings?: number | null) => void;
   onClear: (meal: MealType) => void;
 }) {
   return (
@@ -427,7 +472,34 @@ function DayModal({
                     <div className="mm-macro"><div className="mm-macro-val">{slot.kcal ?? "—"}</div><div className="mm-macro-label">kcal</div></div>
                     <div className="mm-macro"><div className="mm-macro-val">{slot.proteinGrams ?? "—"}g</div><div className="mm-macro-label">protein</div></div>
                     <div className="mm-macro"><div className="mm-macro-val">{slot.protein}</div><div className="mm-macro-label">source</div></div>
-                    <div className="mm-macro"><div className="mm-macro-val">×{slot.servings}</div><div className="mm-macro-label">servings</div></div>
+                    <div className="mm-macro"><div className="mm-macro-val">×{slot.servings}</div><div className="mm-macro-label">{slot.servingsLocked ? "servings · fixed" : "servings · roster"}</div></div>
+                  </div>
+                )}
+                {slot && (
+                  <div className="mm-servings">
+                    <label>
+                      Fix servings
+                      <input
+                        key={`${slot.recipeVersionId}-${slot.servings}`}
+                        className="add-field"
+                        type="number"
+                        min="1"
+                        defaultValue={slot.servingsLocked ? slot.servings : ""}
+                        placeholder={String(slot.servings)}
+                        aria-label={`Fix servings for ${MEAL_NAMES[meal]}`}
+                        onBlur={(event) => {
+                          const value = Number(event.target.value);
+                          if (event.target.value && Number.isInteger(value) && value > 0 && value !== slot.servings) {
+                            onAssign(meal, slot.recipeVersionId, value);
+                          }
+                        }}
+                      />
+                    </label>
+                    {slot.servingsLocked && (
+                      <button type="button" className="subscribers-link" onClick={() => onAssign(meal, slot.recipeVersionId, null)}>
+                        ↺ Follow roster
+                      </button>
+                    )}
                   </div>
                 )}
                 {slot && slot.advanceCount > 0 && (

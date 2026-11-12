@@ -12,6 +12,7 @@ export {
   getPurchaseOrder,
   getOutreach,
   toPurchaseOrderView,
+  listReceivedOrderCosts,
 } from "@/modules/procurement/application/purchase-order-queries";
 
 export { createPurchaseOrder } from "@/modules/procurement/application/create-purchase-order";

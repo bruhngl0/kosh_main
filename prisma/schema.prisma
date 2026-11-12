@@ -18,6 +18,8 @@ enum UserRole {
   KITCHEN
   PROCUREMENT
   VIEWER
+  /// A system calling in with a service token, e.g. the onboarding app (BR-23).
+  INTEGRATION
 }
 
 enum CycleStatus {
@@ -84,6 +86,9 @@ model User {
   prepTasks PrepTask[]
   movements InventoryMovement[]
   audits    AuditEvent[]
+  runSheetChecks   RunSheetCheck[]
+  productionRuns   ProductionRun[]
+  vesselDispatches VesselDispatch[]
 
   @@map("users")
 }
@@ -95,7 +100,11 @@ model Cycle {
   durationDays          Int             @default(28) @map("duration_days")
   status                CycleStatus     @default(DRAFT)
   weekStart             DateTime?       @map("week_start") @db.Date
+  /// Head-count. Follows the subscriber roster once it has active subscribers (BR-30);
+  /// typed in only before then.
   subscriberCount       Int             @default(1) @map("subscriber_count")
+  /// When servings were last brought in line with the roster (BR-30).
+  headcountSyncedAt     DateTime?       @map("headcount_synced_at")
   foodCostTargetPercent Decimal?        @map("food_cost_target_percent") @db.Decimal(5, 2)
   chefName              String?         @map("chef_name")
   /// BR-1: rolling window, in days, within which a dinner protein may not repeat.
@@ -120,6 +129,7 @@ model CycleDay {
   cycle       Cycle            @relation(fields: [cycleId], references: [id], onDelete: Cascade)
   assignments MealAssignment[]
   prepTasks   PrepTask[]
+  productionRuns ProductionRun[]
 
   @@unique([cycleId, dayNumber])
   @@index([cycleId, weekNumber])
@@ -247,6 +257,8 @@ model MealAssignment {
   mealType        MealType      @map("meal_type")
   recipeVersionId String        @map("recipe_version_id") @db.Uuid
   servings        Int           @default(1)
+  /// True when someone set the servings by hand; the roster sync leaves it alone (BR-30).
+  servingsLocked  Boolean       @default(false) @map("servings_locked")
   notes           String?
   createdAt       DateTime      @default(now()) @map("created_at")
   updatedAt       DateTime      @updatedAt @map("updated_at")
@@ -431,14 +443,38 @@ model SubscriptionPlan {
 }
 
 model Subscriber {
-  id        String            @id @default(uuid()) @db.Uuid
-  name      String
-  status    String            @default("active")
-  planId    String?           @map("plan_id") @db.Uuid
-  createdAt DateTime          @default(now()) @map("created_at")
-  updatedAt DateTime          @updatedAt @map("updated_at")
-  plan      SubscriptionPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
-  kits      VesselKit[]
+  id            String            @id @default(uuid()) @db.Uuid
+  name          String
+  /// onboarding | active | paused | ended (BR-24)
+  status        String            @default("active")
+  planId        String?           @map("plan_id") @db.Uuid
+  phone         String?
+  email         String?
+  address       String?
+  landmark      String?
+  deliveryNote  String?           @map("delivery_note")
+  /// What the client asked for on the form: "Single Slot" or "Multi Slot".
+  deliverySlot  String?           @map("delivery_slot")
+  diet          String?
+  allergies     String[]          @default([])
+  dislikes      String?
+  medical       String?
+  /// The rest of the onboarding answers (goal, body numbers, palate). Shown, not queried.
+  profile       Json?
+  startDate     DateTime?         @map("start_date") @db.Date
+  notes         String?
+  /// manual | onboarding | seed
+  source        String            @default("manual")
+  /// The onboarding submission id. Unique, so a resync updates instead of duplicating (BR-23).
+  externalRef   String?           @unique @map("external_ref")
+  /// The human reference the client was given, e.g. KSH-H8K3A.
+  onboardingRef String?           @map("onboarding_ref")
+  syncedAt      DateTime?         @map("synced_at")
+  createdAt     DateTime          @default(now()) @map("created_at")
+  updatedAt     DateTime          @updatedAt @map("updated_at")
+  plan          SubscriptionPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
+  kits          VesselKit[]
+  dispatches    VesselDispatch[]
 
   @@index([status])
   @@map("subscribers")
@@ -479,4 +515,149 @@ model AuditEvent {
   @@index([entityType, entityId, createdAt])
   @@index([actorId, createdAt])
   @@map("audit_events")
+}
+
+// ── Finance ──────────────────────────────────────────────────────────────────
+// Cash flow ledger. Replaces the browser-only Kosh_Cash_Flow.html prototype.
+// See docs/system-design.md BR-19..BR-22.
+
+enum CashDirection {
+  IN
+  OUT
+}
+
+model CashTransaction {
+  id              String         @id @default(uuid()) @db.Uuid
+  date            DateTime       @db.Date
+  direction       CashDirection
+  /// One of the categories in src/shared/schemas/finance.ts, checked per direction.
+  category        String
+  description     String
+  /// Always positive; `direction` carries the sign (BR-19).
+  amount          Decimal        @db.Decimal(12, 2)
+  notes           String?
+  /// Set when the row was imported from a received purchase order (BR-21).
+  /// Unique, so importing twice cannot double-count. Not a foreign key: finance
+  /// reads procurement only through its published interface (§4.3).
+  purchaseOrderId String?        @unique @map("purchase_order_id") @db.Uuid
+  /// Set when the row was posted from a fixed cost reminder (BR-22).
+  recurringCostId String?        @map("recurring_cost_id") @db.Uuid
+  createdAt       DateTime       @default(now()) @map("created_at")
+  updatedAt       DateTime       @updatedAt @map("updated_at")
+  recurringCost   RecurringCost? @relation(fields: [recurringCostId], references: [id], onDelete: SetNull)
+
+  @@index([date])
+  @@index([recurringCostId, date])
+  @@map("cash_transactions")
+}
+
+/// A monthly fixed cost. A reminder only — never auto-posted (BR-22).
+model RecurringCost {
+  id           String            @id @default(uuid()) @db.Uuid
+  name         String            @unique
+  category     String
+  amount       Decimal           @db.Decimal(12, 2)
+  active       Boolean           @default(true)
+  createdAt    DateTime          @default(now()) @map("created_at")
+  updatedAt    DateTime          @updatedAt @map("updated_at")
+  transactions CashTransaction[]
+
+  @@map("recurring_costs")
+}
+
+/// Opening balance set by hand for a month, keyed "YYYY-MM" (BR-20).
+model CashOpeningBalance {
+  month     String   @id
+  amount    Decimal  @db.Decimal(14, 2)
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("cash_opening_balances")
+}
+
+// ── Daily run sheet ──────────────────────────────────────────────────────────
+// Replaces the browser-only Kosh_Daily_Run_Sheet.html prototype. The menu,
+// roster and allergen alerts are derived; only what the kitchen does on the day
+// is stored here. See docs/system-design.md BR-26..BR-29.
+
+/// One per production date. Created on the first write for that date.
+model RunSheet {
+  id             String            @id @default(uuid()) @db.Uuid
+  productionDate DateTime          @unique @map("production_date") @db.Date
+  /// Overrides the cycle's chef for this day.
+  chefName       String?           @map("chef_name")
+  dispatchWindow String?           @map("dispatch_window")
+  specialNotes   String?           @map("special_notes")
+  /// Kitchen and delivery notes written during the day.
+  notes          String?
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @updatedAt @map("updated_at")
+  checks         RunSheetCheck[]
+  tasks          RunSheetTask[]
+  dispatches     VesselDispatch[]
+
+  @@map("run_sheets")
+}
+
+/// A ticked checklist item. The row existing means done (BR-27).
+model RunSheetCheck {
+  id         String   @id @default(uuid()) @db.Uuid
+  runSheetId String   @map("run_sheet_id") @db.Uuid
+  /// A standard task id (src/modules/runsheet/domain/checklist.ts) or a RunSheetTask id.
+  taskKey    String   @map("task_key")
+  doneById   String?  @map("done_by_id") @db.Uuid
+  doneAt     DateTime @default(now()) @map("done_at")
+  runSheet   RunSheet @relation(fields: [runSheetId], references: [id], onDelete: Cascade)
+  doneBy     User?    @relation(fields: [doneById], references: [id], onDelete: SetNull)
+
+  @@unique([runSheetId, taskKey])
+  @@map("run_sheet_checks")
+}
+
+/// A task added by hand for one day, on top of the standard checklist.
+model RunSheetTask {
+  id         String   @id @default(uuid()) @db.Uuid
+  runSheetId String   @map("run_sheet_id") @db.Uuid
+  phase      String
+  title      String
+  owner      String   @default("Chef")
+  createdAt  DateTime @default(now()) @map("created_at")
+  runSheet   RunSheet @relation(fields: [runSheetId], references: [id], onDelete: Cascade)
+
+  @@index([runSheetId])
+  @@map("run_sheet_tasks")
+}
+
+/// Where a subscriber's vessel is on a given day: out | collected | missing (BR-28).
+model VesselDispatch {
+  id           String     @id @default(uuid()) @db.Uuid
+  runSheetId   String     @map("run_sheet_id") @db.Uuid
+  subscriberId String     @map("subscriber_id") @db.Uuid
+  status       String
+  updatedById  String?    @map("updated_by_id") @db.Uuid
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+  runSheet     RunSheet   @relation(fields: [runSheetId], references: [id], onDelete: Cascade)
+  subscriber   Subscriber @relation(fields: [subscriberId], references: [id], onDelete: Restrict)
+  updatedBy    User?      @relation(fields: [updatedById], references: [id], onDelete: SetNull)
+
+  @@unique([runSheetId, subscriberId])
+  @@map("vessel_dispatches")
+}
+
+/// One per cycle day and meal whose ingredients have been taken off stock (BR-31).
+/// The unique key is what stops a day being consumed twice.
+model ProductionRun {
+  id               String   @id @default(uuid()) @db.Uuid
+  cycleDayId       String   @map("cycle_day_id") @db.Uuid
+  mealType         MealType @map("meal_type")
+  reference        String
+  ingredientCount  Int      @map("ingredient_count")
+  /// True when an authorised override let stock go below zero (BR-10).
+  negativeOverride Boolean  @default(false) @map("negative_override")
+  recordedById     String?  @map("recorded_by_id") @db.Uuid
+  recordedAt       DateTime @default(now()) @map("recorded_at")
+  cycleDay         CycleDay @relation(fields: [cycleDayId], references: [id], onDelete: Restrict)
+  recordedBy       User?    @relation(fields: [recordedById], references: [id], onDelete: SetNull)
+
+  @@unique([cycleDayId, mealType])
+  @@map("production_runs")
 }

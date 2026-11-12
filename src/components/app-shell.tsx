@@ -32,9 +32,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </Link>
         <div className="header-rule" />
         <nav className="global-nav">
+          <Link href="/run-sheet">Run Sheet</Link>
           <Link href="/cycles">Cycle Planner</Link>
           <Link href="/recipes">Recipe Database</Link>
           <Link href="/inventory">Inventory</Link>
+          <Link href="/subscribers">Subscribers</Link>
+          <Link href="/finance">Finance</Link>
         </nav>
         <div className="header-spacer" />
         <span className={`environment-badge env-${tone}`} title={sha ? `commit ${sha}` : "running locally"}>

@@ -2,6 +2,9 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./inventory-reference.css";
 import "./cycle-reference.css";
+import "./finance.css";
+import "./subscribers.css";
+import "./run-sheet.css";
 
 export const metadata: Metadata = {
   title: "Kōsh Operations",

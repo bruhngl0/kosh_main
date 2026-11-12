@@ -1,0 +1,100 @@
+/* Finance — /finance cash flow. Builds on the inventory card, table and KPI styles. */
+.finance-kpis{grid-template-columns:repeat(6,minmax(0,1fr))}
+.finance-kpis .kpi strong{overflow-wrap:anywhere}
+.kpi.caution{background:var(--amber-bg);border-color:var(--amber)}
+.money-in{color:var(--green)}
+.money-out{color:var(--red)}
+.finance-muted{color:var(--stone)}
+
+.finance-alert{padding:10px 14px;border-radius:6px;font-size:12px;margin-bottom:12px;border-left:3px solid}
+.finance-alert-ok{background:var(--green-bg);border-color:var(--green);color:var(--green)}
+.finance-alert-warn{background:var(--amber-bg);border-color:var(--amber);color:var(--amber)}
+.finance-alert-danger{background:var(--red-bg);border-color:var(--red);color:var(--red)}
+
+.finance-import{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:11px 14px;margin-bottom:12px;background:var(--copper-bg);border:1px solid var(--copper-lt);border-radius:8px;font-size:12px}
+.finance-import small{display:block;color:var(--stone);font-size:11px}
+
+.finance-month-nav{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 14px;margin-bottom:14px;background:var(--surface);border:1px solid var(--border);border-radius:8px}
+.finance-month-nav h2{font:600 24px var(--serif);min-width:180px;text-align:center}
+.finance-month-nav .icon-btn{width:30px;height:30px;margin:0}
+.finance-link{background:none;border:none;color:var(--copper);font:11px var(--mono);text-decoration:underline;padding:0}
+.finance-opening{margin-left:auto;display:grid;grid-template-columns:auto 150px;align-items:center;gap:2px 8px;font-size:11px;color:var(--stone)}
+.finance-opening input{font-family:var(--mono)}
+.finance-opening small{grid-column:1/-1;text-align:right;font-size:10px}
+
+.finance-layout{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:14px;align-items:start;transition:opacity .15s}
+.finance-loading{opacity:.55;pointer-events:none}
+.finance-layout .inventory-card{margin-bottom:12px}
+.finance-side .card-toolbar h2,.finance-ledger .card-toolbar h2,.finance-layout .card-toolbar h2{font:11px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--stone)}
+
+.finance-filters{display:flex;gap:6px;flex-wrap:wrap}
+.finance-table{width:100%;border-collapse:collapse}
+.finance-table th.num,.finance-table td.num{text-align:right;font-family:var(--mono)}
+.finance-table td{vertical-align:middle}
+.finance-date{color:var(--stone);font-size:11px}
+.finance-desc{white-space:normal!important;min-width:200px}
+.finance-desc strong{font-weight:600}
+.finance-desc small{display:block;font-size:10px;color:var(--stone)}
+.finance-balance{font-weight:500}
+.finance-badge{padding:2px 8px;border-radius:10px;font-size:10px;font-weight:600;white-space:nowrap}
+.finance-empty{text-align:center;padding:28px!important;color:var(--stone)}
+
+.finance-quick-add{display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:11px 14px;background:var(--bg);border-top:1px solid var(--border)}
+.finance-quick-desc{flex:1;min-width:160px}
+.finance-quick-amount{width:120px}
+
+.finance-weeks{display:grid;gap:8px}
+.finance-week{padding:13px 15px}
+.finance-week-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px}
+.finance-week-head h3{font:600 19px var(--serif);margin:0}
+.finance-week-head b{font:500 13px var(--mono)}
+.finance-week p{font-size:11px;color:var(--stone);margin:2px 0 8px}
+.finance-week-bars{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.finance-week-bars small{font-size:10px;color:var(--stone)}
+.finance-track{height:6px;background:var(--bg);border-radius:3px;overflow:hidden}
+.finance-track i{display:block;height:100%;border-radius:3px}
+.bar-fill-in{background:var(--green)}
+.bar-fill-out{background:var(--red)}
+
+.finance-chart{padding:10px 14px 12px}
+.finance-chart svg{width:100%;height:auto;display:block}
+.finance-chart-readout{font-size:11px;color:var(--stone);min-height:18px;margin-bottom:4px}
+.finance-legend{display:flex;gap:14px;justify-content:flex-end}
+.finance-legend i{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:4px}
+.legend-in,.bar-in{background:var(--green);fill:var(--green)}
+.legend-out,.bar-out{background:var(--red);fill:var(--red)}
+.chart-grid{stroke:var(--border);stroke-dasharray:2 3}
+.chart-zero{stroke:var(--stone)}
+.chart-label{fill:var(--stone);font:10px var(--mono)}
+.chart-line{fill:none;stroke:var(--copper);stroke-width:2;stroke-linejoin:round}
+.chart-cursor{stroke:var(--sand)}
+.chart-dot{fill:var(--copper);stroke:#fff;stroke-width:2}
+.chart-dot-neg{fill:var(--red);stroke:#fff;stroke-width:2}
+
+.finance-sum{padding:8px 15px}
+.finance-sum-row{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--bg);font-size:12px}
+.finance-sum-row:last-child{border-bottom:none}
+.finance-sum-row>span{display:flex;align-items:center;gap:6px;min-width:0}
+.finance-sum-row b{font:500 12px var(--mono);white-space:nowrap}
+.finance-sum-row.total{font-weight:600;font-size:13px}
+.finance-sum-row.total b{font-weight:600}
+.finance-dot{width:8px;height:8px;border-radius:50%;flex:none}
+.finance-sum .finance-muted{font-size:12px;padding:6px 0}
+
+.finance-delete-row{margin-top:14px;padding-top:12px;border-top:1px solid var(--bg)}
+.finance-delete{color:var(--red);border-color:var(--border)}
+.finance-delete:hover{border-color:var(--red);background:var(--red-bg)}
+
+.finance-recurring-edit{display:grid}
+.finance-recurring-row{display:grid;grid-template-columns:1fr auto 52px auto;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--bg);font-size:12px}
+.finance-recurring-row small{display:block;font-size:10px;color:var(--stone)}
+.finance-recurring-row b{font:500 12px var(--mono)}
+.finance-recurring-row em{font-style:normal;font-size:10px;text-align:center}
+.finance-recurring-add{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.finance-recurring-add input:first-child{flex:1;min-width:120px}
+.finance-recurring-add input[type=number]{width:100px}
+
+@media(max-width:1200px){.finance-kpis{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:900px){.finance-layout{grid-template-columns:minmax(0,1fr)}.finance-opening{margin-left:0}}
+@media(max-width:600px){.finance-kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.chart-label{font-size:18px}.finance-month-nav h2{min-width:0;font-size:20px}.finance-week-bars{grid-template-columns:1fr}}
+@media print{.header-actions,.finance-quick-add,.inventory-tabs,.icon-btn,.finance-import,.finance-link{display:none}}

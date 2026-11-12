@@ -5,7 +5,7 @@ import { assertCan, type Actor } from "@/server/actor";
 import { recordAudit } from "@/server/audit";
 import { notFound } from "@/server/errors";
 import { toDateString } from "@/shared/money";
-import { LEAD_LABEL, derivePrepTasks, type DerivedPrepTask } from "@/modules/production/domain/prep-lead-time";
+import { LEAD_LABEL, derivePrepTasks, serviceDateFor, type DerivedPrepTask } from "@/modules/production/domain/prep-lead-time";
 
 /**
  * BR-3, BR-16 — advance-prep generation and completion.
@@ -239,4 +239,29 @@ function toPrepTaskView(task: {
     status: task.status,
     completedAt: task.completedAt?.toISOString() ?? null,
   };
+}
+
+/** Advance prep due on a date, across cycles. Published for the run sheet (BR-26). */
+export async function listPrepDueOn(date: string) {
+  const tasks = await db.prepTask.findMany({
+    where: { dueDate: new Date(`${date}T00:00:00Z`) },
+    include: {
+      cycle: { select: { weekStart: true } },
+      cycleDay: { select: { dayNumber: true } },
+      assignment: {
+        select: { mealType: true, recipeVersion: { select: { recipe: { select: { title: true } } } } },
+      },
+      completedBy: { select: { name: true } },
+    },
+    orderBy: [{ urgent: "desc" }, { taskType: "desc" }, { createdAt: "asc" }],
+  });
+
+  return tasks.map((task) => ({
+    ...toPrepTaskView(task),
+    dayNumber: task.cycleDay.dayNumber,
+    serviceDate: toDateString(serviceDateFor(task.cycle.weekStart, task.cycleDay.dayNumber)),
+    mealType: task.assignment?.mealType ?? null,
+    dishTitle: task.assignment?.recipeVersion.recipe.title ?? null,
+    completedBy: task.completedBy?.name ?? null,
+  }));
 }
