@@ -38,6 +38,7 @@ export type AuditAction =
   | "production.consumed"
   | "vessel_kit.created"
   | "vessel_kit.updated"
+  | "vessel_kit.sanitised"
   | "cash_transaction.created"
   | "cash_transaction.updated"
   | "cash_transaction.deleted"
