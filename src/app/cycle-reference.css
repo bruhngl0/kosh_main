@@ -4,3 +4,4 @@
 .mm-servings label{display:flex;align-items:center;gap:6px}
 .mm-servings input{width:72px;text-transform:none}
 .mm-servings .subscribers-link{font:10px var(--mono);color:var(--copper);text-transform:uppercase}
+.close-cycle-list{margin:0;padding-left:18px;color:var(--charcoal);font-size:12px}.close-cycle-list li{margin-bottom:4px}.close-cycle-warning{padding:8px 11px;border:1px solid var(--amber);background:var(--amber-bg);color:var(--amber);border-radius:5px;font-size:12px}

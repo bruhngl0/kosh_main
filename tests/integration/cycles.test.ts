@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { db, resetDatabase, seedActor } from "../support/setup-database";
 import { balanceOf, fillCycle, makeCycle, makeIngredient, makeRecipe } from "../support/factories";
-import { assignMeal, publishCycle } from "@/modules/cycles";
+import { assignMeal, clearMeal, closeCycle, publishCycle } from "@/modules/cycles";
 import { consumeProduction, generatePrepTasks, updatePrepTask } from "@/modules/production";
 import type { Actor } from "@/server/actor";
 
@@ -31,6 +31,45 @@ async function fullCycle() {
   });
   return { cycle, meals };
 }
+
+describe("closeCycle", () => {
+  it("closes an active cycle and records it in the audit log", async () => {
+    const { cycle } = await fullCycle();
+    await publishCycle(cycle.id, context());
+
+    const closed = await closeCycle(cycle.id, context());
+    expect(closed.status).toBe("CLOSED");
+
+    const audit = await db.auditEvent.findFirst({ where: { entityId: cycle.id, action: "cycle.closed" } });
+    expect(audit).not.toBeNull();
+  });
+
+  it("refuses a draft cycle and leaves it unchanged", async () => {
+    const { cycle } = await fullCycle();
+    await expect(closeCycle(cycle.id, context())).rejects.toMatchObject({ code: "UNPROCESSABLE" });
+    const unchanged = await db.cycle.findUniqueOrThrow({ where: { id: cycle.id } });
+    expect(unchanged.status).toBe("DRAFT");
+  });
+
+  it("cannot close twice", async () => {
+    const { cycle } = await fullCycle();
+    await publishCycle(cycle.id, context());
+    await closeCycle(cycle.id, context());
+    await expect(closeCycle(cycle.id, context())).rejects.toMatchObject({ code: "UNPROCESSABLE" });
+  });
+
+  it("makes the cycle's meals read-only", async () => {
+    const { cycle, meals } = await fullCycle();
+    await publishCycle(cycle.id, context());
+    await closeCycle(cycle.id, context());
+
+    const target = { cycleId: cycle.id, dayNumber: 1, mealType: "BF" as const };
+    await expect(assignMeal(target, { recipeVersionId: meals[0].version.id }, context())).rejects.toMatchObject({
+      code: "UNPROCESSABLE",
+    });
+    await expect(clearMeal(target, context())).rejects.toMatchObject({ code: "UNPROCESSABLE" });
+  });
+});
 
 describe("publishCycle (BR-4)", () => {
   it("activates a fully assigned cycle", async () => {

@@ -54,9 +54,16 @@ export function CyclePlanner({
   const [productionWeek, setProductionWeek] = useState(1);
   const [production, setProduction] = useState<ProductionPlan | null>(null);
   const [loadingProduction, setLoadingProduction] = useState(false);
-  const [busy, setBusy] = useState<null | "publish" | "prep" | "create" | "headcount">(null);
+  const [busy, setBusy] = useState<null | "publish" | "prep" | "create" | "headcount" | "close">(null);
+  const [confirmClose, setConfirmClose] = useState(false);
   const [headcount, setHeadcount] = useState({ count: cycle.subscriberCount, syncedAt: cycle.headcountSyncedAt });
   const followsRoster = cycle.status === "DRAFT" || cycle.status === "ACTIVE";
+
+  // Last calendar day of the cycle, as YYYY-MM-DD (UTC, matching weekStart).
+  const cycleEnd = cycle.weekStart
+    ? new Date(Date.parse(cycle.weekStart) + (cycle.durationDays - 1) * 86_400_000).toISOString().slice(0, 10)
+    : null;
+  const cycleEnded = cycleEnd !== null && cycleEnd < new Date().toISOString().slice(0, 10);
 
   const criticalPrep = prepTasks.filter((task) => task.urgent && task.status === "OPEN").length;
 
@@ -153,6 +160,21 @@ export function CyclePlanner({
           ". Completed work was preserved.",
       );
     } catch (error) {
+      fail(errorMessage(error));
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function closeCycle() {
+    setBusy("close");
+    try {
+      await api.post(`/cycles/${cycle.id}/close`);
+      setConfirmClose(false);
+      succeed(`${cycle.name} is closed. Its servings are frozen and it no longer follows the roster.`);
+      router.refresh();
+    } catch (error) {
+      setConfirmClose(false);
       fail(errorMessage(error));
     } finally {
       setBusy(null);
@@ -286,6 +308,16 @@ export function CyclePlanner({
               {busy === "publish" ? "Publishing…" : "Publish Cycle"}
             </button>
           )}
+          {cycle.status === "ACTIVE" && (
+            <button
+              className={`btn ${cycleEnded ? "btn-copper" : "btn-ghost"}`}
+              onClick={() => setConfirmClose(true)}
+              disabled={busy === "close"}
+              title={cycleEnded ? `Ended ${cycleEnd}` : undefined}
+            >
+              Close Cycle
+            </button>
+          )}
         </div>
       </div>
 
@@ -387,6 +419,29 @@ export function CyclePlanner({
             <Field label="Head-count *" name="subscriberCount" type="number" min="1" required defaultValue={cycle.subscriberCount} hint="Only used while the subscriber roster is empty; otherwise servings follow the roster day by day." />
             <Field label="Food-cost target (%)" name="foodCostTargetPercent" type="number" min="0" max="100" step="0.01" defaultValue="30" />
             <Field label="Protein repeat window (days)" name="proteinWindowDays" type="number" min="1" max="28" defaultValue="4" hint="No dinner protein may repeat inside this window." />
+          </div>
+        </Modal>
+      )}
+
+      {confirmClose && (
+        <Modal
+          title={`Close ${cycle.name}?`}
+          subtitle={cycleEnd ? `${cycle.weekStart} → ${cycleEnd}${cycleEnded ? " · already ended" : " · still running"}` : undefined}
+          onClose={() => setConfirmClose(false)}
+          saving={busy === "close"}
+          submitLabel="Close cycle"
+          onSubmit={() => void closeCycle()}
+        >
+          <div className="form-stack">
+            <p>Closing marks this cycle as history. This cannot be undone.</p>
+            <ul className="close-cycle-list">
+              <li>Servings are frozen at their current numbers. Subscriber changes no longer update them.</li>
+              <li>Meals and assignments become read-only.</li>
+              <li>The run sheet still shows this cycle on its own dates.</li>
+            </ul>
+            {!cycleEnded && cycleEnd && (
+              <p className="close-cycle-warning">This cycle runs until {cycleEnd}. Close it early only if it has stopped.</p>
+            )}
           </div>
         </Modal>
       )}

@@ -2,7 +2,13 @@ import { db } from "@/server/db";
 import { assertCan, type Actor } from "@/server/actor";
 import { recordAudit } from "@/server/audit";
 import { conflict, notFound, unprocessable } from "@/server/errors";
-import { buildCycleDays, describePublishProblem, isDeletable, validatePublish } from "@/modules/cycles/domain/cycle";
+import {
+  buildCycleDays,
+  canTransitionCycle,
+  describePublishProblem,
+  isDeletable,
+  validatePublish,
+} from "@/modules/cycles/domain/cycle";
 import type { CreateCycleInput, UpdateCycleInput } from "@/shared/schemas/cycle";
 import * as repository from "@/modules/cycles/infrastructure/cycle-repository";
 import { applyRosterHeadcount } from "@/modules/cycles/application/headcount";
@@ -147,6 +153,43 @@ export async function publishCycle(id: string, context: Context) {
     });
 
     return published;
+  });
+}
+
+/**
+ * ACTIVE → CLOSED. A closed cycle is history: it stops following the roster
+ * (BR-30) and its servings are frozen, but it still shows on the run sheet for
+ * its own dates.
+ */
+export async function closeCycle(id: string, context: Context) {
+  assertCan(context.actor, "cycles:write");
+
+  return db.$transaction(async (tx) => {
+    const before = await repository.findCycleMeta(tx, id);
+    if (!before) throw notFound("Cycle", id);
+
+    if (!canTransitionCycle(before.status, "CLOSED")) {
+      throw unprocessable(
+        before.status === "DRAFT"
+          ? `Cycle "${before.name}" has not been published, so there is nothing to close.`
+          : `Cycle "${before.name}" is already ${before.status.toLowerCase()}.`,
+        { status: before.status },
+      );
+    }
+
+    const closed = await repository.updateCycle(tx, id, { status: "CLOSED" });
+
+    await recordAudit(tx, {
+      actorId: context.actor.id,
+      action: "cycle.closed",
+      entityType: "Cycle",
+      entityId: id,
+      before: { status: before.status },
+      after: { status: closed.status },
+      requestId: context.requestId,
+    });
+
+    return closed;
   });
 }
 

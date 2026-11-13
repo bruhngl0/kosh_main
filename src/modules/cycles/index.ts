@@ -10,6 +10,7 @@ export {
   createCycle,
   updateCycle,
   publishCycle,
+  closeCycle,
   deleteCycle,
 } from "@/modules/cycles/application/cycle-management";
 
