@@ -24,6 +24,7 @@ export async function assignMeal(target: AssignTarget, input: AssignMealInput, c
   return db.$transaction(async (tx) => {
     const cycle = await repository.findCycleMeta(tx, target.cycleId);
     if (!cycle) throw notFound("Cycle", target.cycleId);
+    assertMealsEditable(cycle);
 
     const day = await repository.findCycleDay(tx, target.cycleId, target.dayNumber);
     if (!day) throw notFound(`Day ${target.dayNumber} of this cycle`);
@@ -101,6 +102,10 @@ export async function clearMeal(target: AssignTarget, context: Context) {
   assertCan(context.actor, "cycles:write");
 
   return db.$transaction(async (tx) => {
+    const cycle = await repository.findCycleMeta(tx, target.cycleId);
+    if (!cycle) throw notFound("Cycle", target.cycleId);
+    assertMealsEditable(cycle);
+
     const day = await repository.findCycleDay(tx, target.cycleId, target.dayNumber);
     if (!day) throw notFound(`Day ${target.dayNumber} of this cycle`);
 
@@ -124,4 +129,13 @@ export async function clearMeal(target: AssignTarget, context: Context) {
     await repository.deleteAssignment(tx, assignment.id);
     return { cleared: true, dayNumber: target.dayNumber, mealType: target.mealType };
   });
+}
+
+/** Closed and archived cycles are history; their meals are read-only. */
+function assertMealsEditable(cycle: { name: string; status: string }) {
+  if (cycle.status === "CLOSED" || cycle.status === "ARCHIVED") {
+    throw unprocessable(`Cycle "${cycle.name}" is ${cycle.status.toLowerCase()}, so its meals can no longer be changed.`, {
+      status: cycle.status,
+    });
+  }
 }

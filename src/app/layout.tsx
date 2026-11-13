@@ -5,6 +5,7 @@ import "./cycle-reference.css";
 import "./finance.css";
 import "./subscribers.css";
 import "./run-sheet.css";
+import "./recipes.css";
 
 export const metadata: Metadata = {
   title: "Kōsh Operations",

@@ -12,6 +12,7 @@ export type AuditAction =
   | "cycle.created"
   | "cycle.updated"
   | "cycle.published"
+  | "cycle.closed"
   | "cycle.deleted"
   | "meal.assigned"
   | "meal.cleared"

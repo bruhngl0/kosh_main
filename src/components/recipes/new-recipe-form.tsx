@@ -31,7 +31,7 @@ export function NewRecipeForm({
   onError,
 }: {
   onClose: () => void;
-  onCreated: (message: string) => void;
+  onCreated: (message: string, recipeId: string) => void;
   onError: (message: string) => void;
 }) {
   const [ingredients, setIngredients] = useState<IngredientOption[]>([]);
@@ -112,11 +112,12 @@ export function NewRecipeForm({
 
     setSaving(true);
     try {
-      await api.post("/recipes", parsed.data);
+      const recipe = await api.post<{ id: string }>("/recipes", parsed.data);
       onCreated(
         publish
           ? "Recipe created and published — it can now be assigned to a cycle."
           : "Recipe saved as a draft. Publish it before assigning it to a cycle.",
+        recipe.id,
       );
     } catch (reason) {
       const message = errorMessage(reason);
@@ -129,27 +130,32 @@ export function NewRecipeForm({
 
   return (
     <div
-      className="recipe-modal-overlay"
+      className="modal-overlay"
+      role="dialog"
+      aria-modal="true"
+      aria-label="New recipe"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
       <form
-        className="recipe-form-modal recipe-form-modal-wide"
+        className="form-modal form-modal-wide recipe-form-modal"
         onSubmit={(event) => {
           event.preventDefault();
           void submit(event.currentTarget);
         }}
       >
-        <div className="recipe-modal-head">
+        <div className="modal-head">
           <div>
             <h2>New Recipe</h2>
-            <p>Complete kitchen execution card</p>
+            <small className="form-intro">Complete kitchen execution card</small>
           </div>
-          <button type="button" onClick={onClose} aria-label="Close">×</button>
+          <button type="button" className="modal-close" onClick={onClose} aria-label="Close">
+            ×
+          </button>
         </div>
 
-        <div className="recipe-modal-body">
+        <div className="modal-body">
           {error && <div className="recipe-form-error">{error}</div>}
 
           <section className="recipe-form-section">
@@ -306,13 +312,13 @@ export function NewRecipeForm({
           </section>
         </div>
 
-        <div className="recipe-form-actions">
+        <div className="modal-footer recipe-form-actions">
           <label className="toggle-label">
             <input type="checkbox" checked={publish} onChange={(event) => setPublish(event.target.checked)} />
             Publish immediately
           </label>
-          <button type="button" className="recipe-btn recipe-btn-ghost" onClick={onClose}>Cancel</button>
-          <button className="recipe-btn recipe-btn-copper" type="submit" disabled={saving}>
+          <button type="button" className="btn btn-ghost" onClick={onClose}>Cancel</button>
+          <button className="btn btn-copper" type="submit" disabled={saving}>
             {saving ? "Saving…" : publish ? "Create & publish" : "Save as draft"}
           </button>
         </div>
